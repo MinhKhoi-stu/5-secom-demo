@@ -5,18 +5,18 @@ import Sidebar from "./MainLayout/Sidebar";
 
 const PageLayout = () => {
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <Header />
       <Sidebar />
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: '100px',
-          marginTop: '64px',
+          marginLeft: "100px",
+          marginTop: "64px",
           padding: 3,
-          minHeight: '100vh',
-          backgroundColor: '#f9f9f9',
+          minHeight: "100vh",
+          backgroundColor: "#f9f9f9",
         }}
       >
         <Outlet />
