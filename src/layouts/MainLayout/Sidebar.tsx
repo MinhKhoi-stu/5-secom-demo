@@ -7,7 +7,7 @@ const menuItems = [
   { label: "Quản lý Sản phẩm", path: "/main-product" },
   { label: "Quản lý User", path: "/user" },
   { label: "Quản lý Tracking", path: "/tracking" },
-  { label: "Quản lý SKU Design", path: "/sku-design" },
+  { label: "Quản lý SKU Design", path: "/main-skudesign" },
 ];
 
 const Sidebar = () => {
