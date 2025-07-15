@@ -11,7 +11,7 @@ const AddProduct = () => {
           fontWeight: "bold",
         }}
       >
-        QUẢN LÝ SẢN PHẨM
+        THÊM SẢN PHẨM
       </Typography>
 
       {/* THÊM SẢN PHẨM*/}
@@ -26,17 +26,6 @@ const AddProduct = () => {
           // marginTop: 2,
         }}
       >
-        {/* TITLE */}
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          gutterBottom
-          sx={{
-            color: "black",
-          }}
-        >
-          Thêm sản phẩm
-        </Typography>
 
         {/* THẺ INPUT TÊN SẢN PHẨM */}
         <div

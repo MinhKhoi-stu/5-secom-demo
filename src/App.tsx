@@ -27,6 +27,10 @@ function App() {
           <Route path="/main-product" element={<MainProduct />} />
           <Route path="/main-skudesign" element={<MainSKUDesign />} />
           <Route path="/add-skudesign" element={<AddSKUDesign />} />
+          {/* <Route path="/skudesign">
+            <Route index element={<MainSKUDesign />} />
+            <Route path="/add-skudesign" element={<AddSKUDesign />} />
+          </Route> */}
         </Route>
       </Routes>
     </BrowserRouter>

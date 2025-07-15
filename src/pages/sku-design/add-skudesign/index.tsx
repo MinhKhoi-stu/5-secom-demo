@@ -1,9 +1,19 @@
-import {Box, Button, TextField, Typography} from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
 
 const AddSKUDesign = () => {
-    return(
-        <>
-             <>
+  const [value, setValue] = useState("");
+  return (
+    <>
       {/* TITLE */}
       <Typography
         sx={{
@@ -19,27 +29,28 @@ const AddSKUDesign = () => {
       <Box
         sx={{
           width: "1180px",
-          height: "80vh",
+          height: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "12px",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          // marginTop: 2,
         }}
       >
-
-        {/* THẺ INPUT TÊN SẢN PHẨM */}
+        {/* THẺ INPUT TÊN SKU */}
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
           }}
         >
           <Typography
             sx={{
+              display: "flex",
               color: "black",
+              alignItems: "flex-start",
             }}
           >
-            Tên sản phẩm
+            Tên SKU
           </Typography>
 
           <TextField
@@ -48,19 +59,21 @@ const AddSKUDesign = () => {
             variant="outlined"
             sx={{
               width: "400px",
-              marginLeft: "-100px",
-              marginTop: "30px",
+              marginTop: "20px",
               backgroundColor: "white",
               borderRadius: "10px",
             }}
           />
         </div>
 
-        {/* THẺ INPUT HÌNH ẢNH SẢN PHẨM */}
+        {/* THẺ INPUT LOẠI SẢN PHẨM */}
         <div
           style={{
-            display: "flex",
+            width: "400px",
             marginTop: "20px",
+            display: "flex",
+            alignItems: "flex-start",
+            flexDirection: "column",
           }}
         >
           <Typography
@@ -68,16 +81,53 @@ const AddSKUDesign = () => {
               color: "black",
             }}
           >
-            Hình ảnh (100px)
+            Loại sản phẩm
+          </Typography>
+
+          <FormControl
+            sx={{
+              marginTop: "20px",
+              width: "400px",
+            }}
+          >
+            <InputLabel id="combo-label">Chọn</InputLabel>
+            <Select
+              labelId="combo-label"
+              value={value}
+              label="Loại sản phẩm"
+              onChange={(e) => setValue(e.target.value)}
+            >
+              <MenuItem value="shirt">SKU 1</MenuItem>
+              <MenuItem value="patch">SKU 2</MenuItem>
+              <MenuItem value="mug">SKU 3</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+
+        {/* HÌNH ẢNH DEMO */}
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Typography
+            sx={{
+              display: "flex",
+              color: "black",
+              alignItems: "flex-start",
+            }}
+          >
+            Hình ảnh demo (1200px)
           </Typography>
 
           <div
             style={{
               display: "flex",
-              marginLeft: "-130px",
+              alignItems: "flex-start",
             }}
           >
-            {/* NÚT CHỌN HÌNH ẢNH */}
             <Button
               sx={{
                 color: "black",
@@ -95,7 +145,6 @@ const AddSKUDesign = () => {
               variant="outlined"
               sx={{
                 width: "315px",
-                // marginLeft: '-120px',
                 marginTop: "30px",
                 backgroundColor: "white",
                 borderRadius: "10px",
@@ -104,7 +153,7 @@ const AddSKUDesign = () => {
           </div>
         </div>
 
-        {/* THẺ PHÂN LOẠI SIZE SẢN PHẨM */}
+        {/* LINK FILE GỐC */}
         <div
           style={{
             marginTop: "20px",
@@ -116,108 +165,64 @@ const AddSKUDesign = () => {
             sx={{
               display: "flex",
               color: "black",
-              marginBottom: "10px",
               alignItems: "flex-start",
             }}
           >
-            Phân loại Size sản phẩm
+            Link File gốc
           </Typography>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
+          <TextField
+            type="text"
+            id="addproduct"
+            variant="outlined"
+            sx={{
+              width: "400px",
+              marginTop: "20px",
+              backgroundColor: "white",
+              borderRadius: "10px",
+            }}
+          />
+        </div>
+
+        {/*FULFILLMENT TẠI*/}
+        <div
+          style={{
+            width: "400px",
+            marginTop: "20px",
+            display: "flex",
+            alignItems: "flex-start",
+            flexDirection: "column",
+          }}
+        >
+          <Typography
+            sx={{
+              color: "black",
             }}
           >
-            {/* INCHES */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
+            Fulfillment tại
+          </Typography>
 
-            {/* WEIGHTS */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
+          <FormControl
+            sx={{
+              marginTop: "20px",
+              width: "400px",
+            }}
+          >
+            <InputLabel id="combo-label">Chọn</InputLabel>
+            <Select
+              labelId="combo-label"
+              value={value}
+              label="Loại sản phẩm"
+              onChange={(e) => setValue(e.target.value)}
             >
-              Weights
-            </Typography>
-
-            {/* LENGTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Length
-            </Typography>
-
-            {/* WIDTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Width
-            </Typography>
-
-            {/* HEIGHT */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Height
-            </Typography>
-          </div>
+              <MenuItem value="shirt">Tại 1</MenuItem>
+              <MenuItem value="patch">Tại 2</MenuItem>
+              <MenuItem value="mug">Tại 3</MenuItem>
+            </Select>
+          </FormControl>
         </div>
-        {/* THẺ PHÂN LOẠI SIZE SẢN PHẨM */}
+
+        {/* SỐ LƯỢNG */}
         <div
           style={{
             marginTop: "20px",
@@ -225,201 +230,65 @@ const AddSKUDesign = () => {
             flexDirection: "column",
           }}
         >
-          <div
-            style={{
+          <Typography
+            sx={{
               display: "flex",
-              gap: "10px",
+              color: "black",
+              alignItems: "flex-start",
             }}
           >
-            {/* INCHES */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
+            Số lượng
+          </Typography>
 
-            {/* WEIGHTS */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Weights
-            </Typography>
-
-            {/* LENGTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Length
-            </Typography>
-
-            {/* WIDTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Width
-            </Typography>
-
-            {/* HEIGHT */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Height
-            </Typography>
-          </div>
+          <TextField
+            type="text"
+            id="addproduct"
+            variant="outlined"
+            sx={{
+              width: "400px",
+              marginTop: "20px",
+              backgroundColor: "white",
+              borderRadius: "10px",
+            }}
+          />
         </div>
-        {/* THẺ PHÂN LOẠI SIZE SẢN PHẨM */}
+
+         {/*NGƯỜI LÀM*/}
         <div
           style={{
+            width: "400px",
             marginTop: "20px",
             display: "flex",
+            alignItems: "flex-start",
             flexDirection: "column",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
+          <Typography
+            sx={{
+              color: "black",
             }}
           >
-            {/* INCHES */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
+            Người làm
+          </Typography>
 
-            {/* WEIGHTS */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
+          <FormControl
+            sx={{
+              marginTop: "20px",
+              width: "400px",
+            }}
+          >
+            <InputLabel id="combo-label">Chọn</InputLabel>
+            <Select
+              labelId="combo-label"
+              value={value}
+              label="Loại sản phẩm"
+              onChange={(e) => setValue(e.target.value)}
             >
-              Weights
-            </Typography>
-
-            {/* LENGTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Length
-            </Typography>
-
-            {/* WIDTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Width
-            </Typography>
-
-            {/* HEIGHT */}
-            <TextField
-              type="text"
-              variant="outlined"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "15px",
-                color: "black",
-              }}
-            >
-              Height
-            </Typography>
-          </div>
+              <MenuItem value="shirt">Người 1</MenuItem>
+              <MenuItem value="patch">Người 2</MenuItem>
+              <MenuItem value="mug">Người 3</MenuItem>
+            </Select>
+          </FormControl>
         </div>
 
         {/* NÚT THÊM SẢN PHẨM */}
@@ -430,15 +299,17 @@ const AddSKUDesign = () => {
           }}
         >
           <button
-          // onClick={handleClick}
+            // onClick={handleClick}
+            style={{
+              backgroundColor: "rgba(232, 67, 12, 0.88)",
+            }}
           >
-            Thêm sản phẩm
+            Thêm SKU Design
           </button>
         </div>
       </Box>
     </>
-        </>
-    )
-}
+  );
+};
 
 export default AddSKUDesign;

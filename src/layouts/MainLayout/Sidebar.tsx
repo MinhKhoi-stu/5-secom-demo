@@ -8,6 +8,7 @@ const menuItems = [
   { label: "Quản lý User", path: "/user" },
   { label: "Quản lý Tracking", path: "/tracking" },
   { label: "Quản lý SKU Design", path: "/main-skudesign" },
+  // { label: "Quản lý SKU Design", path: "/skudesign" },
 ];
 
 const Sidebar = () => {
@@ -30,6 +31,8 @@ const Sidebar = () => {
       <List>
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
+          // const isActive = location.pathname.startsWith(item.path);
+
 
           return (
             <ListItemButton
