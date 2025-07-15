@@ -1,10 +1,16 @@
 import {Box, Typography} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 const MainProduct = () => {
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate('/add-product');
+    }
     return(
         <>
             <Typography
             sx={{
+                display: 'flex',
                 color: 'black',
                 fontWeight: 'bold'
             }}>
@@ -36,8 +42,23 @@ const MainProduct = () => {
             sx={{
                 color: 'black'
             }}>
-                Đây là nội dung của trang admin. Có thể thêm bảng, biểu đồ, v.v.
+                Đây là nội dung
             </Typography>
+
+            {/* NÚT THÊM SẢN PHẨM */}
+            <div style={{
+                display: 'flex',
+                marginTop: '300px'
+            }}>
+                <button
+                style={{
+                    backgroundColor: 'lightsalmon'
+                }}
+                onClick={handleClick}
+                >
+                    Thêm sản phẩm 
+                </button>
+            </div>
             </Box>
         </>
     )
