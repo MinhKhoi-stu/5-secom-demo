@@ -18,12 +18,11 @@ const AddProduct = () => {
       <Box
         sx={{
           width: "1180px",
-          height: "80vh",
+          height: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "12px",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          // marginTop: 2,
         }}
       >
 
@@ -45,6 +44,7 @@ const AddProduct = () => {
             type="text"
             id="addproduct"
             variant="outlined"
+            size="small"
             sx={{
               width: "400px",
               marginLeft: "-100px",
@@ -82,7 +82,7 @@ const AddProduct = () => {
                 color: "black",
                 backgroundColor: "gray",
                 marginTop: "30px",
-                height: "55px",
+                height: "40px",
               }}
             >
               Chọn tệp
@@ -92,6 +92,7 @@ const AddProduct = () => {
               type="img"
               id="addproduct"
               variant="outlined"
+              size="small"
               sx={{
                 width: "315px",
                 // marginLeft: '-120px',
@@ -132,6 +133,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -143,6 +145,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -151,7 +154,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -162,6 +165,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -170,7 +174,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -181,6 +185,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -189,7 +194,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -200,6 +205,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -208,7 +214,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -234,6 +240,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -245,6 +252,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -253,7 +261,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -264,6 +272,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -272,7 +281,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -283,6 +292,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -291,7 +301,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -302,6 +312,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -310,7 +321,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -336,6 +347,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -347,6 +359,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -355,7 +368,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -366,6 +379,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -374,7 +388,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -385,6 +399,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -393,7 +408,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >
@@ -404,6 +419,7 @@ const AddProduct = () => {
             <TextField
               type="text"
               variant="outlined"
+              size="small"
               sx={{
                 width: "100px",
                 backgroundColor: "white",
@@ -412,7 +428,7 @@ const AddProduct = () => {
             />
             <Typography
               sx={{
-                marginTop: "15px",
+                marginTop: "10px",
                 color: "black",
               }}
             >

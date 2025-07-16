@@ -5,8 +5,8 @@ const menuItems = [
   { label: "Admin Dashboard", path: "/admin-dashboard" },
   { label: "Quản lý Fulfillment", path: "/fulfillment" },
   { label: "Quản lý Sản phẩm", path: "/main-product" },
-  { label: "Quản lý User", path: "/user" },
-  { label: "Quản lý Tracking", path: "/tracking" },
+  { label: "Quản lý User", path: "/main-user" },
+  { label: "Quản lý Tracking", path: "/main-tracking" },
   { label: "Quản lý SKU Design", path: "/main-skudesign" },
   // { label: "Quản lý SKU Design", path: "/skudesign" },
 ];

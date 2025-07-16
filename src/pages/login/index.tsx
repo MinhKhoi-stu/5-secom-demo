@@ -1,7 +1,11 @@
-import { TextField, Typography } from "@mui/material";
+import { InputAdornment, TextField, Typography } from "@mui/material";
+import {useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Login = () => {
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const handleLogin = () => {
     navigate("/admin-dashboard");
@@ -66,7 +70,7 @@ const Login = () => {
 
         {/* input password */}
         <TextField
-          type="password"
+          type={show ? "text" : "password"}
           id="username"
           placeholder="Password"
           variant="outlined"
@@ -79,6 +83,38 @@ const Login = () => {
               fontWeight: "bold",
               color: "black",
             },
+          }}
+          //ẨN HIỆN PASSWORD
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {show ? (
+                  <VisibilityIcon
+                    onClick={() => setShow(false)}
+                    sx={{
+                      cursor: "pointer",
+                      "&:hover": {
+                        color: "gray",
+                        transform: "scale(1.2)",
+                        transition: "all 0.2s ease",
+                      },
+                    }}
+                  />
+                ) : (
+                  <VisibilityOffIcon
+                    onClick={() => setShow(true)}
+                    sx={{
+                      cursor: "pointer",
+                      "&:hover": {
+                        color: "gray",
+                        transform: "scale(1.2)",
+                        transition: "all 0.2s ease",
+                      },
+                    }}
+                  />
+                )}
+              </InputAdornment>
+            ),
           }}
         />
 

@@ -8,6 +8,10 @@ import AddProduct from "./pages/product/add-product";
 import MainProduct from "./pages/product/main-product";
 import MainSKUDesign from "./pages/sku-design/main-skudesign";
 import AddSKUDesign from "./pages/sku-design/add-skudesign";
+import MainUser from "./pages/user/main-user";
+import AddUser from "./pages/user/add-user";
+import MainTracking from "./pages/tracking/main-tracking";
+import DetailsTracking from "./pages/tracking/details-tracking";
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -27,10 +31,10 @@ function App() {
           <Route path="/main-product" element={<MainProduct />} />
           <Route path="/main-skudesign" element={<MainSKUDesign />} />
           <Route path="/add-skudesign" element={<AddSKUDesign />} />
-          {/* <Route path="/skudesign">
-            <Route index element={<MainSKUDesign />} />
-            <Route path="/add-skudesign" element={<AddSKUDesign />} />
-          </Route> */}
+          <Route path="/main-user" element={<MainUser />} />
+          <Route path="/add-user" element={<AddUser/>} />
+          <Route path="/main-tracking" element={<MainTracking/>} />
+          <Route path="/details-tracking" element={<DetailsTracking/>} />
         </Route>
       </Routes>
     </BrowserRouter>

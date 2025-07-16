@@ -57,6 +57,7 @@ const AddSKUDesign = () => {
             type="text"
             id="addproduct"
             variant="outlined"
+            size="small"
             sx={{
               width: "400px",
               marginTop: "20px",
@@ -85,6 +86,7 @@ const AddSKUDesign = () => {
           </Typography>
 
           <FormControl
+            size="small"
             sx={{
               marginTop: "20px",
               width: "400px",
@@ -133,7 +135,7 @@ const AddSKUDesign = () => {
                 color: "black",
                 backgroundColor: "gray",
                 marginTop: "30px",
-                height: "55px",
+                height: "40px",
               }}
             >
               Chọn tệp
@@ -143,6 +145,7 @@ const AddSKUDesign = () => {
               type="img"
               id="addproduct"
               variant="outlined"
+              size="small"
               sx={{
                 width: "315px",
                 marginTop: "30px",
@@ -175,6 +178,7 @@ const AddSKUDesign = () => {
             type="text"
             id="addproduct"
             variant="outlined"
+            size="small"
             sx={{
               width: "400px",
               marginTop: "20px",
@@ -203,6 +207,7 @@ const AddSKUDesign = () => {
           </Typography>
 
           <FormControl
+            size="small"
             sx={{
               marginTop: "20px",
               width: "400px",
@@ -244,6 +249,7 @@ const AddSKUDesign = () => {
             type="text"
             id="addproduct"
             variant="outlined"
+            size="small"
             sx={{
               width: "400px",
               marginTop: "20px",
@@ -253,7 +259,7 @@ const AddSKUDesign = () => {
           />
         </div>
 
-         {/*NGƯỜI LÀM*/}
+        {/*NGƯỜI LÀM*/}
         <div
           style={{
             width: "400px",
@@ -272,6 +278,7 @@ const AddSKUDesign = () => {
           </Typography>
 
           <FormControl
+            size="small"
             sx={{
               marginTop: "20px",
               width: "400px",

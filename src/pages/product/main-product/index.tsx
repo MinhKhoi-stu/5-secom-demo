@@ -2,12 +2,12 @@ import { Box, Typography, Button, Avatar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const productList = [
-  { name: "Patches Thêu", img: "/images/patches.png" },
-  { name: "Áo Thêu", img: "/images/shirt.png" },
-  { name: "Nón thêu", img: "/images/hat.png" },
-  { name: "Lịch 2026", img: "/images/calendar.png" },
-  { name: "Led Mica", img: "/images/led.png" },
-  { name: "Gỗ Handmade", img: "/images/wood.png" },
+  { name: "Patches Thêu", img: "/logo.png" },
+  { name: "Áo Thêu", img: "/logo.png" },
+  { name: "Nón thêu", img: "/logo.png" },
+  { name: "Lịch 2026", img: "/logo.png" },
+  { name: "Led Mica", img: "/logo.png" },
+  { name: "Gỗ Handmade", img: "/logo.png" },
 ];
 
 const MainProduct = () => {
@@ -33,7 +33,9 @@ const MainProduct = () => {
       {/* BOC CHỨA SẢN PHẨM */}
       <Box
         sx={{
-          width: "1180px",
+          width: 'flex',
+          height: 'flex',
+          // width: "1180px",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "16px",
