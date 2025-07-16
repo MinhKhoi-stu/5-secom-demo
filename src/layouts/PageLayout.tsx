@@ -15,7 +15,6 @@ const PageLayout = () => {
           marginLeft: "100px",
           marginTop: "64px",
           padding: 3,
-          // minHeight: "100vh",
           height: 'flex',
           backgroundColor: "#f9f9f9",
         }}

@@ -34,7 +34,7 @@ const DetailsTracking = () => {
           gap: 4,
         }}
       >
-        {/* THẺ BỌC TRẠNG THÁI */}
+        {/* THẺ BỌC TRẠNG THÁI ĐƠN HÀNG GIẢ */}
         <Box
           sx={{
             display: "flex",
@@ -65,6 +65,7 @@ const DetailsTracking = () => {
             </Box>
           </Box>
 
+          {/* NÚT DOWNLOAD FILE */}
           <Button
             variant="contained"
             startIcon={<CloudDownloadIcon />}
@@ -74,7 +75,7 @@ const DetailsTracking = () => {
           </Button>
         </Box>
 
-        {/* CHIP TRẠNG THÁI */}
+        {/* CẬP NHẬT TRẠNG THÁI */}
         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
           <Chip
             label="Chưa mua tracking"
@@ -97,6 +98,8 @@ const DetailsTracking = () => {
             onClick={() => setSelectedChip("Đã trả")}
           />
           {/* <Chip label="Cập nhật" variant="outlined" /> */}
+
+          {/* NÚT LƯU CẬP NHẬT TRẠNG THÁI */}
           <Button
             sx={{
               backgroundColor: "gray",
