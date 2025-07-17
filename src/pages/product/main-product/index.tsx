@@ -91,8 +91,8 @@ const MainProduct = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "lightsalmon",
-              color: "black",
+              backgroundColor: "red",
+              color: "white",
               fontWeight: "bold",
               textTransform: "none",
               borderRadius: "10px",

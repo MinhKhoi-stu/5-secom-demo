@@ -12,12 +12,14 @@ import {
   Typography,
   Paper,
   Pagination,
+  Link,
 } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
+// import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import { Popover } from "@mui/material";
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { AttachFile } from "@mui/icons-material";
 
 const mockData = [
   {
@@ -25,6 +27,7 @@ const mockData = [
     img: "/logo.png",
     type: "Áo thêu",
     file: "Link File",
+    fileUrl: "https://dientoan.vn/",
     fulfillment: "Sản xuất tại VN",
     quantity: "1 tỷ",
     worker: "Hồng Nhung",
@@ -34,6 +37,7 @@ const mockData = [
     img: "/react.svg",
     type: "Patches",
     file: "Link File",
+    fileUrl: "https://dientoan.vn/",
     fulfillment: "Kho USA",
     quantity: "50",
     worker: "Thùy Vân",
@@ -43,6 +47,7 @@ const mockData = [
     img: "/logo.png",
     type: "Áo thêu",
     file: "Link File",
+    fileUrl: "https://dientoan.vn/",
     fulfillment: "Sản xuất tại VN",
     quantity: "1 tỷ",
     worker: "Hồng Nhung",
@@ -52,6 +57,7 @@ const mockData = [
     img: "/react.svg",
     type: "Patches",
     file: "Link File",
+    fileUrl: "https://dientoan.vn/",
     fulfillment: "Kho USA",
     quantity: "50",
     worker: "Thùy Vân",
@@ -61,6 +67,7 @@ const mockData = [
     img: "/logo.png",
     type: "Áo thêu",
     file: "Link File",
+    fileUrl: "https://dientoan.vn/",
     fulfillment: "Sản xuất tại VN",
     quantity: "1 tỷ",
     worker: "Hồng Nhung",
@@ -70,6 +77,7 @@ const mockData = [
     img: "/react.svg",
     type: "Patches",
     file: "Link File",
+    fileUrl: "https://dientoan.vn/",
     fulfillment: "Kho USA",
     quantity: "50",
     worker: "Thùy Vân",
@@ -184,9 +192,32 @@ const MainSKUDesign = () => {
                   </TableCell>
 
                   <TableCell>{row.type}</TableCell>
+
                   <TableCell>
-                    <InsertDriveFileOutlinedIcon />
-                    {` ${row.file}`}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Link
+                        href={row.fileUrl}
+                        target="_blank"
+                        underline="hover"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          color: "black",
+                          fontWeight: 500,
+                          transition: "all 0.2s ease-in-out",
+                          "&:hover": {
+                            color: "red",
+                            transform: "translateY(-1px)",
+                            textDecoration: "underline",
+                          },
+                          cursor: "pointer",
+                        }}
+                      >
+                        {row.file}
+                        <AttachFile fontSize="small" />
+                      </Link>
+                    </Box>
                   </TableCell>
                   <TableCell>{row.fulfillment}</TableCell>
                   <TableCell>{row.quantity}</TableCell>

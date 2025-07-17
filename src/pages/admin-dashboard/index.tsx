@@ -10,7 +10,12 @@ import {
   Paper,
   TableHead,
   Chip,
+  Select,
+  InputLabel,
+  MenuItem,
+  FormControl,
 } from "@mui/material";
+import { useState } from "react";
 
 const AdminDashboard = () => {
   // Fake data - dễ kết nối với BE sau này
@@ -132,7 +137,7 @@ const AdminDashboard = () => {
       type: "3 inches",
       quantity: 2,
       status: "Đã có hình",
-      isError: true,
+      // isError: true,
     },
   ];
 
@@ -151,18 +156,12 @@ const AdminDashboard = () => {
     { name: "Hương Sài Gòn", email: "huongs@5se.com", files: 130 },
   ];
 
+  const [valueDay, setValueDay] = useState("");
+  const [valueBill, setValueBill] = useState("");
+
   return (
     <div>
       {/* ĐƠN HÀNG MỚI CẬP NHẬT */}
-      {/* <Box
-        sx={{ width: "1180px", backgroundColor: "white", p: 3, borderRadius: 2, boxShadow: 3 }}
-      >
-        <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
-          Đơn hàng mới cập nhật
-        </Typography>
-        <Typography color="black">Hiển thị bảng đơn hàng ở đây.</Typography>
-      </Box> */}
-
       <Box
         sx={{
           width: "1180px",
@@ -179,7 +178,11 @@ const AdminDashboard = () => {
         <TableContainer component={Paper}>
           <Table size="small">
             <TableHead>
-              <TableRow>
+              <TableRow
+                sx={{
+                  "& th": { fontWeight: "bold" },
+                }}
+              >
                 <TableCell>SKU</TableCell>
                 <TableCell>Order ID</TableCell>
                 <TableCell>Shop</TableCell>
@@ -191,10 +194,13 @@ const AdminDashboard = () => {
                 <TableCell>Trạng thái</TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {orders.map((order, idx) => (
                 <TableRow key={idx}>
-                  <TableCell sx={{ color: order.isError ? "red" : "inherit" }}>
+                  <TableCell
+                  // sx={{ color: order.isError ? "red" : "inherit" }}
+                  >
                     {order.sku}
                   </TableCell>
                   <TableCell>{order.orderId}</TableCell>
@@ -264,15 +270,46 @@ const AdminDashboard = () => {
               boxShadow: 3,
             }}
           >
-            <Typography
-              variant="h5"
-              fontWeight="bold"
-              gutterBottom
-              color="black"
+            <Box
+              sx={{
+                flexDirection: "row",
+                display: "flex",
+              }}
             >
-              Tổng doanh thu
-            </Typography>
-            <Typography color="black" fontSize={28} fontWeight="bold">
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                gutterBottom
+                color="black"
+              >
+                Tổng doanh thu
+              </Typography>
+              <FormControl
+                size="small"
+                sx={{
+                  marginLeft: "90px",
+                  width: "270px",
+                }}
+              >
+                <InputLabel id="combo-label">Chọn</InputLabel>
+                <Select
+                  labelId="total-label"
+                  value={valueDay}
+                  label="Loại sản phẩm"
+                  onChange={(e) => setValueDay(e.target.value)}
+                >
+                  <MenuItem value="shirt">7 ngày gần nhất</MenuItem>
+                  <MenuItem value="patch">30 ngày gần nhất</MenuItem>
+                  <MenuItem value="mug">90 ngày gần nhất</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Typography
+              marginTop={5}
+              color="black"
+              fontSize={29}
+              fontWeight="bold"
+            >
               {revenue}
             </Typography>
           </Box>
@@ -286,16 +323,43 @@ const AdminDashboard = () => {
               mt: 3,
             }}
           >
-            <Typography
-              variant="h5"
-              fontWeight="bold"
-              gutterBottom
-              color="black"
+            <Box
+              sx={{
+                flexDirection: "row",
+                display: "flex",
+              }}
             >
-              Tổng đơn hàng
-            </Typography>
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                gutterBottom
+                color="black"
+              >
+                Tổng đơn hàng
+              </Typography>
+
+              <FormControl
+                size="small"
+                sx={{
+                  marginLeft: "90px",
+                  width: "270px",
+                }}
+              >
+                <InputLabel id="combo-label">Chọn</InputLabel>
+                <Select
+                  labelId="totalbill-label"
+                  value={valueBill}
+                  label="Loại sản phẩm"
+                  onChange={(e) => setValueBill(e.target.value)}
+                >
+                  <MenuItem value="shirt">7 ngày gần nhất</MenuItem>
+                  <MenuItem value="patch">30 ngày gần nhất</MenuItem>
+                  <MenuItem value="mug">90 ngày gần nhất</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
             {orders2.map((o, i) => (
-              <Typography key={i} color="black">
+              <Typography marginTop={5} key={i} color="black">
                 {o.name}: {o.count} Orders
               </Typography>
             ))}
@@ -312,13 +376,50 @@ const AdminDashboard = () => {
             boxShadow: 3,
           }}
         >
-          <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
-            Top vẽ file thêu
-          </Typography>
+          <Box
+            sx={{
+              flexDirection: "row",
+              display: "flex",
+            }}
+          >
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              gutterBottom
+              color="black"
+            >
+              Top vẽ file thêu
+            </Typography>
+            <FormControl
+              size="small"
+              sx={{
+                marginLeft: "90px",
+                width: "270px",
+              }}
+            >
+              <InputLabel id="combo-label">Chọn</InputLabel>
+              <Select
+                labelId="totalbill-label"
+                value={valueBill}
+                label="Loại sản phẩm"
+                onChange={(e) => setValueBill(e.target.value)}
+              >
+                <MenuItem value="shirt">7 ngày gần nhất</MenuItem>
+                <MenuItem value="patch">30 ngày gần nhất</MenuItem>
+                <MenuItem value="mug">90 ngày gần nhất</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
           {topUsers.map((user, i) => (
             <Box
               key={i}
-              sx={{ display: "flex", alignItems: "center", gap: 2, my: 1 }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 2,
+                my: 3,
+              }}
             >
               <Avatar>{user.name[0]}</Avatar>
               <Box>

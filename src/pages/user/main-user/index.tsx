@@ -93,7 +93,10 @@ const MainUser = () => {
             <Tab
               key={idx}
               label={label}
-              sx={{ textTransform: "none", fontWeight: 500 }}
+              sx={{
+                // textTransform: "none",
+                fontWeight: "bold",
+              }}
             />
           ))}
         </Tabs>

@@ -43,7 +43,7 @@ const AddSKUDesign = () => {
       <Box
         sx={{
           // width: "1180px",
-          width: 'flex',
+          width: "flex",
           height: "flex",
           backgroundColor: "white",
           padding: 3,
@@ -122,54 +122,6 @@ const AddSKUDesign = () => {
         </div>
 
         {/* HÌNH ẢNH DEMO */}
-        {/* <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            sx={{
-              display: "flex",
-              color: "black",
-              alignItems: "flex-start",
-            }}
-          >
-            Hình ảnh demo (1200px)
-          </Typography>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-            }}
-          >
-            <Button
-              sx={{
-                color: "black",
-                backgroundColor: "gray",
-                marginTop: "30px",
-                height: "40px",
-              }}
-            >
-              Chọn tệp
-            </Button>
-
-            <TextField
-              type="img"
-              id="addproduct"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "315px",
-                marginTop: "30px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-          </div>
-        </div> */}
 
         <div
           style={{
@@ -289,9 +241,8 @@ const AddSKUDesign = () => {
               label="Loại sản phẩm"
               onChange={(e) => setValue(e.target.value)}
             >
-              <MenuItem value="shirt">Tại 1</MenuItem>
-              <MenuItem value="patch">Tại 2</MenuItem>
-              <MenuItem value="mug">Tại 3</MenuItem>
+              <MenuItem value="">Tại Việt Nam</MenuItem>
+              <MenuItem value="">Tại kho USA</MenuItem>
             </Select>
           </FormControl>
         </div>

@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import {Link} from "react-router-dom";
 
 const Header = () => {
   return (
@@ -18,14 +19,16 @@ const Header = () => {
         boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
       }}
     >
-      <img
-        src="/logocochu.png"
-        alt="Logo"
-        style={{
-          height: "40px",
-          marginRight: "16px",
-        }}
-      />
+      <Link to="/login" style={{ display: "flex", alignItems: "center" }}>
+        <img
+          src="/logocochu.png"
+          alt="Logo"
+          style={{
+            height: "40px",
+            marginRight: "16px",
+          }}
+        />
+      </Link>
     </Box>
   );
 };

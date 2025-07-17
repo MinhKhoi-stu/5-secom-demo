@@ -1,5 +1,5 @@
 import { InputAdornment, TextField, Typography } from "@mui/material";
-import {useState} from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -85,37 +85,37 @@ const Login = () => {
             },
           }}
           //ẨN HIỆN PASSWORD
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                {show ? (
-                  <VisibilityIcon
-                    onClick={() => setShow(false)}
-                    sx={{
-                      cursor: "pointer",
-                      "&:hover": {
-                        color: "gray",
-                        transform: "scale(1.2)",
-                        transition: "all 0.2s ease",
-                      },
-                    }}
-                  />
-                ) : (
-                  <VisibilityOffIcon
-                    onClick={() => setShow(true)}
-                    sx={{
-                      cursor: "pointer",
-                      "&:hover": {
-                        color: "gray",
-                        transform: "scale(1.2)",
-                        transition: "all 0.2s ease",
-                      },
-                    }}
-                  />
-                )}
-              </InputAdornment>
-            ),
-          }}
+          // InputProps={{
+          //   endAdornment: (
+          //     <InputAdornment position="end">
+          //       {show ? (
+          //         <VisibilityIcon
+          //           onClick={() => setShow(false)}
+          //           sx={{
+          //             cursor: "pointer",
+          //             "&:hover": {
+          //               color: "gray",
+          //               transform: "scale(1.2)",
+          //               transition: "all 0.2s ease",
+          //             },
+          //           }}
+          //         />
+          //       ) : (
+          //         <VisibilityOffIcon
+          //           onClick={() => setShow(true)}
+          //           sx={{
+          //             cursor: "pointer",
+          //             "&:hover": {
+          //               color: "gray",
+          //               transform: "scale(1.2)",
+          //               transition: "all 0.2s ease",
+          //             },
+          //           }}
+          //         />
+          //       )}
+          //     </InputAdornment>
+          //   ),
+          // }}
         />
 
         {/* nút Đăng nhập */}
@@ -148,7 +148,7 @@ const Login = () => {
 
           <Typography style={{ flex: 1, textAlign: "right" }}>
             <Link
-              to="/forgotPassword"
+              to="/forgotpassword"
               style={{
                 fontSize: "15px",
                 textDecoration: "none",

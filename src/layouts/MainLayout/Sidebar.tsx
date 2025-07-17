@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Admin Dashboard", path: "/admin-dashboard" },
-  { label: "Quản lý Fulfillment", path: "/fulfillment" },
+  { label: "Quản lý Fulfillment", path: "/main-fulfillment" },
   { label: "Quản lý Sản phẩm", path: "/main-product" },
   { label: "Quản lý User", path: "/main-user" },
   { label: "Quản lý Tracking", path: "/main-tracking" },
   { label: "Quản lý SKU Design", path: "/main-skudesign" },
-  // { label: "Quản lý SKU Design", path: "/skudesign" },
 ];
 
 const Sidebar = () => {
@@ -32,8 +31,6 @@ const Sidebar = () => {
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           // const isActive = location.pathname.startsWith(item.path);
-
-
           return (
             <ListItemButton
               key={item.path}
@@ -44,8 +41,8 @@ const Sidebar = () => {
                 boxShadow: isActive
                   ? "0 0 12px rgba(255, 255, 255, 0.6)"
                   : "0 4px 8px rgba(255, 255, 255, 0.25)",
-                backgroundColor: isActive ? "#333" : "transparent",
-                color: isActive ? "#ffffff" : "#cccccc",
+                backgroundColor: isActive ? "rgba(255, 21, 0, 0.44)" : "transparent",
+                color: isActive ? "black" : "black",
                 borderLeft: isActive ? "4px solid white" : "none",
                 "&:hover": {
                   boxShadow: "0 6px 12px rgba(255, 255, 255, 0.25)",

@@ -394,7 +394,8 @@ const AddUser = () => {
               // onClick={handleClick}
               style={{
                 width: "200px",
-                backgroundColor: "rgba(232, 67, 12, 0.88)",
+                // backgroundColor: "rgba(232, 67, 12, 0.88)",
+                backgroundColor: "red"
               }}
             >
               Thêm User

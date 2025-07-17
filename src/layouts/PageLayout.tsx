@@ -15,8 +15,9 @@ const PageLayout = () => {
           marginLeft: "100px",
           marginTop: "64px",
           padding: 3,
-          height: 'flex',
+          height: "flex",
           backgroundColor: "#f9f9f9",
+          // backgroundColor: "white",
         }}
       >
         <Outlet />
