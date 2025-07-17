@@ -112,7 +112,9 @@ const AddOrder = () => {
           <FormControlLabel
             control={<Checkbox />}
             label={
-              <Typography sx={{ fontSize: 16, fontWeight: "bold", color: "black" }}>
+              <Typography
+                sx={{ fontSize: 16, fontWeight: "bold", color: "black" }}
+              >
                 Ưu tiên làm đơn này
               </Typography>
             }
