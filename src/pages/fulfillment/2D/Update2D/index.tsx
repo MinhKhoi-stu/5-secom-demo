@@ -1,21 +1,16 @@
-import { 
-    // useLocation, 
-    useParams } from "react-router-dom";
-import {UpdateOrderForm} from "../../../../components/fulfillment/2D/UpdateOrderForm";
-
+import { useLocation } from "react-router-dom";
+import { UpdateOrderForm } from "../../../../components/fulfillment/2D/UpdateOrderForm";
+import { type Order } from "../../../../types/OrderTable";
 
 const UpdateOrderPage = () => {
-  const { orderId } = useParams<{ orderId: string }>();
-//   const location = useLocation();
-//   const orderFromState = location.state?.order;
+  const location = useLocation();
+  const order = location.state?.order as Order;
 
-  // Giả lập dữ liệu đơn hàng (sau này sẽ lấy từ API)
-  const order = {
-    id: orderId || "", // fallback tránh undefined
-    images: [],
-  };
+  if (!order) {
+    return <div>Không tìm thấy dữ liệu đơn hàng</div>;
+  }
 
-  return <UpdateOrderForm orderId={order.id} images={order.images} />;
+  return <UpdateOrderForm orderId={order.orderId} demoImage={order.demoImage} />;
 };
 
 export default UpdateOrderPage;

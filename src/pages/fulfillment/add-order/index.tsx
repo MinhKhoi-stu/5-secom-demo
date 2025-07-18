@@ -5,6 +5,7 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   Link,
   MenuItem,
@@ -16,7 +17,8 @@ import {
 } from "@mui/material";
 import { useRef, useState } from "react";
 import OriginLabel from "../../../components/originlabel";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
 
 const AddOrder = () => {
   const [fileName, setFileName] = useState("hinhanh.png");
@@ -38,10 +40,10 @@ const AddOrder = () => {
     }
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleButtonAdd = () => {
     navigate("/2D");
-  }
+  };
   return (
     <>
       {/* TIÊU ĐỀ */}
@@ -263,9 +265,6 @@ const AddOrder = () => {
               </Button>
             </div>
 
-            
-            
-            
             {/* PHẦN BỔ SUNG */}
             {showStepTwo && (
               <Box
@@ -367,7 +366,7 @@ const AddOrder = () => {
                           variant="outlined"
                           size="small"
                           sx={{
-                            width: "430px",
+                            width: "512px",
                             backgroundColor: "white",
                           }}
                           InputProps={{
@@ -382,9 +381,10 @@ const AddOrder = () => {
                 {/* YÊU CẦU THIẾT KẾ CHO ĐƠN HÀNG */}
                 <FormControl
                   size="small"
-                  sx={{
-                    width: "523px",
-                  }}
+                  fullWidth
+                  // sx={{
+                  //   width: "523px",
+                  // }}
                 >
                   <InputLabel id="combo-label">
                     Yêu cầu thiết kế cho đơn hàng
@@ -434,15 +434,34 @@ const AddOrder = () => {
                   </div>
                   <Button
                     sx={{
-                      backgroundColor: "transparent",
+                      backgroundColor: "#f5f5f5",
                       color: "red",
                       fontWeight: "bold",
                       fontSize: "15px",
+                      "&:hover": {
+                        backgroundColor: "#e0e0e0",
+                      },
                     }}
                     // variant="outlined"
                   >
                     +
                   </Button>
+
+                  <IconButton
+                    onClick={() => {}}
+                    sx={{
+                      color: "red",
+                      width: 32,
+                      height: 32,
+                      borderRadius: "50%",
+                      backgroundColor: "#f5f5f5",
+                      "&:hover": {
+                        backgroundColor: "#e0e0e0",
+                      },
+                    }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
                 </Box>
 
                 <TextField
@@ -454,7 +473,7 @@ const AddOrder = () => {
                   }}
                 />
                 <Button
-                onClick={handleButtonAdd}
+                  onClick={handleButtonAdd}
                   sx={{
                     width: "50%",
                     backgroundColor: "orangered",
@@ -466,10 +485,6 @@ const AddOrder = () => {
                 </Button>
               </Box>
             )}
-           
-           
-
-
           </Box>
         </Box>
       </Box>

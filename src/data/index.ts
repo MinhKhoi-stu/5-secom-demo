@@ -1,8 +1,9 @@
-import type {Order} from "../types/OrderTable";
+import type { Order, SKUDesign } from "../types/OrderTable";
 
 //DATA CHO 2D
 export const mockOrders: Order[] = [
   {
+    customer: "",
     id: "1",
     sku: "E7212",
     orderId: "3692333075",
@@ -12,21 +13,25 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
   {
+    customer: "",
+
     id: "2",
     sku: "E7212",
-    orderId: "3692333075",
+    orderId: "1234567890",
     date: "20/5/2025",
-    demoImage: "/img/demo/2D.png",
+    demoImage: "/img/flag/VietNamflag.jpg",
     product: "Patches thêu",
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
-    {
+  {
+    customer: "",
+
     id: "3",
     sku: "E7212",
     orderId: "3692333075",
@@ -36,9 +41,11 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
   {
+    customer: "",
+
     id: "4",
     sku: "E7212",
     orderId: "3692333075",
@@ -48,9 +55,11 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
-    {
+  {
+    customer: "",
+
     id: "5",
     sku: "E7212",
     orderId: "3692333075",
@@ -60,9 +69,11 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
   {
+    customer: "",
+
     id: "6",
     sku: "E7212",
     orderId: "3692333075",
@@ -72,9 +83,11 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
-    {
+  {
+    customer: "",
+
     id: "7",
     sku: "E7212",
     orderId: "3692333075",
@@ -84,9 +97,11 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
   {
+    customer: "",
+
     id: "8",
     sku: "E7212",
     orderId: "3692333075",
@@ -96,9 +111,11 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
-    {
+  {
+    customer: "",
+
     id: "9",
     sku: "E7212",
     orderId: "3692333075",
@@ -108,9 +125,11 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
   },
   {
+    customer: "",
+
     id: "10",
     sku: "E7212",
     orderId: "3692333075",
@@ -120,6 +139,69 @@ export const mockOrders: Order[] = [
     size: "3 inches",
     type: "3 inches",
     quantity: 1,
-    status: "Khách đã gửi hình"
+    status: "Khách đã gửi hình",
+  },
+];
+
+export const SKUDesignData: SKUDesign[] = [
+  {
+    sku: "PAT-D020824-1-4",
+    img: "/logo.png",
+    type: "Áo thêu",
+    file: "Link File",
+    fileUrl: "https://dientoan.vn/",
+    fulfillment: "Sản xuất tại VN",
+    quantity: "1 tỷ",
+    worker: "Hồng Nhung",
+  },
+  {
+    sku: "PAT-D020924-1-4",
+    img: "/react.svg",
+    type: "Patches",
+    file: "Link File",
+    fileUrl: "https://dientoan.vn/",
+    fulfillment: "Kho USA",
+    quantity: "50",
+    worker: "Thùy Vân",
+  },
+  {
+    sku: "PAT-D020824-1-4",
+    img: "/logo.png",
+    type: "Áo thêu",
+    file: "Link File",
+    fileUrl: "https://dientoan.vn/",
+    fulfillment: "Sản xuất tại VN",
+    quantity: "1 tỷ",
+    worker: "Hồng Nhung",
+  },
+  {
+    sku: "PAT-D020924-1-4",
+    img: "/react.svg",
+    type: "Patches",
+    file: "Link File",
+    fileUrl: "https://dientoan.vn/",
+    fulfillment: "Kho USA",
+    quantity: "50",
+    worker: "Thùy Vân",
+  },
+  {
+    sku: "PAT-D020824-1-4",
+    img: "/logo.png",
+    type: "Áo thêu",
+    file: "Link File",
+    fileUrl: "https://dientoan.vn/",
+    fulfillment: "Sản xuất tại VN",
+    quantity: "1 tỷ",
+    worker: "Hồng Nhung",
+  },
+  {
+    sku: "PAT-D020924-1-4",
+    img: "/react.svg",
+    type: "Patches",
+    file: "Link File",
+    fileUrl: "https://dientoan.vn/",
+    fulfillment: "Kho USA",
+    quantity: "50",
+    worker: "Thùy Vân",
   },
 ];

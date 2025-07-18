@@ -16,6 +16,7 @@ import {
   FormControl,
 } from "@mui/material";
 import { useState } from "react";
+import PaginationWrapper from "../../components/common/PaginationWrapper";
 
 const AdminDashboard = () => {
   // Fake data - dễ kết nối với BE sau này
@@ -159,6 +160,22 @@ const AdminDashboard = () => {
   const [valueDay, setValueDay] = useState("");
   const [valueBill, setValueBill] = useState("");
 
+  //PAGINATION
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 3;
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
+
+  const paginatedOrders = orders.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
+
   return (
     <div>
       {/* ĐƠN HÀNG MỚI CẬP NHẬT */}
@@ -224,6 +241,27 @@ const AdminDashboard = () => {
               ))}
             </TableBody>
           </Table>
+          {/* Pagination */}
+          {/* <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              margin: 2,
+            }}
+          >
+            <Typography color="black" variant="body2">
+              Showing 1 to 3 of 6 entries
+            </Typography>
+            <Pagination count={3} page={1} variant="outlined" shape="rounded" />
+          </Box> */}
+          <PaginationWrapper
+            page={page}
+            totalPages={Math.ceil(orders.length / itemsPerPage)}
+            totalItems={orders.length}
+            itemsPerPage={itemsPerPage}
+            onChange={handlePageChange}
+          />
         </TableContainer>
       </Box>
 

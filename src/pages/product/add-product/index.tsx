@@ -1,5 +1,5 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 
 const AddProduct = () => {
   const [fileName, setFileName] = useState("hinhanh.png"); // ban đầu
@@ -34,7 +34,7 @@ const AddProduct = () => {
       <Box
         sx={{
           // width: "1180px",
-          width: 'flex',
+          width: "flex",
           height: "flex",
           backgroundColor: "white",
           padding: 3,
@@ -127,337 +127,52 @@ const AddProduct = () => {
         </div>
 
         {/* THẺ PHÂN LOẠI SIZE SẢN PHẨM */}
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
+        {/* Lặp lại 3 lần */}
+        {[1, 2, 3].map((groupIndex) => (
+          <Box
+            key={groupIndex}
             sx={{
+              mt: 3,
               display: "flex",
-              color: "black",
-              marginBottom: "10px",
-              alignItems: "flex-start",
+              alignItems: "center",
+              gap: 2,
+              flexWrap: "wrap",
             }}
           >
-            Phân loại Size sản phẩm
-          </Typography>
-
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
-            {/* INCHES */}
+            {/* Field: Inches (không có nhãn) */}
             <TextField
               type="text"
-              variant="outlined"
+              placeholder="Inches"
               size="small"
               sx={{
-                width: "100px",
+                width: 100,
                 backgroundColor: "white",
-                borderRadius: "10px",
+                borderRadius: 1,
               }}
             />
 
-            {/* WEIGHTS */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Weights
-            </Typography>
-
-            {/* LENGTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Length
-            </Typography>
-
-            {/* WIDTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Width
-            </Typography>
-
-            {/* HEIGHT */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Height
-            </Typography>
-          </div>
-        </div>
-        {/* THẺ PHÂN LOẠI SIZE SẢN PHẨM */}
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
-            {/* INCHES */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-
-            {/* WEIGHTS */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Weights
-            </Typography>
-
-            {/* LENGTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Length
-            </Typography>
-
-            {/* WIDTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Width
-            </Typography>
-
-            {/* HEIGHT */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Height
-            </Typography>
-          </div>
-        </div>
-        {/* THẺ PHÂN LOẠI SIZE SẢN PHẨM */}
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
-            {/* INCHES */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-
-            {/* WEIGHTS */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Weights
-            </Typography>
-
-            {/* LENGTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Length
-            </Typography>
-
-            {/* WIDTH */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Width
-            </Typography>
-
-            {/* HEIGHT */}
-            <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "100px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-            />
-            <Typography
-              sx={{
-                marginTop: "10px",
-                color: "black",
-              }}
-            >
-              Height
-            </Typography>
-          </div>
-        </div>
+            {/* Các field có nhãn bên phải */}
+            {["Weight", "Length", "Width", "Height"].map((label) => (
+              <Box
+                key={label}
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <TextField
+                  type="text"
+                  size="small"
+                  sx={{
+                    width: 100,
+                    backgroundColor: "white",
+                    borderRadius: 1,
+                  }}
+                />
+                <Typography sx={{ color: "black", whiteSpace: "nowrap" }}>
+                  {label}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        ))}
 
         {/* NÚT THÊM SẢN PHẨM */}
         <div

@@ -7,18 +7,19 @@ import {
   Avatar,
   Tabs,
   Tab,
+  Pagination,
 } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // const fakeUsers = Array.from({ length: 18 }).map((_, i) => ({ //dùng cho fake random avatar
-const fakeUsers = Array.from({ length: 18 }).map((_) => ({
+const fakeUsers = Array.from({ length: 18 }).map((_, i) => ({
   name: "Trần Chiêm",
   email: "tranchiem@secom.com",
   phone: "12345678910JQk",
-  // avatar: `https://randomuser.me/api/portraits/${i % 2 === 0 ? "men" : "women"}/${i + 10}.jpg`, //API fake random avatar
-  avatar: "/logo.png",
+  avatar: `https://randomuser.me/api/portraits/${i % 2 === 0 ? "men" : "women"}/${i + 10}.jpg`, //API fake random avatar
+  // avatar: "/logo.png",
 }));
 
 const tabLabels = [
@@ -134,31 +135,19 @@ const MainUser = () => {
           ))}
         </Box>
 
-        {/* CHUYỂN TRANG */}
+        {/* Pagination */}
         <Box
           sx={{
-            mt: 4,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginTop: 2,
           }}
         >
-          <Typography fontSize={14} color="gray">
+          <Typography color="black" variant="body2">
             Showing 1 to 3 of 6 entries
           </Typography>
-
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button size="small">&#60;</Button>
-            <Button
-              size="small"
-              variant="contained"
-              sx={{ backgroundColor: "#333" }}
-            >
-              1
-            </Button>
-            <Button size="small">2</Button>
-            <Button size="small">&#62;</Button>
-          </Box>
+          <Pagination count={3} page={1} variant="outlined" shape="rounded" />
         </Box>
       </Box>
 

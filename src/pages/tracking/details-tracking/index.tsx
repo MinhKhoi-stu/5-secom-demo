@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Chip } from "@mui/material";
+import { Box, Typography, Button, Chip, Pagination } from "@mui/material";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { useState } from "react";
@@ -139,31 +139,19 @@ const DetailsTracking = () => {
           </Box>
         </Box>
 
-        {/* CHUYỂN TRANG */}
+        {/* Pagination */}
         <Box
           sx={{
-            mt: 4,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginTop: 2,
           }}
         >
-          <Typography fontSize={14} color="gray">
+          <Typography color="black" variant="body2">
             Showing 1 to 3 of 6 entries
           </Typography>
-
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button size="small">&#60;</Button>
-            <Button
-              size="small"
-              variant="contained"
-              sx={{ backgroundColor: "#333" }}
-            >
-              1
-            </Button>
-            <Button size="small">2</Button>
-            <Button size="small">&#62;</Button>
-          </Box>
+          <Pagination count={3} page={1} variant="outlined" shape="rounded" />
         </Box>
       </Box>
     </>

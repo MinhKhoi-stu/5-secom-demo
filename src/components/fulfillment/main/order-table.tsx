@@ -9,123 +9,29 @@ import {
   Typography,
   Paper,
   Chip,
-  Pagination,
 } from "@mui/material";
-
-const orderData = [
-  {
-    sku: "E7214",
-    orderId: "36239330075",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 2,
-    status: "Đợi khách gửi hình",
-  },
-  {
-    sku: "AMZ505",
-    orderId: "36804885320",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 3,
-    status: "Đã đóng gói",
-  },
-  {
-    sku: "E7214",
-    orderId: "36239330075",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 2,
-    status: "Đợi khách gửi hình",
-  },
-  {
-    sku: "AMZ505",
-    orderId: "36804885320",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 3,
-    status: "Đã đóng gói",
-  },
-  {
-    sku: "E7214",
-    orderId: "36239330075",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 2,
-    status: "Đợi khách gửi hình",
-  },
-  {
-    sku: "AMZ505",
-    orderId: "36804885320",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 3,
-    status: "Đã đóng gói",
-  },
-  {
-    sku: "E7214",
-    orderId: "36239330075",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 2,
-    status: "Đợi khách gửi hình",
-  },
-  {
-    sku: "AMZ505",
-    orderId: "36804885320",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 3,
-    status: "Đã đóng gói",
-  },
-  {
-    sku: "E7214",
-    orderId: "36239330075",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 2,
-    status: "Đợi khách gửi hình",
-  },
-  {
-    sku: "AMZ505",
-    orderId: "36804885320",
-    shop: "CustomPatchesTX",
-    date: "20/5/2025",
-    customer: "Jennifer Vargas",
-    product: "Patches thêu",
-    type: "3 inches",
-    quantity: 3,
-    status: "Đã đóng gói",
-  },
-];
+import { mockOrders } from "../../../data";
+import type { Order } from "../../../types/OrderTable";
+import { useState } from "react";
+import PaginationWrapper from "../../common/PaginationWrapper";
 
 const OrderTable = () => {
+  const orders: Order[] = mockOrders;
+  //PAGINATION
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 3;
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
+
+  const paginatedOrders = orders.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
   return (
     <Box
       sx={{
@@ -143,14 +49,9 @@ const OrderTable = () => {
       <TableContainer component={Paper} elevation={0}>
         <Table>
           <TableHead>
-            <TableRow
-              sx={{
-                "& th": { fontWeight: "bold" },
-              }}
-            >
+            <TableRow sx={{ "& th": { fontWeight: "bold" } }}>
               <TableCell>SKU</TableCell>
               <TableCell>Order ID</TableCell>
-              <TableCell>Shop</TableCell>
               <TableCell>Ngày</TableCell>
               <TableCell>Khách hàng</TableCell>
               <TableCell>Sản phẩm</TableCell>
@@ -160,13 +61,12 @@ const OrderTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orderData.map((row, index) => (
+            {orders.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.sku}</TableCell>
                 <TableCell>{row.orderId}</TableCell>
-                <TableCell>{row.shop}</TableCell>
                 <TableCell>{row.date}</TableCell>
-                <TableCell>{row.customer}</TableCell>
+                <TableCell>{row.customer || "—"}</TableCell>
                 <TableCell>{row.product}</TableCell>
                 <TableCell>{row.type}</TableCell>
                 <TableCell>{row.quantity}</TableCell>
@@ -174,7 +74,7 @@ const OrderTable = () => {
                   <Chip
                     label={row.status}
                     color={
-                      row.status === "Đã đóng gói"
+                      row.status.includes("Đã")
                         ? "success"
                         : row.status.includes("Đợi")
                         ? "warning"
@@ -185,22 +85,25 @@ const OrderTable = () => {
                 </TableCell>
               </TableRow>
             ))}
+            {orders.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  Không có đơn hàng nào
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+
       {/* Pagination */}
-      <Box
-        sx={{
-          color: "black",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: 2,
-        }}
-      >
-        <Typography variant="body2">Showing 1 to 3 of 6 entries</Typography>
-        <Pagination count={3} page={1} variant="outlined" shape="rounded" />
-      </Box>
+      <PaginationWrapper
+        page={page}
+        totalPages={Math.ceil(orders.length / itemsPerPage)}
+        totalItems={orders.length}
+        itemsPerPage={itemsPerPage}
+        onChange={handlePageChange}
+      />
     </Box>
   );
 };

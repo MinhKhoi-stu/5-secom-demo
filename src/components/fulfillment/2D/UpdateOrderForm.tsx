@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardContent,
-  Divider,
   FormControl,
   InputLabel,
   MenuItem,
@@ -12,16 +11,16 @@ import {
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
-// import { useState } from "react";
 
 interface UpdateOrderFormProps {
   orderId: string;
-  images: string[];
+  demoImage: string;
 }
 
-export const UpdateOrderForm = ({ orderId, images }: UpdateOrderFormProps) => {
-  //   const [note, setNote] = useState(""); // Sau này dùng để nhập thông tin đơn hàng
-
+export const UpdateOrderForm = ({
+  orderId,
+  demoImage,
+}: UpdateOrderFormProps) => {
   const [fileName, setFileName] = useState("hinhanh.png");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const handleButtonClick = () => {
@@ -36,166 +35,179 @@ export const UpdateOrderForm = ({ orderId, images }: UpdateOrderFormProps) => {
     }
   };
   const [value, setValue] = useState("");
-
   return (
     <>
+      {/* TIÊu ĐỀ */}
+      <Box sx={{
+        display: "flex",
+        flexDirection: "column",
+        textAlign: "left",
+      }}>
+        <Typography color="black" variant="h6" fontWeight={"bold"} gutterBottom>
+          ĐƠN HÀNG CẦN VẼ 2D - {orderId}
+        </Typography>
+      </Box>
+
       <Box
         sx={{
           width: "500px",
           display: "flex",
           flexDirection: "column",
           textAlign: "left",
+          p: 2,
+          backgroundColor: "white",
+          borderRadius: "10px"
         }}
       >
-        <Typography color="black" variant="h6" gutterBottom>
-          ĐƠN HÀNG CẦN VẼ 2D
-          {/* - {orderId} */}
-        </Typography>
-        <Card
+        {/* THẺ BỌC THÔNG TIN + HÌNH ẢNH KHÁCH GỬI */}
+        <Box
           sx={{
-            p: 2,
             width: "500px",
-            margin: "0 auto",
-            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "row",
+            textAlign: "left",
+            gap: "10px",
           }}
         >
+          {/* CỘT THÔNG TIN YÊU CẦU */}
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
+              flexDirection: "column",
               textAlign: "left",
-              justifyContent: "space-between",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                textAlign: "left",
-              }}
-            >
-              <Typography fontWeight="bold">Thông tin yêu cầu</Typography>
+            <Typography color="black" fontWeight="bold">
+              Thông tin yêu cầu
+            </Typography>
 
-              <Card variant="outlined" sx={{ flex: 1, borderRadius: "20px" }}>
-                <CardContent>
-                  <Typography color="text.secondary">
-                    {/* Tạm thời*/}
-                    Chưa có thông tin yêu cầu.
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                textAlign: "left",
-              }}
-            >
-              <Typography fontWeight="bold">Hình ảnh khách gửi</Typography>
-
-              <Card variant="outlined" sx={{ flex: 1, borderRadius: "20px", }}>
-                <CardContent>
-                  <Box width={200} display="flex" gap={1} flexWrap="wrap">
-                    {images.map((img, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          width: 100,
-                          height: 100,
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          border: "1px solid #ccc",
-                        }}
-                      >
-                        <img
-                          src={img}
-                          alt={`image-${index}`}
-                          width={100}
-                          height={100}
-                          style={{ objectFit: "cover" }}
-                        />
-                      </Box>
-                    ))}
-                  </Box>
-                </CardContent>
-              </Card>
-            </Box>
+            <Card variant="outlined" sx={{ flex: 1, borderRadius: "10px" }}>
+              <CardContent>
+                <Typography color="text.secondary">
+                  {/* Tạm thời hiển thị trống hoặc default text */}
+                  Chưa có thông tin yêu cầu.
+                </Typography>
+              </CardContent>
+            </Card>
           </Box>
 
-          <Typography sx={{ marginTop: "10px" }} fontWeight="bold">
-            Trạng thái đơn hàng
-          </Typography>
-          <Card
-            variant="outlined"
+          {/* CỘT HÌNH ẢNH KHÁCH GỬI */}
+          <Box
             sx={{
-              flex: 1,
-              borderRadius: "20px",
+              display: "flex",
+              flexDirection: "column",
+              textAlign: "left",
             }}
           >
-            <CardContent>
-              <Box mt={2} display="flex" flexDirection="column" gap={2}>
-                {/* Nhóm chọn file */}
-                <Box display="flex" alignItems="flex-start" gap={0}>
-                  <Button
-                    onClick={handleButtonClick}
+            <Typography color="black" fontWeight="bold">
+              Hình ảnh khách gửi
+            </Typography>
+
+            <Card variant="outlined" sx={{ flex: 1, borderRadius: "10px" }}>
+              <CardContent>
+                <Box width={250} display="flex" gap={1} flexWrap="wrap">
+                  <Box
                     sx={{
-                      width: "100px",
-                      color: "white",
-                      backgroundColor: "gray",
-                      height: "40px",
-                      fontSize: "10px",
+                      width: 100,
+                      height: 100,
+                      borderRadius: 2,
+                      overflow: "hidden",
+                      border: "1px solid #ccc",
                     }}
                   >
-                    Chọn tệp
-                  </Button>
-
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    ref={inputRef}
-                    onChange={handleFileChange}
-                  />
-
-                  <TextField
-                    value={fileName}
-                    variant="outlined"
-                    size="small"
-                    sx={{ width: "430px", backgroundColor: "white" }}
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                  />
+                    <img
+                      src={demoImage}
+                      alt="Demo"
+                      width={100}
+                      height={100}
+                      style={{ objectFit: "cover" }}
+                    />
+                  </Box>
                 </Box>
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
 
-                {/* Nhóm trạng thái */}
-                <FormControl size="small" sx={{ width: "467px" }}>
-                  <InputLabel id="combo-label">Trạng thái</InputLabel>
-                  <Select
-                    labelId="combo-label"
-                    value={value}
-                    label="Loại sản phẩm"
-                    onChange={(e) => setValue(e.target.value)}
-                  >
-                    <MenuItem value="drawing">Đang vẽ 2D</MenuItem>
-                    <MenuItem value="done">Đã vẽ 2D</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box mt={3}>
+        {/* <Box mt={3}>
+        <Button variant="contained" color="error" fullWidth>
+          Cập nhật trạng thái đơn hàng
+        </Button>
+      </Box> */}
+        <Typography
+          sx={{ marginTop: "10px", color: "black" }}
+          fontWeight="bold"
+        >
+          Trạng thái đơn hàng
+        </Typography>
+        <Card
+          variant="outlined"
+          sx={{
+            flex: 1,
+            borderRadius: "20px",
+          }}
+        >
+          <CardContent>
+            <Box mt={2} display="flex" flexDirection="column" gap={2}>
+              {/* Nhóm chọn file */}
+              <Box display="flex" alignItems="flex-start" gap={0}>
                 <Button
-                  variant="contained"
+                  onClick={handleButtonClick}
                   sx={{
-                    backgroundColor: "red",
+                    width: "100px",
+                    color: "white",
+                    backgroundColor: "gray",
+                    height: "40px",
+                    fontSize: "10px",
                   }}
                 >
-                  Cập nhật trạng thái đơn hàng
+                  Chọn tệp
                 </Button>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  ref={inputRef}
+                  onChange={handleFileChange}
+                />
+
+                <TextField
+                  value={fileName}
+                  variant="outlined"
+                  size="small"
+                  sx={{ width: "430px", backgroundColor: "white" }}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
               </Box>
-            </CardContent>
-          </Card>
+
+              {/* Nhóm trạng thái */}
+              <FormControl size="small" sx={{ width: "467px" }}>
+                <InputLabel id="combo-label">Trạng thái</InputLabel>
+                <Select
+                  labelId="combo-label"
+                  value={value}
+                  label="Loại sản phẩm"
+                  onChange={(e) => setValue(e.target.value)}
+                >
+                  <MenuItem value="drawing">Đang vẽ 2D</MenuItem>
+                  <MenuItem value="done">Đã vẽ 2D</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Box mt={3}>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "red",
+                }}
+              >
+                Cập nhật trạng thái đơn hàng
+              </Button>
+            </Box>
+          </CardContent>
         </Card>
       </Box>
     </>
