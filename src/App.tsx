@@ -15,6 +15,8 @@ import DetailsTracking from "./pages/tracking/details-tracking";
 import MainFulfillment from "./pages/fulfillment/main-fulfillment";
 import ForgotPassword from "./pages/forgotpassword";
 import AddOrder from "./pages/fulfillment/add-order";
+import Page2D from "./pages/fulfillment/2D/Page2D";
+import UpdateOrderPage from "./pages/fulfillment/2D/Update2D";
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -41,6 +43,8 @@ function App() {
           <Route path="/details-tracking" element={<DetailsTracking/>} />
           <Route path="/main-fulfillment" element={<MainFulfillment/>} />
           <Route path="/add-order" element={<AddOrder/>} />
+          <Route path="/2D" element={<Page2D/>} />
+          <Route path="/Update2D" element={<UpdateOrderPage/>} />
         </Route>
       </Routes>
     </BrowserRouter>

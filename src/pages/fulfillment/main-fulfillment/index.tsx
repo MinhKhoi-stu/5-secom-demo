@@ -6,9 +6,10 @@ import {
   //   Grid,
 } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import OrderStatusBox from "../../../components/fulfillment/order-status-box";
-import OrderTable from "../../../components/fulfillment/order-table";
+
 import {useNavigate} from "react-router-dom";
+import OrderStatusBox from "../../../components/fulfillment/main/order-status-box";
+import OrderTable from "../../../components/fulfillment/main/order-table";
 
 const orderStatusData = [
   { label: "Mới cập nhật", count: 120, color: "#f8b500" },

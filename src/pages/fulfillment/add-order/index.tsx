@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useRef, useState } from "react";
 import OriginLabel from "../../../components/originlabel";
+import {useNavigate} from "react-router-dom";
 
 const AddOrder = () => {
   const [fileName, setFileName] = useState("hinhanh.png");
@@ -36,6 +37,11 @@ const AddOrder = () => {
       // Sau này upload file
     }
   };
+
+  const navigate = useNavigate()
+  const handleButtonAdd = () => {
+    navigate("/2D");
+  }
   return (
     <>
       {/* TIÊU ĐỀ */}
@@ -257,7 +263,9 @@ const AddOrder = () => {
               </Button>
             </div>
 
-            {/* ---------------------------------------------------------------------------------------------- */}
+            
+            
+            
             {/* PHẦN BỔ SUNG */}
             {showStepTwo && (
               <Box
@@ -360,9 +368,7 @@ const AddOrder = () => {
                           size="small"
                           sx={{
                             width: "430px",
-                            // marginTop: "30px",
                             backgroundColor: "white",
-                            borderRadius: "10px",
                           }}
                           InputProps={{
                             readOnly: true,
@@ -448,6 +454,7 @@ const AddOrder = () => {
                   }}
                 />
                 <Button
+                onClick={handleButtonAdd}
                   sx={{
                     width: "50%",
                     backgroundColor: "orangered",
@@ -459,7 +466,10 @@ const AddOrder = () => {
                 </Button>
               </Box>
             )}
-            {/* ----------------------------------------------------------------------------------- */}
+           
+           
+
+
           </Box>
         </Box>
       </Box>
