@@ -1,0 +1,3 @@
+export enum EXCEL_FORM_TYPE {
+  FORM_INSTANCE = 'FORM_INSTANCE',
+}

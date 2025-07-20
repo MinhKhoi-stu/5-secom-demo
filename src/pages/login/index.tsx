@@ -3,12 +3,24 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useLogin } from "hooks/auth";
+import { LoginDto } from "dto/auth";
 
 const Login = () => {
   const [show, setShow] = useState(false);
+  const login = useLogin();
   const navigate = useNavigate();
-  const handleLogin = () => {
-    navigate("/admin-dashboard");
+
+  const initialValues: LoginDto = {
+    username: "",
+    password: "",
+  };
+
+  const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    login.mutate({ username: "johndoe", password: "123456" });
+    // navigate("/admin-dashboard");
   };
 
   return (
