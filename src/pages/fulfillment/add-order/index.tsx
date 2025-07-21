@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
-import OriginLabel from "../../../components/originlabel";
+import OriginLabel from "../../../components/OriginLabel";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
 

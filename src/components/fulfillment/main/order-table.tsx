@@ -14,6 +14,7 @@ import { mockOrders } from "../../../data";
 import type { Order } from "../../../types/OrderTable";
 import { useState } from "react";
 import PaginationWrapper from "../../common/PaginationWrapper";
+import {themeStyles} from "themes/styles";
 
 const OrderTable = () => {
   const orders: Order[] = mockOrders;
@@ -73,13 +74,23 @@ const OrderTable = () => {
                 <TableCell>
                   <Chip
                     label={row.status}
-                    color={
-                      row.status.includes("Đã")
-                        ? "success"
+                    // color={
+                    //   row.status.includes("Đã")
+                    //     ? "success"
+                    //     : row.status.includes("Đợi")
+                    //     ? "warning"
+                    //     : "default"
+                    // }
+                    sx={{
+                      backgroundColor: row.status.includes("Đã")
+                        ? themeStyles.success
                         : row.status.includes("Đợi")
-                        ? "warning"
-                        : "default"
-                    }
+                        ? themeStyles.warning
+                        : themeStyles.successDark,
+                        // : themeStyles.grey400,
+                      color: "#fff", // hoặc themeStyles.textLight nếu cần
+                      fontWeight: "bold",
+                    }}
                     size="small"
                   />
                 </TableCell>

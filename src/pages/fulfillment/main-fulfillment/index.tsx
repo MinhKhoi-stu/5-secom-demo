@@ -8,33 +8,21 @@ import {
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 import {useNavigate} from "react-router-dom";
-import OrderStatusBox from "../../../components/fulfillment/main/order-status-box";
-import OrderTable from "../../../components/fulfillment/main/order-table";
+import OrderStatusBox from "../../../components/FulFillment/main/order-status-box";
+import OrderTable from "../../../components/FulFillment/main/order-table";
+import {orderStatus} from "types/OrderTable";
+import {orderStatusData} from "../../../data";
 
-const orderStatusData = [
-  { label: "Mới cập nhật", count: 120, color: "#f8b500" },
-  { label: "Chưa có hình", count: 55, color: "#f48fb1" },
-  { label: "Đang vẽ 2D", count: 24, color: "#ce93d8" },
-  { label: "Đang vẽ thêu", count: 85, color: "#90caf9" },
-  { label: "Đang cắt laser", count: 43, color: "#a5d6a7" },
-  { label: "Đang sản xuất", count: 57, color: "#81c784" },
-  { label: "Đang đóng gói", count: 94, color: "#aed581" },
-];
+const status: orderStatus[] = orderStatusData;
 
 const MainFulfillment = () => {
+
   const navigate = useNavigate();
   const handleClick = () => {
     navigate("/add-order");
   };
   return (
     <>
-      {/* <Grid container spacing={2} sx={{ mb: 3 }}>
-        {orderStatusData.map((item, index) => (
-          <Grid item key={index}>
-            <OrderStatusBox {...item} />
-          </Grid>
-        ))}
-      </Grid> */}
 
       {/* BOX TRẠNG THÁI SỐ LƯỢNG ĐƠN HÀNG */}
       <Box
@@ -59,7 +47,7 @@ const MainFulfillment = () => {
             justifyContent: "center",
           }}
         >
-          {orderStatusData.map((item, index) => (
+          {status.map((item, index) => (
             <OrderStatusBox key={index} {...item} />
           ))}
         </Box>

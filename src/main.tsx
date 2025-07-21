@@ -17,8 +17,8 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider theme={theme}>
+    {/* <ThemeProvider theme={theme}> */}
       <App />
-    </ThemeProvider>
+    {/* </ThemeProvider> */}
   </QueryClientProvider>
 );

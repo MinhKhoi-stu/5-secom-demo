@@ -2,7 +2,7 @@ import { Box, List, ListItemButton, ListItemText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const menuItems = [
-  { label: "Admin Dashboard", path: "/admin-dashboard" },
+  { label: "Admin Dashboard", path: "/AdminDashboard" },
   { label: "Quản lý Fulfillment", path: "/main-fulfillment" },
   { label: "Quản lý Sản phẩm", path: "/main-product" },
   { label: "Quản lý User", path: "/main-user" },

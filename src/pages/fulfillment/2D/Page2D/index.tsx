@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Box } from "@mui/material";
 import type { Order } from "../../../../types/OrderTable";
 import { mockOrders } from "../../../../data";
-import OrdersToDrawTable from "../../../../components/fulfillment/2D/OrdersToDrawTable";
-import OrdersInProgressTable from "../../../../components/fulfillment/2D/OrdersInProgressTable";
+import OrdersToDrawTable from "../../../../components/FulFillment/2D/OrdersToDrawTable";
+import OrdersInProgressTable from "../../../../components/FulFillment/2D/OrdersInProgressTable";
 
 const Page2D = () => {
   const [ordersToDraw, setOrdersToDraw] = useState<Order[]>(mockOrders);

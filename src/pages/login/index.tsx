@@ -19,8 +19,9 @@ const Login = () => {
   const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    login.mutate({ username: "johndoe", password: "123456" });
-    // navigate("/admin-dashboard");
+    // login.mutate({ username: "johndoe", password: "123456" });
+    localStorage.setItem("accessToken", "fake_token");
+    navigate("/AdminDashboard");
   };
 
   return (
@@ -144,6 +145,7 @@ const Login = () => {
           <div style={{ flex: 1 }} />
 
           <button
+            type="button"
             onClick={handleLogin}
             style={{
               width: "150px",
@@ -160,7 +162,7 @@ const Login = () => {
 
           <Typography style={{ flex: 1, textAlign: "right" }}>
             <Link
-              to="/forgotpassword"
+              to="/ForgotPassword"
               style={{
                 fontSize: "15px",
                 textDecoration: "none",
