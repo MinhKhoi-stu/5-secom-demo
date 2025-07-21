@@ -23,3 +23,18 @@ export interface SKUDesign {
   quantity: string;
   worker: string;
 }
+
+export interface TopFile {
+  id: string;
+  name: string;
+  email: string;
+  img: string;
+  files: number;
+}
+
+export interface TotalOrders {
+  id: string;
+  name: string;
+  img: string;
+  count: number;
+}

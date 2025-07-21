@@ -1,4 +1,9 @@
-import type { Order, SKUDesign } from "../types/OrderTable";
+import type {
+  Order,
+  SKUDesign,
+  TopFile,
+  TotalOrders,
+} from "../types/OrderTable";
 
 //DATA CHO 2D
 export const mockOrders: Order[] = [
@@ -203,5 +208,90 @@ export const SKUDesignData: SKUDesign[] = [
     fulfillment: "Kho USA",
     quantity: "50",
     worker: "Thùy Vân",
+  },
+];
+
+export const TopUserDesignData: TopFile[] = [
+  {
+    id: "11",
+    name: "Hoàng Chiêm",
+    email: "hoangchiem@5se.com",
+    img: "/img/demo/2D.png",
+    files: 250,
+  },
+  {
+    id: "12",
+    name: "Hồng Nhung",
+    email: "hongnhung@5se.com",
+    img: "/img/demo/2D.png",
+    files: 200,
+  },
+  {
+    id: "13",
+    name: "Việt Út",
+    email: "vietut@5se.com",
+    img: "/img/demo/2D.png",
+    files: 190,
+  },
+  {
+    id: "14",
+    name: "Thùy Vân",
+    email: "thuyvan@5se.com",
+    img: "/img/demo/2D.png",
+    files: 175,
+  },
+  {
+    id: "15",
+    name: "Hoàng Dzung",
+    email: "hoangdzung@5se.com",
+    img: "/img/demo/2D.png",
+    files: 150,
+  },
+  {
+    id: "16",
+    name: "Thùy Vi",
+    email: "thuyvi@5se.com",
+    img: "/img/demo/2D.png",
+    files: 135,
+  },
+  {
+    id: "17",
+    name: "Hương Sài Gòn",
+    email: "huongsg@5se.com",
+    img: "/img/demo/2D.png",
+    files: 130,
+  },
+];
+
+export const CountOrders: TotalOrders[] = [
+  {
+    id: "18",
+    name: "CustomPatchesTX",
+    img: "/img/demo/2D.png",
+    count: 86,
+  },
+  {
+    id: "19",
+    name: "TexasGiftsbyThi",
+    img: "/img/demo/2D.png",
+    count: 55,
+  },
+  {
+    id: "20",
+    name: "HomeGiftsTX",
+    img: "/img/demo/2D.png",
+    count: 50,
+  },
+  {
+    id: "21",
+    name: "5SECOM",
+    img: "/img/demo/2D.png",
+    count: 50,
+  },
+  {
+    id: "22",
+    name: "EcomplusTX",
+    img: "/img/demo/2D.png",
+    count: 40,
   },
 ];

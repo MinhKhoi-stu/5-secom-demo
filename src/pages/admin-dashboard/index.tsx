@@ -14,12 +14,15 @@ import {
   InputLabel,
   MenuItem,
   FormControl,
+  Link,
 } from "@mui/material";
 import { useState } from "react";
 import PaginationWrapper from "../../components/common/PaginationWrapper";
+import type { TopFile, TotalOrders } from "../../types/OrderTable";
+import { CountOrders, TopUserDesignData } from "../../data";
 
 const AdminDashboard = () => {
-  // Fake data - dễ kết nối với BE sau này
+  // Fake data kết nối với BE sau này
   const revenue = "$3,201,350";
   const orders2 = [
     { name: "CustomPatchesTX", count: 86 },
@@ -149,13 +152,8 @@ const AdminDashboard = () => {
     return "grey";
   };
 
-  const topUsers = [
-    { name: "Hoàng Chiểm", email: "hoangchiem@5se.com", files: 250 },
-    { name: "Hồng Nhung", email: "hongnhung@5se.com", files: 200 },
-    { name: "Việt Út", email: "vietut@5se.com", files: 190 },
-    { name: "Thuỷ Vân", email: "thuyvan@5se.com", files: 175 },
-    { name: "Hương Sài Gòn", email: "huongs@5se.com", files: 130 },
-  ];
+  const files: TopFile[] = TopUserDesignData;
+  const counts: TotalOrders[] = CountOrders;
 
   const [valueDay, setValueDay] = useState("");
   const [valueBill, setValueBill] = useState("");
@@ -176,6 +174,7 @@ const AdminDashboard = () => {
     page * itemsPerPage
   );
 
+  const [value, setValue] = useState("30");
   return (
     <div>
       {/* ĐƠN HÀNG MỚI CẬP NHẬT */}
@@ -267,7 +266,7 @@ const AdminDashboard = () => {
 
       {/* NGÀY SHIP VÀ TRACKING */}
       <Box sx={{ display: "flex", gap: 3, mt: 3 }}>
-        <Box
+        {/* <Box
           sx={{
             width: "100%",
             backgroundColor: "#c5f5f6",
@@ -280,20 +279,101 @@ const AdminDashboard = () => {
             Ngày ship hàng gần nhất
           </Typography>
           <Typography color="black">23/05/2025 - 350 đơn hàng</Typography>
-        </Box>
+        </Box> */}
+
         <Box
           sx={{
             width: "100%",
-            backgroundColor: "white",
+            backgroundColor: "#c5f5f6",
             p: 3,
             borderRadius: 2,
             boxShadow: 3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
-            Cập nhật tracking mới nhất
-          </Typography>
-          <Typography color="black">19/05/2025 - 250 đơn hàng</Typography>
+          {/* Bên trái - thông tin */}
+          <Box>
+            <Typography variant="h6" fontWeight="bold" color="black">
+              Ngày ship hàng gần nhất
+            </Typography>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              color="black"
+              sx={{ mt: 1 }}
+            >
+              23/05/2025
+            </Typography>
+            <Typography color="black">
+              350 đơn hàng.{" "}
+              <Link
+                href="https://dientoan.vn/"
+                underline="hover"
+                fontWeight={500}
+              >
+                Xem file Label
+              </Link>
+            </Typography>
+          </Box>
+
+          {/*PHẢI */}
+          <Box>
+            <img
+              src="/img/demo/truckkun.png"
+              alt="truck"
+              style={{ width: 150, height: "auto", opacity: 0.8 }}
+            />
+          </Box>
+        </Box>
+
+        {/* TRACKING */}
+        <Box
+          sx={{
+            width: "100%",
+            backgroundColor: "#c5f5f6",
+            p: 3,
+            borderRadius: 2,
+            boxShadow: 3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* Bên trái - thông tin */}
+          <Box>
+            <Typography variant="h6" fontWeight="bold" color="black">
+              Cập nhật tracking mới nhất
+            </Typography>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              color="black"
+              sx={{ mt: 1 }}
+            >
+              19/05/2025
+            </Typography>
+            <Typography color="black">
+              250 đơn hàng.{" "}
+              <Link
+                href="https://dientoan.vn/"
+                underline="hover"
+                fontWeight={500}
+              >
+                Xem file Tracking
+              </Link>
+            </Typography>
+          </Box>
+
+          {/*PHẢI */}
+          <Box>
+            <img
+              src="/img/demo/tracking.png"
+              alt="tracking"
+              style={{ width: 150, height: "auto", opacity: 0.8 }}
+            />
+          </Box>
         </Box>
       </Box>
 
@@ -352,7 +432,8 @@ const AdminDashboard = () => {
             </Typography>
           </Box>
 
-          <Box
+          {/* TỔNG ĐƠN HÀNG */}
+          {/* <Box
             sx={{
               backgroundColor: "#c5f5f6",
               p: 3,
@@ -401,11 +482,94 @@ const AdminDashboard = () => {
                 {o.name}: {o.count} Orders
               </Typography>
             ))}
+          </Box> */}
+
+          {/* TỔNG ĐƠN HÀNG */}
+          <Box
+            sx={{
+              backgroundColor: "#c5f5f6",
+              p: 3,
+              borderRadius: 2,
+              boxShadow: 3,
+              mt: 3,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                gutterBottom
+                color="black"
+              >
+                Tổng đơn hàng
+              </Typography>
+
+              <FormControl
+                size="small"
+                sx={{
+                  marginLeft: "auto",
+                  width: "270px",
+                }}
+              >
+                <InputLabel id="combo-label">Chọn</InputLabel>
+                <Select
+                  labelId="combo-label"
+                  value={valueBill}
+                  label="Loại sản phẩm"
+                  onChange={(e) => setValueBill(e.target.value)}
+                >
+                  <MenuItem value="7days">7 ngày gần nhất</MenuItem>
+                  <MenuItem value="30days">30 ngày gần nhất</MenuItem>
+                  <MenuItem value="90days">90 ngày gần nhất</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            {/* Hiển thị danh sách đơn hàng từ backend hoặc mock data */}
+            {/* {counts.map((item) => (
+              <Typography marginTop={2} key={item.id} color="black">
+                {item.name}: {item.count} Orders
+              </Typography>
+            ))} */}
+
+            {counts.map((item) => (
+              <Box
+                key={item.id}
+                sx={{
+                  marginTop: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  mb: 2,
+                }}
+              >
+                {/* TRÁI */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Avatar src={item.img} alt={item.name} />
+                  <Box>
+                    <Typography fontWeight="600" color="black">
+                      {item.name}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* PHẢI */}
+                <Typography fontWeight="bold" color="black">
+                  {item.count} Orders
+                </Typography>
+              </Box>
+            ))}
           </Box>
         </Box>
 
         {/* TOP FILE THÊU */}
-        <Box
+        {/* <Box
           sx={{
             width: "100%",
             backgroundColor: "white",
@@ -468,6 +632,81 @@ const AdminDashboard = () => {
               </Box>
             </Box>
           ))}
+        </Box> */}
+
+        <Box
+          sx={{
+            width: "100%",
+            backgroundColor: "white",
+            p: 3,
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h6" fontWeight="bold" color="black">
+              Top vẽ file thêu
+            </Typography>
+            <FormControl size="small" sx={{ width: 170 }}>
+              <InputLabel id="filter-label">Lọc</InputLabel>
+              <Select
+                labelId="filter-label"
+                value={value}
+                label="Lọc"
+                onChange={(e) => setValue(e.target.value)}
+              >
+                <MenuItem value="7">7 ngày gần nhất</MenuItem>
+                <MenuItem value="30">30 ngày gần nhất</MenuItem>
+                <MenuItem value="90">90 ngày gần nhất</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          {/* DANH SÁCH USER */}
+          {files.map((user) => (
+            <Box
+              key={user.id}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
+            >
+              {/* TRÁI */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Avatar src={user.img} alt={user.name} />
+                <Box>
+                  <Typography fontWeight="600" color="black">
+                    {user.name}
+                  </Typography>
+                  <Typography variant="body2" color="gray">
+                    {user.email}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* PHẢI */}
+              <Typography fontWeight="bold" color="black">
+                {user.files} Files
+              </Typography>
+            </Box>
+          ))}
+          {/* PAGINATION */}
+          {/* <PaginationWrapper
+            page={page}
+            totalPages={Math.ceil(orders.length / itemsPerPage)}
+            totalItems={orders.length}
+            itemsPerPage={itemsPerPage}
+            onChange={handlePageChange}
+          /> */}
         </Box>
       </Box>
     </div>
