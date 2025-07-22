@@ -8,10 +8,11 @@ import {
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 import {useNavigate} from "react-router-dom";
-import OrderStatusBox from "../../../components/FulFillment/main/order-status-box";
-import OrderTable from "../../../components/FulFillment/main/order-table";
+
 import {orderStatus} from "types/OrderTable";
 import {orderStatusData} from "../../../data";
+import OrderStatusBox from "../component/main/order-status-box";
+import OrderTable from "../component/main/order-table";
 
 const status: orderStatus[] = orderStatusData;
 

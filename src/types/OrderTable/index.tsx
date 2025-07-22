@@ -56,3 +56,26 @@ export interface orderStatus {
   count: number;
   color: string;
 }
+
+export interface ShippedOrders {
+  shipDate: string;
+  orderCount: number;
+  trackingSample: string;
+}
+
+export interface OrdersShipList {
+  sku: string;
+  orderNumber: string;
+}
+
+export interface FakeUser {
+  name: string;
+  email: string;
+  phone: string;
+  avatar: string;
+}
+
+export interface ProductList {
+  name: string;
+  img: string;
+}

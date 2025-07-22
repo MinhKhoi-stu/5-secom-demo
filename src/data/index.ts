@@ -1,16 +1,20 @@
 import type {
+  FakeUser,
   newOrders,
   Order,
+  OrdersShipList,
   orderStatus,
+  ProductList,
+  ShippedOrders,
   SKUDesign,
   TopFile,
   TotalOrders,
 } from "../types/OrderTable";
 
-//DATA CHO 2D
+//DATA CHO MAINFULFILLMENT + DATA 2D
 export const mockOrders: Order[] = [
   {
-    customer: "",
+    customer: "Tao",
     id: "1",
     sku: "E7212",
     orderId: "3692333075",
@@ -23,7 +27,7 @@ export const mockOrders: Order[] = [
     status: "Khách đã gửi hình",
   },
   {
-    customer: "",
+    customer: "Tớ",
 
     id: "2",
     sku: "E7212",
@@ -37,7 +41,7 @@ export const mockOrders: Order[] = [
     status: "Khách đã gửi hình",
   },
   {
-    customer: "",
+    customer: "Mình",
 
     id: "3",
     sku: "E7212",
@@ -432,4 +436,163 @@ export const orderStatusData: orderStatus[] = [
   { label: "Đang cắt laser", count: 43, color: "#56C6A9" },
   { label: "Đang sản xuất", count: 57, color: "	#89CFFD" },
   { label: "Đang đóng gói", count: 94, color: "#CDB4DB" },
+];
+
+//ORDER ĐÃ SHIP CẦN MUA TRACKING
+export const shippedData: ShippedOrders[] = [
+  {
+    shipDate: "20/05/2025",
+    orderCount: 100,
+    trackingSample: "1ZW4090W0494xxxxxx",
+  },
+  {
+    shipDate: "22/05/2025",
+    orderCount: 150,
+    trackingSample: "1ZW4090W0494yyyyyy",
+  },
+  {
+    shipDate: "23/05/2025",
+    orderCount: 200,
+    trackingSample: "1ZW4090W0494zzzzz",
+  },
+  {
+    shipDate: "24/05/2025",
+    orderCount: 250,
+    trackingSample: "1ZW4090W0494abcde",
+  },
+];
+
+//TRACKING ĐÃ MUA GẦN NHẤT
+export const recentTrackings = Array.from({ length: 12 }).map((_, i) => ({
+  shipDate: "10/05/2025",
+  orderCount: 148,
+}));
+
+//DANH SACH ORDER SHIP NGÀY [] ORDER DETAIL
+export const shipListData : OrdersShipList[] = [
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+  {
+    sku: "E7541",
+    orderNumber: "3432581692",
+  },
+  {
+    sku: "A1287",
+    orderNumber: "1234567890",
+  },
+  {
+    sku: "B9543",
+    orderNumber: "7890123456",
+  },
+];
+
+//DANH SÁCH USER GIẢ
+export const userData : FakeUser[] = Array.from({ length: 18 }).map((_, i) => ({
+  name: "Trần Chiêm",
+  email: "tranchiem@secom.com",
+  phone: "12345678910JQk",
+  avatar: `https://randomuser.me/api/portraits/${i % 2 === 0 ? "men" : "women"}/${i + 10}.jpg`,
+}));
+
+//TAB
+export const TabLabels: string[] = [
+  "Tất cả",
+  "Admin",
+  "Vẽ 2D",
+  "Vẽ File Thêu",
+  "Sản Xuất",
+  "Đóng gói",
+  "Shipping",
+];
+
+//DANH SÁCH SẢN PHẨM
+export const productData : ProductList[] = [
+  { name: "Patches Thêu", img: "/img/flag/VietNamflag.jpg" },
+  { name: "Áo Thêu", img: "/img/flag/VietNamflag.jpg" },
+  { name: "Nón thêu", img: "/img/flag/VietNamflag.jpg" },
+  { name: "Lịch 2026", img: "/logo.png" },
+  { name: "Led Mica", img: "/logo.png" },
+  { name: "Gỗ Handmade", img: "/logo.png" },
 ];

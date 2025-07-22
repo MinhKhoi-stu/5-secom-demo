@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import UploadImage from "components/common/UploadImage";
 import { useRef, useState } from "react";
 
 interface UpdateOrderFormProps {
@@ -35,6 +36,10 @@ export const UpdateOrderForm = ({
     }
   };
   const [value, setValue] = useState("");
+  const handleImageUpload = (file: File) => {
+    console.log("Ảnh đã chọn:", file);
+  };
+
   return (
     <>
       {/* TIÊu ĐỀ */}
@@ -129,11 +134,6 @@ export const UpdateOrderForm = ({
           </Box>
         </Box>
 
-        {/* <Box mt={3}>
-        <Button variant="contained" color="error" fullWidth>
-          Cập nhật trạng thái đơn hàng
-        </Button>
-      </Box> */}
         <Typography
           sx={{ marginTop: "10px", color: "black" }}
           fontWeight="bold"
@@ -150,38 +150,7 @@ export const UpdateOrderForm = ({
           <CardContent>
             <Box mt={2} display="flex" flexDirection="column" gap={2}>
               {/* Nhóm chọn file */}
-              <Box display="flex" alignItems="flex-start" gap={0}>
-                <Button
-                  onClick={handleButtonClick}
-                  sx={{
-                    width: "100px",
-                    color: "white",
-                    backgroundColor: "gray",
-                    height: "40px",
-                    fontSize: "10px",
-                  }}
-                >
-                  Chọn tệp
-                </Button>
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  ref={inputRef}
-                  onChange={handleFileChange}
-                />
-
-                <TextField
-                  value={fileName}
-                  variant="outlined"
-                  size="small"
-                  sx={{ width: "430px", backgroundColor: "white" }}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Box>
+              <UploadImage onFileSelect={handleImageUpload}/>
 
               {/* Nhóm trạng thái */}
               <FormControl size="small" sx={{ width: "467px" }}>

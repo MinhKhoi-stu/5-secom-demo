@@ -11,9 +11,9 @@ import {
   Paper,
   Pagination,
 } from "@mui/material";
-import type { Order } from "../../../types/OrderTable";
+import PaginationWrapper from "components/common/PaginationWrapper";
 import { useState } from "react";
-import PaginationWrapper from "../../common/PaginationWrapper";
+import {Order} from "types/OrderTable";
 
 interface Props {
   orders: Order[];
@@ -23,7 +23,7 @@ interface Props {
 const OrdersToDrawTable = ({ orders, onAccept }: Props) => {
   //PAGINATION
   const [page, setPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 8;
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -67,7 +67,7 @@ const OrdersToDrawTable = ({ orders, onAccept }: Props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((order, index) => (
+            {paginatedOrders.map((order, index) => (
               <TableRow key={index}>
                 <TableCell>{order.sku}</TableCell>
                 <TableCell>{order.orderId}</TableCell>

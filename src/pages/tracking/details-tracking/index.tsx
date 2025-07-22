@@ -2,10 +2,25 @@ import { Box, Typography, Button, Chip, Pagination } from "@mui/material";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { OrdersShipList } from "types/OrderTable";
+import { shipListData } from "../../../data";
 
 const DetailsTracking = () => {
   const [selectedChip, setSelectedChip] = useState<string | null>(null);
+  const { state } = useLocation();
+  const navigate = useNavigate();
 
+  const shipDate = state?.shipDate || "N/A";
+  const trackingSample = state?.trackingSample || "N/A";
+  const orderCount = state?.orderCount || 0;
+  const list: OrdersShipList[] = shipListData;
+
+  //Nếu không có dữ liệu, quay về trang trước
+  if (!state) {
+    navigate("/main-tracking");
+    return null;
+  }
   return (
     <>
       {/* TIÊU ĐỀ */}
@@ -18,13 +33,13 @@ const DetailsTracking = () => {
           mb: 2,
         }}
       >
-        TRACKING ORDER SHIP NGÀY []
+        TRACKING ORDER SHIP NGÀY {shipDate}
       </Typography>
 
       {/* THẺ BỌC CẢ BẢNG */}
       <Box
         sx={{
-          width: "1180px",
+          width: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "16px",
@@ -57,10 +72,10 @@ const DetailsTracking = () => {
               }}
             >
               <Typography fontWeight={700} color="black">
-                Order Ship ngày []
+                Order Ship ngày {shipDate}
               </Typography>
               <Typography fontSize={14} color="black">
-                148 Order (Track VN-US: 1ZW4090W0494381838)
+                {orderCount} Order (Track VN-US: {trackingSample})
               </Typography>
             </Box>
           </Box>
@@ -69,7 +84,7 @@ const DetailsTracking = () => {
           <Button
             variant="contained"
             startIcon={<CloudDownloadIcon />}
-            sx={{ backgroundColor: "#333", borderRadius: 2 }}
+            sx={{ backgroundColor: "#333", borderRadius: 2, width: "130px" }}
           >
             Download File Label
           </Button>
@@ -121,7 +136,7 @@ const DetailsTracking = () => {
               textAlign: "left",
             }}
           >
-            Danh sách 148 order ship ngày 20/05/2025
+            Danh sách {orderCount} order ship ngày {shipDate}
           </Typography>
 
           <Box
@@ -129,11 +144,12 @@ const DetailsTracking = () => {
               display: "grid",
               gridTemplateColumns: "repeat(2, 1fr)",
               rowGap: 0.5,
+              columnGap: 7,
             }}
           >
-            {Array.from({ length: 40 }).map((_, i) => (
+            {list.map((order, i) => (
               <Typography key={i} fontSize={14} color="black">
-                {i + 1}. SKU: E7541, Order Number: 3432581692
+                {i + 1}. SKU: {order.sku}, Order Number: {order.orderNumber}
               </Typography>
             ))}
           </Box>

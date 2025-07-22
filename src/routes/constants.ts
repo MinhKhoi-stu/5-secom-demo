@@ -3,6 +3,8 @@ export enum PATH {
   HOME = "/",
   // DASHBOARD = "/admin-dashboard",
   DASHBOARD = "/AdminDashboard",
+  // SKUDESIGN = "/SKUDesign/main-skudesign",
+  TRACKING = "/Tracking",
   LOGIN = "/Login",
   // FORGOT_PASSWORD = "/forgot-password",
   FORGOT_PASSWORD = "/ForgotPassword",

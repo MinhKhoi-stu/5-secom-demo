@@ -12,25 +12,10 @@ import {
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {FakeUser} from "types/OrderTable";
+import {TabLabels, userData} from "../../../data";
 
-// const fakeUsers = Array.from({ length: 18 }).map((_, i) => ({ //dùng cho fake random avatar
-const fakeUsers = Array.from({ length: 18 }).map((_, i) => ({
-  name: "Trần Chiêm",
-  email: "tranchiem@secom.com",
-  phone: "12345678910JQk",
-  avatar: `https://randomuser.me/api/portraits/${i % 2 === 0 ? "men" : "women"}/${i + 10}.jpg`, //API fake random avatar
-  // avatar: "/logo.png",
-}));
-
-const tabLabels = [
-  "Tất cả",
-  "Admin",
-  "Vẽ 2D",
-  "Vẽ File Thêu",
-  "Sản Xuất",
-  "Đóng gói",
-  "Shipping",
-];
+const fakeUsers : FakeUser[] = userData;
 
 const MainUser = () => {
   const [tab, setTab] = useState(0);
@@ -55,7 +40,8 @@ const MainUser = () => {
 
       <Box
         sx={{
-          width: "1180px",
+          // width: "1180px",
+          width: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "16px",
@@ -90,7 +76,7 @@ const MainUser = () => {
           scrollButtons="auto"
           sx={{ mb: 3 }}
         >
-          {tabLabels.map((label, idx) => (
+          {TabLabels.map((label, idx) => (
             <Tab
               key={idx}
               label={label}

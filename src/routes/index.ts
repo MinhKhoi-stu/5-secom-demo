@@ -4,6 +4,7 @@ import PageLayout from 'layouts/PageLayout';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import { PATH } from './constants';
+// import MainSKUDesign from 'pages/sku-design/main-skudesign';
 
 const NotFoundPage = lazy(() => import('pages/404'));
 
@@ -11,6 +12,10 @@ const LoginPage = lazy(() => import('pages/Login'));
 const ForgotPasswordPage = lazy(() => import('pages/ForgotPassword'));
 
 const DashboardPage = lazy(() => import('pages/AdminDashboard'));
+// const MainSKUDesign = lazy(() =>
+//   import('pages/SKUDesign/main-skudesign')
+// );
+const TrackingPage = lazy(() => import('pages/Tracking/main-tracking'));
 
 export const routes: RouteObject[] = [
   {
@@ -27,6 +32,14 @@ export const routes: RouteObject[] = [
       {
         path: PATH.DASHBOARD,
         Component: DashboardPage,
+      },
+      // {
+      //   path: PATH.SKUDESIGN,
+      //   Component: MainSKUDesign,
+      // },
+      {
+        path: PATH.TRACKING,
+        Component: TrackingPage,
       },
     ],
   },

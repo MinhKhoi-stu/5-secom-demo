@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import UploadImage from "components/common/UploadImage";
 import { useRef, useState } from "react";
 
 const AddSKUDesign = () => {
@@ -26,6 +27,12 @@ const AddSKUDesign = () => {
       // Sau này upload file
     }
   };
+
+  const handleImageUpload = (file: File) => {
+    console.log("Ảnh đã chọn:", file);
+    // Bạn có thể upload lên server tại đây hoặc preview
+  };
+
   return (
     <>
       {/* TITLE */}
@@ -136,45 +143,7 @@ const AddSKUDesign = () => {
             Hình ảnh đại diện
           </Typography>
 
-          <div style={{ display: "flex", alignItems: "flex-start" }}>
-            {/* NÚT CHỌN TỆP */}
-            <Button
-              onClick={handleButtonClick}
-              sx={{
-                color: "black",
-                backgroundColor: "gray",
-                marginTop: "30px",
-                height: "40px",
-              }}
-            >
-              Chọn tệp
-            </Button>
-
-            {/* Input ẩn để chọn file */}
-            <input
-              type="file"
-              accept="image/*"
-              style={{ display: "none" }}
-              ref={inputRef}
-              onChange={handleFileChange}
-            />
-
-            {/* FILE ĐÃ CHỌN */}
-            <TextField
-              value={fileName}
-              variant="outlined"
-              size="small"
-              sx={{
-                width: "315px",
-                marginTop: "30px",
-                backgroundColor: "white",
-                borderRadius: "10px",
-              }}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </div>
+          <UploadImage onFileSelect={handleImageUpload}/>
         </div>
 
         {/* LINK FILE GỐC */}

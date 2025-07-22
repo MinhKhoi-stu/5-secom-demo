@@ -1,20 +1,14 @@
 import { Box, Typography, Button, Avatar } from "@mui/material";
+import {productData} from "../../../data";
 import { useNavigate } from "react-router-dom";
-
-const productList = [
-  { name: "Patches Thêu", img: "/logo.png" },
-  { name: "Áo Thêu", img: "/logo.png" },
-  { name: "Nón thêu", img: "/logo.png" },
-  { name: "Lịch 2026", img: "/logo.png" },
-  { name: "Led Mica", img: "/logo.png" },
-  { name: "Gỗ Handmade", img: "/logo.png" },
-];
+import {ProductList} from "types/OrderTable";
 
 const MainProduct = () => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate("/add-product");
   };
+  const prod : ProductList[] = productData;
 
   return (
     <>
@@ -64,7 +58,7 @@ const MainProduct = () => {
             gap: 2,
           }}
         >
-          {productList.map((product, index) => (
+          {prod.map((product, index) => (
             <Box
               key={index}
               sx={{

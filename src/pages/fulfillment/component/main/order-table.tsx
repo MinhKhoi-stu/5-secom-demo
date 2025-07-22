@@ -10,17 +10,17 @@ import {
   Paper,
   Chip,
 } from "@mui/material";
-import { mockOrders } from "../../../data";
-import type { Order } from "../../../types/OrderTable";
 import { useState } from "react";
-import PaginationWrapper from "../../common/PaginationWrapper";
 import {themeStyles} from "themes/styles";
+import PaginationWrapper from "components/common/PaginationWrapper";
+import {Order} from "types/OrderTable";
+import {mockOrders} from "../../../../data";
 
 const OrderTable = () => {
   const orders: Order[] = mockOrders;
   //PAGINATION
   const [page, setPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -62,7 +62,7 @@ const OrderTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((row, index) => (
+            {paginatedOrders.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{row.sku}</TableCell>
                 <TableCell>{row.orderId}</TableCell>
@@ -88,7 +88,7 @@ const OrderTable = () => {
                         ? themeStyles.warning
                         : themeStyles.successDark,
                         // : themeStyles.grey400,
-                      color: "#fff", // hoặc themeStyles.textLight nếu cần
+                      color: "#fff", 
                       fontWeight: "bold",
                     }}
                     size="small"

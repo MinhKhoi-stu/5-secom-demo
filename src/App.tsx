@@ -26,10 +26,10 @@ import UpdateOrderPage from "pages/fulfillment/2D/Update2D";
 import AddOrder from "pages/fulfillment/add-order";
 import MainFulfillment from "pages/fulfillment/main-fulfillment";
 import AddProduct from "pages/product/add-product";
-import AddSKUDesign from "pages/sku-design/add-skudesign";
-import MainSKUDesign from "pages/sku-design/main-skudesign";
-import DetailsTracking from "pages/tracking/details-tracking";
-import MainTracking from "pages/tracking/main-tracking";
+import AddSKUDesign from "pages/SKUDesign/add-skudesign";
+import MainSKUDesign from "pages/SKUDesign/main-skudesign";
+import DetailsTracking from "pages/Tracking/details-tracking";
+import MainTracking from "pages/Tracking/main-tracking";
 import AddUser from "pages/user/add-user";
 import MainUser from "pages/user/main-user";
 

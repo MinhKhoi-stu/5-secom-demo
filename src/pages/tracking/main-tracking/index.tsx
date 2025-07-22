@@ -1,9 +1,13 @@
 import { Box, Typography, Paper } from "@mui/material";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { useNavigate } from "react-router-dom";
+import { recentTrackings, shippedData } from "../../../data";
+import { ShippedOrders } from "types/OrderTable";
+import DescriptionIcon from "@mui/icons-material/Description";
 
 const MainTracking = () => {
   const navigate = useNavigate();
+  const shipped: ShippedOrders[] = shippedData;
   return (
     <>
       {/* TIÊU ĐỀ */}
@@ -19,7 +23,6 @@ const MainTracking = () => {
         QUẢN LÝ TRACKING
       </Typography>
 
-      {/* BỌC CẢ BẢNG */}
       <Box
         sx={{
           width: "1180px",
@@ -32,23 +35,12 @@ const MainTracking = () => {
           gap: 4,
         }}
       >
-        {/* BỌC ORDER ĐÃ SHIP CẦN MUA TRACKING */}
-        <Box
-          sx={{
-            textAlign: "left",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "black",
-              fontWeight: "bold",
-              mb: 2,
-            }}
-          >
+        {/* ĐƠN ĐÃ SHIP CẦN MUA TRACKING */}
+        <Box sx={{ textAlign: "left" }}>
+          <Typography sx={{ color: "black", fontWeight: "bold", mb: 2 }}>
             Order đã Ship cần mua tracking
           </Typography>
 
-          {/* BỌC ĐƠN HÀNG GIẢ */}
           <Box
             sx={{
               display: "grid",
@@ -58,18 +50,25 @@ const MainTracking = () => {
               justifyContent: "center",
             }}
           >
-            {[20, 22, 23, 24].map((day, idx) => (
+            {shipped.map((order, idx) => (
               <Paper
                 key={idx}
                 elevation={2}
-                // onClick={() => navigate(`/details-tracking/${day}`)}
-                onClick={() => navigate(`/details-tracking`)}
+                // onClick={() => navigate(`/details-tracking`)}
+                onClick={() =>
+                  navigate("/details-tracking", {
+                    state: {
+                      shipDate: order.shipDate,
+                      trackingSample: order.trackingSample,
+                      orderCount: order.orderCount,
+                    },
+                  })
+                }
                 sx={{
                   padding: 2,
                   borderRadius: 2,
                   display: "flex",
                   flexDirection: "column",
-                  width: "flex",
                   border: "1px solid #e0e0e0",
                   cursor: "pointer",
                   transition: "0.2s",
@@ -81,34 +80,23 @@ const MainTracking = () => {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <LocalShippingIcon sx={{ color: "red" }} />
                   <Typography fontWeight={700} color="red">
-                    Ship ngày {day}/05/2025
+                    Ship ngày {order.shipDate}
                   </Typography>
                 </Box>
                 <Typography fontSize={14} mt={1}>
-                  {100 + idx * 50} Order (Track VN-US: 1ZW4090W0494xxxxxx)
+                  {order.orderCount} Order (Track VN-US: {order.trackingSample})
                 </Typography>
               </Paper>
             ))}
           </Box>
         </Box>
 
-        {/* BỌC TRACKING ĐÃ MUA GẦN NHẤT */}
-        <Box
-          sx={{
-            textAlign: "left",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "black",
-              fontWeight: "bold",
-              mb: 2,
-            }}
-          >
+        {/* TRACKING ĐÃ MUA GẦN NHẤT */}
+        <Box sx={{ textAlign: "left" }}>
+          <Typography sx={{ color: "black", fontWeight: "bold", mb: 2 }}>
             Tracking đã mua gần nhất
           </Typography>
 
-          {/* BỌC TRACKING GIẢ */}
           <Box
             sx={{
               display: "grid",
@@ -118,11 +106,17 @@ const MainTracking = () => {
               justifyContent: "center",
             }}
           >
-            {Array.from({ length: 12 }).map((_, i) => (
-              <Box key={i} sx={{ width: "270px", display: "flex", gap: 1 }}>
-                <LocalShippingIcon />
-                <Typography color="black" fontSize={14}>
-                  Ship ngày 10/05/2025 (148 Order)
+            {recentTrackings.map((tracking, i) => (
+              <Box key={i} sx={{ width: "400px", display: "flex", gap: 1 }}>
+                <DescriptionIcon
+                  sx={{
+                    color: "black",
+                    width: "50px",
+                    height: "50px",
+                  }}
+                />
+                <Typography color="black" fontSize={18}>
+                  Ship ngày {tracking.shipDate} ({tracking.orderCount} Order)
                 </Typography>
               </Box>
             ))}
