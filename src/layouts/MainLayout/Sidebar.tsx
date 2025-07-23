@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { label: "Admin Dashboard", path: "/AdminDashboard" },
-  { label: "Quản lý Fulfillment", path: "/main-fulfillment" },
-  { label: "Quản lý Sản phẩm", path: "/main-product" },
-  { label: "Quản lý User", path: "/main-user" },
-  { label: "Quản lý Tracking", path: "/main-tracking" },
-  { label: "Quản lý SKU Design", path: "/main-skudesign" },
+  { label: "Quản lý Fulfillment", path: "/Fulfillment" },
+  { label: "Quản lý Sản phẩm", path: "/Product" },
+  { label: "Quản lý User", path: "/User" },
+  { label: "Quản lý Tracking", path: "/Tracking" },
+  { label: "Quản lý SKU Design", path: "/SKUDesign" },
 ];
 
 const Sidebar = () => {

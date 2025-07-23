@@ -15,6 +15,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useRef, useState } from "react";
 import UploadImage from "components/common/UploadImage";
+import {useNavigate} from "react-router-dom";
 
 interface Props {
   fileName: string;
@@ -25,19 +26,26 @@ interface Props {
   handleButtonAdd: () => void;
 }
 
-const AddOrderDetails = ({
-  fileName,
-  setFileName,
-  inputRef,
-  handleFileChange,
-  handleButtonClick,
-  handleButtonAdd,
-}: Props) => {
+const AddOrderDetails = (
+//   {
+//   fileName,
+//   setFileName,
+//   inputRef,
+//   handleFileChange,
+//   handleButtonClick,
+//   handleButtonAdd,
+// }: Props
+) => {
   const [customOption, setCustomOption] = useState("");
   const [value, setValue] = useState("");
 
   const handleImageUpload = (file: File) => {
     console.log("Ảnh đã chọn:", file);
+  };
+
+  const navigate = useNavigate();
+  const handleAdd = () => {
+    navigate("/Page2D");
   };
 
   return (
@@ -114,7 +122,8 @@ const AddOrderDetails = ({
       />
 
       <Button
-        onClick={handleButtonAdd}
+        // onClick={handleButtonAdd}
+        onClick={handleAdd}
         sx={{
           width: "50%",
           backgroundColor: "orangered",

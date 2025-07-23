@@ -6,7 +6,7 @@ import {ProductList} from "types/OrderTable";
 const MainProduct = () => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/add-product");
+    navigate("add-product");
   };
   const prod : ProductList[] = productData;
 

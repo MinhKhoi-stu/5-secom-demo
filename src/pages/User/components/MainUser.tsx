@@ -21,7 +21,7 @@ const MainUser = () => {
   const [tab, setTab] = useState(0);
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/add-user");
+    navigate("add-user");
   };
   return (
     <>

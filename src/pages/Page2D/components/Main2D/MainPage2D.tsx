@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Box } from "@mui/material";
-import type { Order } from "../../../../types/OrderTable";
-import { mockOrders } from "../../../../data";
-import OrdersToDrawTable from "pages/fulfillment/component/2D/OrdersToDrawTable";
-import OrdersInProgressTable from "pages/fulfillment/component/2D/OrdersInProgressTable";
+
+import OrdersToDrawTable from "pages/Page2D/components/Main2D/OrdersToDrawTable";
+import OrdersInProgressTable from "pages/Page2D/components/Main2D/OrdersInProgressTable";
+import {mockOrders} from "../../../../data";
+import {Order} from "types/OrderTable";
 
 
-const Page2D = () => {
+const MainPage2D = () => {
   const [ordersToDraw, setOrdersToDraw] = useState<Order[]>(mockOrders);
   const [inProgressOrders, setInProgressOrders] = useState<Order[]>([]);
 
@@ -15,10 +16,10 @@ const Page2D = () => {
     setInProgressOrders((prev) => [...prev, order]);
   };
 
-  const handleReturnOrder = (order: Order) => {
-    setInProgressOrders((prev) => prev.filter((o) => o.id !== order.id));
-    setOrdersToDraw((prev) => [...prev, order]);
-  };
+  // const handleReturnOrder = (order: Order) => {
+  //   setInProgressOrders((prev) => prev.filter((o) => o.id !== order.id));
+  //   setOrdersToDraw((prev) => [...prev, order]);
+  // };
 
   return (
     <Box>
@@ -31,4 +32,4 @@ const Page2D = () => {
   );
 };
 
-export default Page2D;
+export default MainPage2D;

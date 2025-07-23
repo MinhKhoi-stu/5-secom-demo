@@ -9,7 +9,6 @@ import {
   TableRow,
   Typography,
   Paper,
-  Pagination,
 } from "@mui/material";
 import PaginationWrapper from "components/common/PaginationWrapper";
 import { useState } from "react";

@@ -56,7 +56,7 @@ const MainTracking = () => {
                 elevation={2}
                 // onClick={() => navigate(`/details-tracking`)}
                 onClick={() =>
-                  navigate("/details-tracking", {
+                  navigate("details-tracking", {
                     state: {
                       shipDate: order.shipDate,
                       trackingSample: order.trackingSample,

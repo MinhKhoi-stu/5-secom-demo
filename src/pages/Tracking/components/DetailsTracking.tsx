@@ -18,7 +18,7 @@ const DetailsTracking = () => {
 
   //Nếu không có dữ liệu, quay về trang trước
   if (!state) {
-    navigate("/main-tracking");
+    navigate("/Tracking");
     return null;
   }
   return (

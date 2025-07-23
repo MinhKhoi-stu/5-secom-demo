@@ -16,10 +16,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
-import OriginLabel from "../../../components/OriginLabel";
+import OriginLabel from "../../../../components/OriginLabel";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
-import AddOrderDetails from "../component/AddOrder/AddOrderDetails";
+import AddOrderDetails from "./AddOrderDetails";
 
 const AddOrder = () => {
   const [fileName, setFileName] = useState("hinhanh.png");
@@ -486,12 +486,12 @@ const AddOrder = () => {
               //   </Button>
               // </Box>
               <AddOrderDetails
-                fileName={fileName}
-                setFileName={setFileName}
-                inputRef={inputRef}
-                handleFileChange={handleFileChange}
-                handleButtonClick={handleButtonClick}
-                handleButtonAdd={handleButtonAdd}
+                // fileName={fileName}
+                // setFileName={setFileName}
+                // inputRef={inputRef}
+                // handleFileChange={handleFileChange}
+                // handleButtonClick={handleButtonClick}
+                // handleButtonAdd={handleButtonAdd}
               />
             )}
           </Box>

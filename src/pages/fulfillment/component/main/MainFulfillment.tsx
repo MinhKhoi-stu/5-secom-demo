@@ -10,9 +10,9 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import {useNavigate} from "react-router-dom";
 
 import {orderStatus} from "types/OrderTable";
-import {orderStatusData} from "../../../data";
-import OrderStatusBox from "../component/main/order-status-box";
-import OrderTable from "../component/main/order-table";
+import {orderStatusData} from "../../../../data";
+import OrderStatusBox from "./order-status-box";
+import OrderTable from "./order-table";
 
 const status: orderStatus[] = orderStatusData;
 
@@ -20,7 +20,7 @@ const MainFulfillment = () => {
 
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/add-order");
+    navigate("add-order");
   };
   return (
     <>

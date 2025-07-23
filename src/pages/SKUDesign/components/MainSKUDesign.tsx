@@ -95,7 +95,7 @@ const MainSKUDesign = () => {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate("/add-skudesign");
+    navigate("add-skudesign");
   };
   //PAGINATION
   const [page, setPage] = useState(1);

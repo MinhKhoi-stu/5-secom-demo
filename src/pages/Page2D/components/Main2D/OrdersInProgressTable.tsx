@@ -25,7 +25,7 @@ const OrdersInProgressTable = ({ orders }: Props) => {
 
   const handleReturnOrder = (order: Order) => {
     // navigate(`/2D/update/${order.id}`, { state: { order } });
-    navigate(`/Update2D`);
+    navigate("update-2d");
   };
 
   //PAGINATION
@@ -95,7 +95,7 @@ const OrdersInProgressTable = ({ orders }: Props) => {
                     color="error"
                     size="small"
                     // onClick={() => handleReturnOrder(order)}
-                    onClick={() => navigate(`/Update2D`, { state: { order } })}
+                    onClick={() => navigate("update-2d", { state: { order } })}
                   >
                     Trả đơn
                   </Button>

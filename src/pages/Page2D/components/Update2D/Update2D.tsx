@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
-import { type Order } from "../../../../types/OrderTable";
-import {UpdateOrderForm} from "pages/fulfillment/component/2D/UpdateOrderForm";
+import {UpdateOrderForm} from "pages/Page2D/components/Update2D/UpdateOrderForm";
+import {Order} from "types/OrderTable";
 
 const UpdateOrderPage = () => {
   const location = useLocation();
