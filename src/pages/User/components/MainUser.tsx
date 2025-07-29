@@ -10,19 +10,99 @@ import {
   Pagination,
 } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {FakeUser} from "types/OrderTable";
-import {TabLabels, userData} from "../../../data";
+import { AdminUserDto } from "dto/admin-users";
+import { FindAllAdminUserDto, useAllAdminUsers } from "hooks/admin-users";
 
-const fakeUsers : FakeUser[] = userData;
+//---------------------------------------LÀM LẠI LOAD USER-------------------------------
+// const fakeUsers: FakeUser[] = userData;
 
 const MainUser = () => {
-  const [tab, setTab] = useState(0);
+  const [users, setUsers] = useState<AdminUserDto[]>([]);
   const navigate = useNavigate();
   const handleClick = () => {
     navigate("add-user");
   };
+
+  // NÀY LÀM QUERY--------------------------------------------------------------------------------
+  // const [selectedTab, setSelectedTab] = useState("");
+  // const { data, isLoading } = useAllAdminUsers({
+  //   pageIndex: 0,
+  //   pageSize: 100,
+  // });
+
+  // const users = data?.content || []; // content là mảng AdminUserDto
+
+  // const filteredUsers = useMemo(() => {
+  //   return selectedTab === ""
+  //     ? users
+  //     : users.filter((user) => user.adminRole?.username === selectedTab);
+  // }, [users, selectedTab]);
+
+  // const params = {}; // có thể truyền thêm keyword, status nếu cần
+
+  // const { data, isLoading, isError } = useAllAdminUsers(params);
+
+  // const users = data?.content || [];
+
+  // const filteredUsers = useMemo(() => {
+  //   if (!selectedTab) return users;
+  //   return users.filter((user) => user.adminRole?.username === selectedTab);
+  // }, [users, selectedTab]);
+
+  // KHÔNG PHẢI QUERY--------------------------------------------------------------------------------
+  //kiềm tím----------------------------------------------------------------------------------------
+  // const [searchText, setSearchText] = useState("");
+
+  //bộ nọc chuyển tab--------------------------------------------------------------------------------
+
+  const [selectedTab, setSelectedTab] = useState("");
+
+  const RoleTabs = [
+    { label: "Tất cả", value: "" },
+    { label: "Admin", value: "admin" },
+    { label: "Vẽ 2D", value: "ve2d" },
+    { label: "Vẽ File Thêu", value: "theu" },
+    { label: "Sản Xuất", value: "sanxuat" },
+    { label: "Đóng gói", value: "donggoi" },
+    { label: "Cắt laser", value: "catlaser" },
+  ];
+
+  const filteredUsers = useMemo(() => {
+    if (!selectedTab) return users;
+    return users.filter((user) => user.adminRole?.username === selectedTab);
+  }, [users, selectedTab]);
+
+  // const filteredUsers = useMemo(() => {
+  //   const role = RoleTabs[selectedTab].value;
+  //   if (!role) return users;
+  //   // return users.filter((user) => user.adminRole?.username === role);
+  //   return users.filter((user) => user.adminRole?.username === role);
+  // }, [users, selectedTab]);
+
+  //load du sơ------------------------------------------------------------------------------------
+  const params: FindAllAdminUserDto = {};
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await useAllAdminUsers(params);
+      // console.log("RESPONSE:", res);
+      setUsers(res);
+    };
+    fetchData();
+  }, []);
+
+  // const findAllUser = async () => {
+  //   // console.log(await useAllAdminUsers(params));
+  //   const res = await useAllAdminUsers(params);
+  //   console.log(res);
+  //   setUsers(res);
+  // };
+  // useEffect(() => {
+  //   // findAllUser();
+  // }, [users, setUsers, findAllUser]);
+
   return (
     <>
       {/* TIÊU ĐỀ */}
@@ -40,8 +120,9 @@ const MainUser = () => {
 
       <Box
         sx={{
-          // width: "1180px",
-          width: "flex",
+          width: "1180px",
+          height: "60vh",
+          // height: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "16px",
@@ -70,19 +151,28 @@ const MainUser = () => {
 
         {/* CÁC TAB GIẢ*/}
         <Tabs
-          value={tab}
-          onChange={(e, newVal) => setTab(newVal)}
+          value={selectedTab}
+          onChange={(e, newValue) => setSelectedTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ mb: 3 }}
+          sx={{
+            mb: 3,
+            "& .MuiTabs-indicator": {
+              backgroundColor: "red", // ✅ màu gạch chân
+            },
+          }}
         >
-          {TabLabels.map((label, idx) => (
+          {RoleTabs.map((tab) => (
             <Tab
-              key={idx}
-              label={label}
+              key={tab.value}
+              label={tab.label}
+              value={tab.value}
               sx={{
-                // textTransform: "none",
+                color: "black",
                 fontWeight: "bold",
+                "&.Mui-selected": {
+                  color: "red",
+                },
               }}
             />
           ))}
@@ -92,12 +182,13 @@ const MainUser = () => {
         <Box
           sx={{
             display: "flex",
+            height: "30vh",
             flexWrap: "wrap",
             gap: 2,
             justifyContent: "flex-start",
           }}
         >
-          {fakeUsers.map((user, index) => (
+          {filteredUsers?.map((user, index) => (
             <Box
               key={index}
               sx={{
@@ -107,15 +198,21 @@ const MainUser = () => {
                 gap: 2,
               }}
             >
-              <Avatar src={user.avatar} sx={{ width: 56, height: 56 }} />
+              <Avatar
+                src={"/img/flag/VietNamflag.jpg"}
+                sx={{ width: 56, height: 56 }}
+              />
               <Box
                 sx={{
                   color: "black",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
                 }}
               >
                 <Typography fontWeight="bold">{user.name}</Typography>
                 <Typography fontSize={13}>{user.email}</Typography>
-                <Typography fontSize={13}>Phone: {user.phone}</Typography>
+                <Typography fontSize={13}>{user.phone}</Typography>
               </Box>
             </Box>
           ))}

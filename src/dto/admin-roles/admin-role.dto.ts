@@ -8,4 +8,5 @@ export type AdminRoleDto = {
   permissions: PERMISSION[];
   createdAt: Date;
   updatedAt: Date;
+  username: string;
 };

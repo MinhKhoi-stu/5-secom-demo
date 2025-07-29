@@ -44,6 +44,7 @@ export const NewOrdersTable = ({ news }: Props) => {
         p: 3,
         borderRadius: 2,
         boxShadow: 3,
+        textAlign: "left"
       }}
     >
       <Typography variant="h6" fontWeight="bold" gutterBottom color="black">

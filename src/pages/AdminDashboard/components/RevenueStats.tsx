@@ -1,8 +1,14 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
-import {useDashboardData} from "../hook/useDashBoardData";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
+import { useDashboardData } from "../hook/useDashBoardData";
 
 export const RevenueStats = () => {
-
   const { valueDay, setValueDay, revenue } = useDashboardData();
   return (
     // <Box
@@ -91,7 +97,9 @@ export const RevenueStats = () => {
       <Box sx={{ width: "100%" }}>
         <Box
           sx={{
-            backgroundColor: "#c5f5f6",
+            // backgroundColor: "#ff000036",
+            backgroundImage: `linear-gradient(135deg, #ffffff 0%, #fdd0d0ff 90%)`,
+
             p: 3,
             borderRadius: 2,
             boxShadow: 3,

@@ -18,7 +18,8 @@ const {valueBill, setValueBill, counts} = useDashboardData();
     <>
       <Box
         sx={{
-          backgroundColor: "#c5f5f6",
+          // backgroundColor: "#ff000036",
+          backgroundImage: `linear-gradient(135deg, #ffffff 0%, #fdd0d0ff 90%)`,
           p: 3,
           borderRadius: 2,
           boxShadow: 3,

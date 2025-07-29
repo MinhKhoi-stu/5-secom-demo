@@ -2,14 +2,14 @@ import axios, {
   AxiosError,
   AxiosResponse,
   InternalAxiosRequestConfig,
-} from 'axios';
-import { configuration } from './configuration';
-import { localStorageKey } from './constants';
-import { authAPI } from 'api/auth';
-import { TokenDto } from 'dto/auth/token.dto';
-import { PATH } from 'routes/constants';
-import { HTTP_STATUS } from './enums';
-import { toast } from 'react-toastify';
+} from "axios";
+import { configuration } from "./configuration";
+import { localStorageKey } from "./constants";
+import { authAPI } from "api/auth";
+import { TokenDto } from "dto/auth/token.dto";
+import { PATH } from "routes/constants";
+import { HTTP_STATUS } from "./enums";
+import { toast } from "react-toastify";
 
 let refreshingFunc: Promise<TokenDto> | undefined;
 
@@ -21,8 +21,9 @@ export type AxiosRequestConfig = InternalAxiosRequestConfig<any> & {
 
 const axiosClient = axios.create({
   baseURL: `${configuration.API_URL}/api/`,
+  // baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -42,7 +43,6 @@ axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response.data,
   async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig;
-
     if (
       error?.response?.status === HTTP_STATUS.UNAUTHORIZED &&
       !originalRequest?._ignoreRefresh &&
@@ -74,6 +74,7 @@ axiosClient.interceptors.response.use(
           localStorage.removeItem(localStorageKey.accessToken);
           localStorage.removeItem(localStorageKey.refreshToken);
           window.location.href = PATH.LOGIN;
+          //TODO
         } finally {
           refreshingFunc = undefined;
         }
@@ -87,7 +88,7 @@ axiosClient.interceptors.response.use(
         data?.message?.toString() ||
           error?.response?.statusText ||
           error?.message,
-        { type: 'error' }
+        { type: "error" }
       );
     }
 

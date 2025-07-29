@@ -589,10 +589,10 @@ export const TabLabels: string[] = [
 
 //DANH SÁCH SẢN PHẨM
 export const productData : ProductList[] = [
-  { name: "Patches Thêu", img: "/img/flag/VietNamflag.jpg" },
-  { name: "Áo Thêu", img: "/img/flag/VietNamflag.jpg" },
-  { name: "Nón thêu", img: "/img/flag/VietNamflag.jpg" },
-  { name: "Lịch 2026", img: "/logo.png" },
-  { name: "Led Mica", img: "/logo.png" },
-  { name: "Gỗ Handmade", img: "/logo.png" },
+  { id: "1", name: "Patches Thêu", img: "/img/flag/VietNamflag.jpg" },
+  { id: "2", name: "Áo Thêu", img: "/img/flag/VietNamflag.jpg" },
+  { id: "3", name: "Nón thêu", img: "/img/flag/VietNamflag.jpg" },
+  { id: "4", name: "Lịch 2026", img: "/logo.png" },
+  { id: "5", name: "Led Mica", img: "/logo.png" },
+  { id: "6", name: "Gỗ Handmade", img: "/logo.png" },
 ];

@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -9,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import UploadImage from "components/common/UploadImage";
+import {productData} from "../../../data";
 import { useRef, useState } from "react";
 
 const AddSKUDesign = () => {
@@ -90,7 +90,7 @@ const AddSKUDesign = () => {
         </div>
 
         {/* THẺ INPUT LOẠI SẢN PHẨM */}
-        <div
+        {/* <div
           style={{
             width: "400px",
             marginTop: "20px",
@@ -126,8 +126,28 @@ const AddSKUDesign = () => {
               <MenuItem value="mug">SKU 3</MenuItem>
             </Select>
           </FormControl>
-        </div>
-
+        </div> */}
+        <FormControl
+          size="small"
+          sx={{
+            marginTop: "20px",
+            width: "400px",
+          }}
+        >
+          <InputLabel id="combo-label">Chọn</InputLabel>
+          <Select
+            labelId="combo-label"
+            value={value}
+            label="Loại sản phẩm"
+            onChange={(e) => setValue(e.target.value)}
+          >
+            {productData.map((item, index) => (
+              <MenuItem key={index} value={item.name}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         {/* HÌNH ẢNH DEMO */}
 
         <div
@@ -143,7 +163,7 @@ const AddSKUDesign = () => {
             Hình ảnh đại diện
           </Typography>
 
-          <UploadImage onFileSelect={handleImageUpload}/>
+          <UploadImage onFileSelect={handleImageUpload} />
         </div>
 
         {/* LINK FILE GỐC */}

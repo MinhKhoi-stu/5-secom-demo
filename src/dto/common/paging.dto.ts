@@ -5,6 +5,7 @@ export type PagingDto = {
 };
 
 export type PagingDataDto<T> = {
+  content: T[]; //thêm
   count: number;
   rows: T[];
 };

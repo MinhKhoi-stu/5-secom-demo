@@ -11,7 +11,9 @@ import axiosClient from "utils/axios-client";
 
 export const adminUsersAPI = {
   getMyProfile(): Promise<AdminUserDto> {
-    return axiosClient.get("admin-users/me");
+    // return axiosClient.get("admin-users/me");
+    return axiosClient.get("user/login-info");
+
   },
   updateMyProfile(
     updateMyProfileDto: UpdateMyProfileDto
@@ -29,10 +31,10 @@ export const adminUsersAPI = {
   findAll(
     findAllAdminUserDto: FindAllAdminUserDto
   ): Promise<PagingDataDto<AdminUserDto>> {
-    return axiosClient.get("admin-users", { params: findAllAdminUserDto });
+    return axiosClient.get("user/find", { params: findAllAdminUserDto });
   },
   findOne(id: number): Promise<AdminUserDto> {
-    return axiosClient.get(`admin-users/${id}`);
+    return axiosClient.get(`user/find/${id}`);
   },
   update(
     id: number,

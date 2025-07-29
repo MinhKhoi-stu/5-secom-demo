@@ -44,6 +44,7 @@ const OrdersToDrawTable = ({ orders, onAccept }: Props) => {
         padding: 3,
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
         mt: 2,
+        textAlign: "left",
       }}
     >
       <Typography color="black" variant="h6" fontWeight="bold" gutterBottom>

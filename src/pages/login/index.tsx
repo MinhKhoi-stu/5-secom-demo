@@ -1,28 +1,41 @@
-import { InputAdornment, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { TextField, Typography } from "@mui/material";
+import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import VisibilityIcon from "@mui/icons-material/Visibility";
-// import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useLogin } from "hooks/auth";
 import { LoginDto } from "dto/auth";
+import { toast } from "react-toastify";
+import { authAPI } from "api/auth";
+import {PATH} from "routes/constants";
 
 const Login = () => {
   const [show, setShow] = useState(false);
   const login = useLogin();
   const navigate = useNavigate();
 
-  const initialValues: LoginDto = {
+  const [formValues, setFormValues] = useState<LoginDto>({
     username: "",
     password: "",
-  };
+    grant_type: "password",
+    scope: "read write",
+    client_id: "dichtetayninh",
+    client_secret: "AVTaQ7vJes38oseonKqt",
+  });
 
-  const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
+  // login.mutate({
+  //   username: initialValues.username,
+  //   password: initialValues.password,
+  //   client_id: "dichtetayninh",
+  //   client_secret: "AVTaQ7vJes38oseonKqt",
+  //   grant_type: "password",
+  //   scope: "read write",
+  // });
+
+  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // login.mutate({ username: "johndoe", password: "123456" });
-    localStorage.setItem("accessToken", "fake_token");
-    navigate("/AdminDashboard");
+    // localStorage.setItem("accessToken", "fake_token");
+    login.mutate(formValues);
   };
+
 
   return (
     //thẻ bọc cả trang
@@ -54,11 +67,11 @@ const Login = () => {
 
       {/* thẻ bọc form login */}
       <form
+        onSubmit={handleLogin}
         style={{
           width: "600px",
           height: "flex",
           backgroundColor: "white",
-          // border: '2px solid gray',
           borderRadius: "30px",
           boxShadow: "0px 4px 20px rgba(128, 128, 128, 0.3)",
         }}
@@ -69,6 +82,11 @@ const Login = () => {
           id="username"
           placeholder="Email address"
           variant="outlined"
+          //
+          value={formValues.username}
+          onChange={(e) =>
+            setFormValues({ ...formValues, username: e.target.value })
+          }
           sx={{
             width: "500px",
             marginTop: "50px",
@@ -76,7 +94,6 @@ const Login = () => {
             borderRadius: "10px",
             "& input::placeholder": {
               fontWeight: "bold",
-              color: "black",
             },
           }}
         />
@@ -84,9 +101,14 @@ const Login = () => {
         {/* input password */}
         <TextField
           type={show ? "text" : "password"}
-          id="username"
+          id="password"
           placeholder="Password"
           variant="outlined"
+          //
+          value={formValues.password}
+          onChange={(e) =>
+            setFormValues({ ...formValues, password: e.target.value })
+          }
           sx={{
             width: "500px",
             marginTop: "30px",
@@ -97,38 +119,6 @@ const Login = () => {
               color: "black",
             },
           }}
-          //ẨN HIỆN PASSWORD
-          // InputProps={{
-          //   endAdornment: (
-          //     <InputAdornment position="end">
-          //       {show ? (
-          //         <VisibilityIcon
-          //           onClick={() => setShow(false)}
-          //           sx={{
-          //             cursor: "pointer",
-          //             "&:hover": {
-          //               color: "gray",
-          //               transform: "scale(1.2)",
-          //               transition: "all 0.2s ease",
-          //             },
-          //           }}
-          //         />
-          //       ) : (
-          //         <VisibilityOffIcon
-          //           onClick={() => setShow(true)}
-          //           sx={{
-          //             cursor: "pointer",
-          //             "&:hover": {
-          //               color: "gray",
-          //               transform: "scale(1.2)",
-          //               transition: "all 0.2s ease",
-          //             },
-          //           }}
-          //         />
-          //       )}
-          //     </InputAdornment>
-          //   ),
-          // }}
         />
 
         {/* nút Đăng nhập */}
@@ -145,8 +135,7 @@ const Login = () => {
           <div style={{ flex: 1 }} />
 
           <button
-            type="button"
-            onClick={handleLogin}
+            type="submit"
             style={{
               width: "150px",
               fontSize: "20px",

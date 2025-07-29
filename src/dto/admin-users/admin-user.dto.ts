@@ -3,10 +3,11 @@ import { ADMIN_USER_STATUS } from 'utils/enums';
 
 export type AdminUserDto = {
   id: number;
-  fullName: string;
+  // fullName: string;
+  name: string;
   email: string;
   status: ADMIN_USER_STATUS;
-  phoneNumber?: string;
+  phone?: string;
   birthday?: Date;
   gender?: string;
   adminRoleId?: number;

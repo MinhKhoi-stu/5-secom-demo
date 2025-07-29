@@ -49,6 +49,8 @@ export const locales = {
   info: 'Thông tin',
   login: 'Đăng nhập',
   loginSuccess: 'Đăng nhập thành công!',
+  //
+  loginFailed: 'Tài khoản hoặc mật khẩu không hợp lệ! Vui lòng thử lại!',
   logout: 'Đăng xuất',
   male: 'Nam',
   maxscore: 'Điểm tối đa',

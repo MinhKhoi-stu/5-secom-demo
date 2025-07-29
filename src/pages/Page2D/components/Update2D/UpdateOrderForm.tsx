@@ -161,8 +161,10 @@ export const UpdateOrderForm = ({
                   label="Loại sản phẩm"
                   onChange={(e) => setValue(e.target.value)}
                 >
-                  <MenuItem value="drawing">Đang vẽ 2D</MenuItem>
-                  <MenuItem value="done">Đã vẽ 2D</MenuItem>
+                  <MenuItem value="drawing">Vẽ thêu</MenuItem>
+                  <MenuItem value="cutting">Cắt laser</MenuItem>
+                  <MenuItem value="produce">Sản xuất</MenuItem>
+                  <MenuItem value="package">Đóng gói</MenuItem>
                 </Select>
               </FormControl>
             </Box>

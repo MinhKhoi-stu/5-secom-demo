@@ -76,6 +76,7 @@ export interface FakeUser {
 }
 
 export interface ProductList {
+  id: string;
   name: string;
   img: string;
 }
