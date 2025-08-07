@@ -1,9 +1,10 @@
-import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import UploadImage from "components/common/UploadImage";
 import { OptionDto } from "dto/option/option.dto";
 import { useRef, useState, useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 
 interface UpdateProductProps {
   mode: "create" | "update";
@@ -39,7 +40,7 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
     console.log("Ảnh đã chọn:", file);
   };
 
-  //THÊM NHÓM
+  //THÊM NHÓM SIZE
   const [sizeGroups, setSizeGroups] = useState<number[]>([1]); // ban đầu 1 nhóm
 
   const addSizeGroup = () => {
@@ -49,6 +50,12 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
   const removeSizeGroup = (index: number) => {
     setSizeGroups((prev) => prev.filter((_, i) => i !== index));
   };
+
+  //STATE-TEST
+  const { data: stateTestOptions, isLoading: isStateTestLoading } =
+    useFindOptionsByGroup("state-test", 0, 50);
+
+  const [selectedOption, setSelectedOption] = useState("");
 
   return (
     <>
@@ -135,16 +142,29 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
             }}
           >
             {/* Field: Inches */}
-            <TextField
-              type="text"
-              placeholder="Inches"
+            <FormControl
               size="small"
               sx={{
                 width: 100,
                 backgroundColor: "white",
                 borderRadius: 1,
+                mr: 2,
               }}
-            />
+            >
+              <InputLabel id="inches-select-label">Inches</InputLabel>
+              <Select
+                size="small"
+                value={selectedOption}
+                onChange={(e) => setSelectedOption(e.target.value)}
+                sx={{ width: 120, backgroundColor: "white", borderRadius: 1 }}
+              >
+                {stateTestOptions?.content?.map((option) => (
+                  <MenuItem key={option.id} value={option.code}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             {/* Các field: Weight, Length, Width, Height */}
             {["Weight", "Length", "Width", "Height"].map((label) => (

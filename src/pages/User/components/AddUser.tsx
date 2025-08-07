@@ -111,7 +111,7 @@ const AddUser = ({
 
   const orgUnits = orgUnitData?.content || [];
 
-  const sortedOrgUnits = [...orgUnits].sort((a, b) => a.lvl - b.lvl);
+  // const sortedOrgUnits = [...orgUnits].sort((a, b) => a.lvl - b.lvl);
 
   //NÀY LÀ LÀM TREE MÀ 0 ĐƯỢC---------------------------------------------------------------------------------
   // const { data: orgUnitData } = useFindAllOrgunit({ orgUnitId: "" });

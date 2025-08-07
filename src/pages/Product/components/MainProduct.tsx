@@ -10,13 +10,14 @@ import {
   IconButton,
 } from "@mui/material";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddProduct from "./AddProduct";
 import PaginationWrapper from "components/common/PaginationWrapper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { OptionDto } from "dto/option/option.dto";
 import UpdateProduct from "./UpdateProduct";
+import { useFindOptionGroupByCodeOrName } from "hooks/option-group/useFindOptionGroupByCodeOrName";
 
 const MainProduct = () => {
   //MỞ DIALOG ADD PRODUCT
@@ -59,6 +60,22 @@ const MainProduct = () => {
     value: number
   ) => {
     setPage(value);
+  };
+
+  //FIND codeOrName
+  // Tìm optionGroup có codeOrName = 'products'
+  const { data: productOptionGroup } =
+    useFindOptionGroupByCodeOrName("products");
+
+  const handleSubmit = (formValues: any) => {
+    if (!productOptionGroup) return;
+
+    const payload = {
+      ...formValues,
+      optionGroup: { id: productOptionGroup.id },
+    };
+
+    // Gọi API tạo Option/Product
   };
 
   return (

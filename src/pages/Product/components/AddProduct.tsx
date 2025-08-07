@@ -1,15 +1,29 @@
-import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import UploadImage from "components/common/UploadImage";
 import { useRef, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { FormField } from "pages/User/components/FormField";
+import { useFindOptionGroupByCodeOrName } from "hooks/option-group/useFindOptionGroupByCodeOrName";
+import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 
 const AddProduct = () => {
   const [fileName, setFileName] = useState("hinhanh.png");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
+  const { data: productOptionGroup, isLoading } =
+    useFindOptionGroupByCodeOrName("products");
 
   const handleButtonClick = () => {
     inputRef.current?.click();
@@ -36,6 +50,27 @@ const AddProduct = () => {
   const removeSizeGroup = (index: number) => {
     setSizeGroups((prev) => prev.filter((_, i) => i !== index));
   };
+
+  //BUTTON ADD
+  const handleAddProduct = () => {
+    if (!productOptionGroup) return;
+
+    const payload = {
+      name: productName,
+      code: productCode,
+      optionGroup: { id: productOptionGroup.id },
+      // thêm các trường khác (image, sizes...) nếu có
+    };
+
+    console.log("Payload gửi lên BE:", payload);
+    // Gọi API tạo sản phẩm ở đây
+  };
+
+  //STATE-TEST
+  const { data: stateTestOptions, isLoading: isStateTestLoading } =
+    useFindOptionsByGroup("state-test", 0, 50);
+
+  const [selectedOption, setSelectedOption] = useState("");
 
   return (
     <>
@@ -117,16 +152,24 @@ const AddProduct = () => {
             }}
           >
             {/* Field: Inches */}
-            <TextField
-              type="text"
-              placeholder="Inches"
+            <FormControl
               size="small"
-              sx={{
-                width: 100,
-                backgroundColor: "white",
-                borderRadius: 1,
-              }}
-            />
+              sx={{ width: 100, backgroundColor: "white", borderRadius: 1, mr: 2 }}
+            >
+              <InputLabel id="inches-select-label">Inches</InputLabel>
+              <Select
+                size="small"
+                value={selectedOption}
+                onChange={(e) => setSelectedOption(e.target.value)}
+                sx={{ width: 120, backgroundColor: "white", borderRadius: 1 }}
+              >
+                {stateTestOptions?.content?.map((option) => (
+                  <MenuItem key={option.id} value={option.code}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             {/* Các field: Weight, Length, Width, Height */}
             {["Weight", "Length", "Width", "Height"].map((label) => (
@@ -186,7 +229,7 @@ const AddProduct = () => {
               boxShadow: 2,
               "&:hover": { backgroundColor: "#ffa07a" },
             }}
-            // onClick={handleClick}
+            onClick={handleAddProduct}
           >
             Thêm sản phẩm
           </Button>
