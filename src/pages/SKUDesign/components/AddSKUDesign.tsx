@@ -1,290 +1,167 @@
 import {
   Box,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 import UploadImage from "components/common/UploadImage";
 import { productData } from "../../../data";
 import { useRef, useState } from "react";
+import { FormField } from "pages/User/components/FormField";
 
 const AddSKUDesign = () => {
   const [value, setValue] = useState("");
-  const [fileName, setFileName] = useState("hinhanh.png"); // ban đầu
+  const [fileName, setFileName] = useState("hinhanh.png");
+  const [formData, setFormData] = useState({
+    name: "",
+    link: "",
+    quantity: "",
+  });
+
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleButtonClick = () => {
-    inputRef.current?.click(); // trigger input ẩn
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name); // lưu tên file để hiển thị
-      // Sau này upload file
-    }
-  };
 
   const handleImageUpload = (file: File) => {
     console.log("Ảnh đã chọn:", file);
-    // Bạn có thể upload lên server tại đây hoặc preview
+    // Xử lý upload file tại đây
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <>
-      {/* TITLE */}
-      <Typography
-        sx={{
-          display: "flex",
-          color: "black",
-          fontWeight: "bold",
-        }}
-      >
-        THÊM SKU DESIGN
-      </Typography>
-
-      {/* THÊM SẢN PHẨM*/}
+      <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
+        <Typography sx={{ color: "black", fontWeight: "bold", mb: 2 }}>
+          THÊM SKU DESIGN
+        </Typography>
+      </Box>
       <Box
         sx={{
-          // width: "1180px",
-          width: "flex",
-          height: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "12px",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {/* THẺ INPUT TÊN SKU */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
+        <Grid
+          container
+          spacing={2}
+          sx={{ display: "flex", flexDirection: "column" }}
         >
-          <Typography
-            sx={{
-              display: "flex",
-              color: "black",
-              alignItems: "flex-start",
-            }}
-          >
-            Tên SKU
-          </Typography>
+          {/* TÊN SKU */}
+          <Grid item xs={12} sm={6}>
+            <FormField
+              label="Tên SKU"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
 
-          <TextField
-            type="text"
-            id="addproduct"
-            variant="outlined"
-            size="small"
-            sx={{
-              width: "400px",
-              marginTop: "20px",
-              backgroundColor: "white",
-              borderRadius: "10px",
-            }}
+            {/* LOẠI SẢN PHẨM */}
+
+            <FormControl fullWidth size="small" sx={{ mt: 2 }}>
+              <InputLabel id="type-label">Loại sản phẩm</InputLabel>
+              <Select
+                labelId="type-label"
+                value={value}
+                label="Loại sản phẩm"
+                onChange={(e) => setValue(e.target.value)}
+              >
+                {productData.map((item, index) => (
+                  <MenuItem key={index} value={item.name}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          {/* HÌNH ẢNH ĐẠI DIỆN */}
+          <Box
+            sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}
+          >
+            <Typography sx={{ color: "black", mt: 3 }}>
+              Hình ảnh đại diện
+            </Typography>
+            <UploadImage onFileSelect={handleImageUpload} />
+          </Box>
+
+          {/* LINK FILE GỐC */}
+
+          <FormField
+            label="Link File gốc"
+            name="link"
+            value={formData.link}
+            onChange={handleChange}
           />
-        </div>
 
-        <FormControl
-          size="small"
-          sx={{
-            marginTop: "20px",
-            width: "400px",
-          }}
-        >
-          <InputLabel id="combo-label">Chọn</InputLabel>
-          <Select
-            labelId="combo-label"
-            value={value}
-            label="Loại sản phẩm"
-            onChange={(e) => setValue(e.target.value)}
-          >
-            {productData.map((item, index) => (
-              <MenuItem key={index} value={item.name}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        {/* HÌNH ẢNH DEMO */}
+          {/* FULFILLMENT */}
 
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            sx={{ display: "flex", color: "black", alignItems: "flex-start" }}
-          >
-            Hình ảnh đại diện
-          </Typography>
-
-          <UploadImage onFileSelect={handleImageUpload} />
-        </div>
-
-        {/* LINK FILE GỐC */}
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            sx={{
-              display: "flex",
-              color: "black",
-              alignItems: "flex-start",
-            }}
-          >
-            Link File gốc
-          </Typography>
-
-          <TextField
-            type="text"
-            id="addproduct"
-            variant="outlined"
-            size="small"
-            sx={{
-              width: "400px",
-              marginTop: "20px",
-              backgroundColor: "white",
-              borderRadius: "10px",
-            }}
-          />
-        </div>
-
-        {/*FULFILLMENT TẠI*/}
-        <div
-          style={{
-            width: "400px",
-            marginTop: "20px",
-            display: "flex",
-            alignItems: "flex-start",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "black",
-            }}
-          >
-            Fulfillment tại
-          </Typography>
-
-          <FormControl
-            size="small"
-            sx={{
-              marginTop: "20px",
-              width: "400px",
-            }}
-          >
-            <InputLabel id="combo-label">Chọn</InputLabel>
+          <FormControl fullWidth size="small" sx={{ mt: 2 }}>
+            <InputLabel id="fulfill-label">Fulfillment tại</InputLabel>
             <Select
-              labelId="combo-label"
+              labelId="fulfill-label"
               value={value}
-              label="Loại sản phẩm"
+              label="Fulfillment tại"
               onChange={(e) => setValue(e.target.value)}
             >
-              <MenuItem value="">Tại Việt Nam</MenuItem>
-              <MenuItem value="">Tại kho USA</MenuItem>
+              <MenuItem value="vietnam">Tại Việt Nam</MenuItem>
+              <MenuItem value="usa">Tại kho USA</MenuItem>
             </Select>
           </FormControl>
-        </div>
 
-        {/* SỐ LƯỢNG */}
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            sx={{
-              display: "flex",
-              color: "black",
-              alignItems: "flex-start",
-            }}
-          >
-            Số lượng
-          </Typography>
+          {/* SỐ LƯỢNG */}
 
-          <TextField
-            type="text"
-            id="addproduct"
-            variant="outlined"
-            size="small"
-            sx={{
-              width: "400px",
-              marginTop: "20px",
-              backgroundColor: "white",
-              borderRadius: "10px",
-            }}
+          <FormField
+            label="Số lượng"
+            name="quantity"
+            value={formData.quantity}
+            onChange={handleChange}
           />
-        </div>
 
-        {/*NGƯỜI LÀM*/}
-        <div
-          style={{
-            width: "400px",
-            marginTop: "20px",
-            display: "flex",
-            alignItems: "flex-start",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "black",
-            }}
-          >
-            Người làm
-          </Typography>
+          {/* NGƯỜI LÀM */}
 
-          <FormControl
-            size="small"
-            sx={{
-              marginTop: "20px",
-              width: "400px",
-            }}
-          >
-            <InputLabel id="combo-label">Chọn</InputLabel>
+          <FormControl fullWidth size="small" sx={{ mt: 2 }}>
+            <InputLabel id="maker-label">Người làm</InputLabel>
             <Select
-              labelId="combo-label"
+              labelId="maker-label"
               value={value}
-              label="Loại sản phẩm"
+              label="Người làm"
               onChange={(e) => setValue(e.target.value)}
             >
-              <MenuItem value="shirt">Người 1</MenuItem>
-              <MenuItem value="patch">Người 2</MenuItem>
-              <MenuItem value="mug">Người 3</MenuItem>
+              <MenuItem value="person1">Người 1</MenuItem>
+              <MenuItem value="person2">Người 2</MenuItem>
+              <MenuItem value="person3">Người 3</MenuItem>
             </Select>
           </FormControl>
-        </div>
 
-        {/* NÚT THÊM SẢN PHẨM */}
-        <div
-          style={{
-            display: "flex",
-            marginTop: "30px",
-          }}
-        >
-          <button
-            // onClick={handleClick}
-            style={{
-              backgroundColor: "rgba(232, 67, 12, 0.88)",
-            }}
+          {/* NÚT THÊM */}
+
+          <Box
+            mt={3}
+            display="flex"
+            justifyContent={{ xs: "center", sm: "flex-start" }}
           >
-            Thêm SKU Design
-          </button>
-        </div>
+            <button
+              style={{
+                backgroundColor: "rgba(232, 67, 12, 0.88)",
+                color: "white",
+                fontWeight: "bold",
+                padding: "10px 20px",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+              }}
+            >
+              Thêm SKU Design
+            </button>
+          </Box>
+        </Grid>
       </Box>
     </>
   );

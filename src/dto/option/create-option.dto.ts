@@ -13,6 +13,14 @@ export interface CreateOptionDto {
   parentOpt?: {
     id: string;
   };
+  // parentOpt?: {
+  //   id: string;
+  //   code: string;
+  //   name: string;
+  //   note: string;
+  //   config: any;
+  //   orderNo: number;
+  // };
   image?: string;
   att1?: string;
   att2?: string;
