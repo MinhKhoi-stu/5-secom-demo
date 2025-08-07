@@ -15,7 +15,7 @@ export const adminRolesAPI = {
   findAll(
     findAllAdminRoleDto: FindAllAdminRoleDto
   ): Promise<PagingDataDto<AdminRoleDto>> {
-    return axiosClient.get("admin-roles", { params: findAllAdminRoleDto });
+    return axiosClient.get("role/find", { params: findAllAdminRoleDto });
   },
   findAllCompact(
     findAllAdminRoleDto: FindAllAdminRoleDto

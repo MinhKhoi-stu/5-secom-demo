@@ -3,13 +3,20 @@ import { ADMIN_USER_STATUS } from 'utils/enums';
 import { Yup } from 'utils/yup';
 
 export type CreateAdminUserDto = {
-  fullName: string;
+  id: string;
+  version?: number;
+  name: string;
+  address: string;
   email: string;
   password: string;
-  phoneNumber?: string;
+  phone?: string;
   birthday?: Date;
-  gender?: string;
-  adminRoleId?: number;
+  // gender?: string;
+  adminRoleId?: string;
+  // role: {"id": "adminRoleId"},
+  role: { id: string };
+  // orgUnit?: string;
+  orgUnit?: {id: string};
   status?: ADMIN_USER_STATUS;
 };
 

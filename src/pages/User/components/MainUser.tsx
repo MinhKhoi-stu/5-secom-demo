@@ -7,108 +7,157 @@ import {
   Avatar,
   Tabs,
   Tab,
-  Pagination,
+  Grid,
+  IconButton,
+  DialogContent,
+  Dialog,
 } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import { useFindAllAdminUsers } from "hooks/admin-users";
+import { useFindAllAdminRoles } from "hooks/admin-roles/useFindAllAdminRole";
+import PaginationWrapper from "components/common/PaginationWrapper";
+import AddUser from "./AddUser";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditUser from "./UpdateUser";
 import { AdminUserDto } from "dto/admin-users";
-import { FindAllAdminUserDto, useAllAdminUsers } from "hooks/admin-users";
-
-//---------------------------------------LÀM LẠI LOAD USER-------------------------------
-// const fakeUsers: FakeUser[] = userData;
+import { useDeleteAdminUsers } from "hooks/admin-users/useDeleteAdminUsers";
 
 const MainUser = () => {
-  const [users, setUsers] = useState<AdminUserDto[]>([]);
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate("add-user");
+  const deleteUser = useDeleteAdminUsers();
+  // const navigate = useNavigate();
+  const [selectedTab, setSelectedTab] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  // PAGINATION
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 3;
+
+  const { data, refetch } = useFindAllAdminUsers({
+    // keyword: searchKeyword,
+    codeOrName: searchKeyword,
+    roleId: selectedTab || undefined,
+    page: page - 1,
+    size: itemsPerPage,
+    // limit: 0
+  });
+
+  const totalItems = data?.totalElements ?? 0;
+  // const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalPages = data?.totalPages || 0;
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
   };
 
-  // NÀY LÀM QUERY--------------------------------------------------------------------------------
-  // const [selectedTab, setSelectedTab] = useState("");
-  // const { data, isLoading } = useAllAdminUsers({
-  //   pageIndex: 0,
-  //   pageSize: 100,
-  // });
+  // const handleClick = () => navigate("add-user");
 
-  // const users = data?.content || []; // content là mảng AdminUserDto
+  // ROLE FILTER
+  const { data: roleData } = useFindAllAdminRoles();
+  const RoleTabs = useMemo(() => {
+    const dynamicTabs =
+      roleData?.content.map((role) => ({
+        label: role.name,
+        value: role.id,
+      })) || [];
 
+    return [{ label: "Tất cả", value: "" }, ...dynamicTabs];
+  }, [roleData]);
+
+  //TÌM KIẾM
   // const filteredUsers = useMemo(() => {
-  //   return selectedTab === ""
-  //     ? users
-  //     : users.filter((user) => user.adminRole?.username === selectedTab);
-  // }, [users, selectedTab]);
+  //   if (!searchKeyword) return data?.content || [];
+  //   const keyword = searchKeyword.toLowerCase();
+  //   return (data?.content || []).filter((user) =>
+  //     [user.name, user.email, user.phone]
+  //       .filter(Boolean)
+  //       .some((field) => field?.toLowerCase().includes(keyword))
+  //   );
+  // }, [searchKeyword, data]);
 
-  // const params = {}; // có thể truyền thêm keyword, status nếu cần
+  // const newRoleId = filteredUsers[0]?.roleId;
 
-  // const { data, isLoading, isError } = useAllAdminUsers(params);
+  // const existsInTabs = RoleTabs.some(
+  //   (tab) => String(tab.value) === String(newRoleId)
+  // );
 
-  // const users = data?.content || [];
+  // useEffect(() => {
+  //   const user = filteredUsers[0];
+  //   const newRoleId = user?.roleId;
 
-  // const filteredUsers = useMemo(() => {
-  //   if (!selectedTab) return users;
-  //   return users.filter((user) => user.adminRole?.username === selectedTab);
-  // }, [users, selectedTab]);
+  //   if (!searchKeyword || !newRoleId) return;
 
-  // KHÔNG PHẢI QUERY--------------------------------------------------------------------------------
-  //kiềm tím----------------------------------------------------------------------------------------
-  // const [searchText, setSearchText] = useState("");
-
-  //bộ nọc chuyển tab--------------------------------------------------------------------------------
-
-  const [selectedTab, setSelectedTab] = useState("");
-
-  const RoleTabs = [
-    { label: "Tất cả", value: "" },
-    { label: "Admin", value: "admin" },
-    { label: "Vẽ 2D", value: "ve2d" },
-    { label: "Vẽ File Thêu", value: "theu" },
-    { label: "Sản Xuất", value: "sanxuat" },
-    { label: "Đóng gói", value: "donggoi" },
-    { label: "Cắt laser", value: "catlaser" },
-  ];
-
-  const filteredUsers = useMemo(() => {
-    if (!selectedTab) return users;
-    return users.filter((user) => user.adminRole?.username === selectedTab);
-  }, [users, selectedTab]);
-
-  // const filteredUsers = useMemo(() => {
-  //   const role = RoleTabs[selectedTab].value;
-  //   if (!role) return users;
-  //   // return users.filter((user) => user.adminRole?.username === role);
-  //   return users.filter((user) => user.adminRole?.username === role);
-  // }, [users, selectedTab]);
-
-  //load du sơ------------------------------------------------------------------------------------
-  const params: FindAllAdminUserDto = {};
+  //   const exists = RoleTabs.some(
+  //     (tab) => String(tab.value) === String(newRoleId)
+  //   );
+  //   if (!exists) return;
+  //   if (String(newRoleId) !== String(selectedTab)) {
+  //     setSelectedTab(String(newRoleId));
+  //     setPage(1);
+  //   }
+  // }, [filteredUsers, searchKeyword, RoleTabs]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await useAllAdminUsers(params);
-      // console.log("RESPONSE:", res);
-      setUsers(res);
-    };
-    fetchData();
-  }, []);
+    setPage(1);
+  }, [searchKeyword]);
 
-  // const findAllUser = async () => {
-  //   // console.log(await useAllAdminUsers(params));
-  //   const res = await useAllAdminUsers(params);
-  //   console.log(res);
-  //   setUsers(res);
-  // };
-  // useEffect(() => {
-  //   // findAllUser();
-  // }, [users, setUsers, findAllUser]);
+  const normalizeText = (str: string) => //chuẩn hóa
+    str
+      ?.normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") 
+      .toLowerCase() || "";
 
+  const filteredUsers = useMemo(() => {
+    if (!data?.content) return [];
+
+    const keyword = searchKeyword.trim().toLowerCase();
+    if (!keyword) return data.content;
+
+    return data.content.filter((user) =>
+      [user.name, user.email, user.phone]
+        .filter((field): field is string => Boolean(field))
+        // .some((field) => field.toLowerCase().includes(keyword))
+        .some((field) => normalizeText(field).includes(keyword))
+    );
+  }, [data, searchKeyword]);
+
+  //MỞ DIALOG ADD USER
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const [openDialogEdit, setOpenDialogEdit] = useState(false);
+  const [editingUser, setEditingUser] = useState<AdminUserDto | null>(null);
+
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
+
+  const handleOpenDialogEdit = (user: AdminUserDto) => {
+    setEditingUser({
+      ...user,
+      roleId: user.roleId ? String(user.roleId) : "",
+    });
+    setOpenDialogEdit(true);
+  };
+
+  const handleCloseDialogEdit = () => {
+    setEditingUser(null);
+    setOpenDialogEdit(false);
+  };
+
+  //HANDLE DELETE
+  const handleDelete = (id: string, version: number) => {
+    if (confirm("Bạn có chắc muốn xóa user này?")) {
+      deleteUser.mutate({ id, version });
+    }
+  };
   return (
-    <>
-      {/* TIÊU ĐỀ */}
+    <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
       <Typography
         sx={{
-          display: "flex",
           color: "black",
           fontWeight: "bold",
           fontSize: "20px",
@@ -120,23 +169,23 @@ const MainUser = () => {
 
       <Box
         sx={{
-          width: "1180px",
-          height: "60vh",
-          // height: "flex",
+          height: "auto",
           backgroundColor: "white",
-          padding: 3,
+          padding: { xs: 2, sm: 3 },
           borderRadius: "16px",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {/*TÌM KIẾM*/}
+        {/* TÌM LIẾM */}
         <TextField
           type="text"
           placeholder="Tìm kiếm User"
           variant="outlined"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
           sx={{
             width: "100%",
-            marginBottom: 3,
+            mb: 3,
             backgroundColor: "white",
             borderRadius: "10px",
           }}
@@ -149,93 +198,139 @@ const MainUser = () => {
           }}
         />
 
-        {/* CÁC TAB GIẢ*/}
-        <Tabs
-          value={selectedTab}
-          onChange={(e, newValue) => setSelectedTab(newValue)}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            mb: 3,
-            "& .MuiTabs-indicator": {
-              backgroundColor: "red", // ✅ màu gạch chân
-            },
-          }}
-        >
-          {RoleTabs.map((tab) => (
-            <Tab
-              key={tab.value}
-              label={tab.label}
-              value={tab.value}
-              sx={{
-                color: "black",
-                fontWeight: "bold",
-                "&.Mui-selected": {
-                  color: "red",
+        {/* TABS CÁC ROLE */}
+        <Box sx={{ overflowX: "auto" }}>
+          <Tabs
+            // value={selectedTab}
+            value={String(selectedTab)}
+            onChange={(e, newValue) => {
+              setSelectedTab(newValue);
+              setPage(1);
+            }}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              mb: 3,
+              "& .MuiTabs-indicator": {
+                backgroundColor: "red",
+              },
+              "& .MuiTabs-scrollButtons": {
+                color: "red",
+                "&.Mui-disabled": {
+                  opacity: 0.3,
+                  color: "orange",
                 },
-              }}
-            />
-          ))}
-        </Tabs>
-
-        {/*DANH SÁCH USER GIẢ*/}
-        <Box
-          sx={{
-            display: "flex",
-            height: "30vh",
-            flexWrap: "wrap",
-            gap: 2,
-            justifyContent: "flex-start",
-          }}
-        >
-          {filteredUsers?.map((user, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: "25%",
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-              }}
-            >
-              <Avatar
-                src={"/img/flag/VietNamflag.jpg"}
-                sx={{ width: 56, height: 56 }}
-              />
-              <Box
+              },
+            }}
+          >
+            {RoleTabs.map((tab) => (
+              <Tab
+                key={tab.value}
+                label={tab.label}
+                // value={tab.value}
+                value={String(tab.value)}
                 sx={{
                   color: "black",
-                  display: "flex",
-                  flexDirection: "column",
-                  textAlign: "left",
+                  fontWeight: "bold",
+                  "&.Mui-selected": {
+                    color: "red",
+                  },
+                  "&:focus": {
+                    outline: "none",
+                  },
                 }}
-              >
-                <Typography fontWeight="bold">{user.name}</Typography>
-                <Typography fontSize={13}>{user.email}</Typography>
-                <Typography fontSize={13}>{user.phone}</Typography>
-              </Box>
-            </Box>
-          ))}
+              />
+            ))}
+          </Tabs>
         </Box>
 
-        {/* Pagination */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: 2,
-          }}
-        >
-          <Typography color="black" variant="body2">
-            Showing 1 to 3 of 6 entries
-          </Typography>
-          <Pagination count={3} page={1} variant="outlined" shape="rounded" />
-        </Box>
+        {/* DANH SÁCH USER */}
+        <Grid container spacing={2} minHeight="300px">
+          {/* {(data?.content || []).map((user, index) => ( */}
+          {filteredUsers.map((user) => (
+            // <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+            <Grid key={user.id} item xs={12} sm={6} md={4} lg={3}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  padding: 2,
+                  borderRadius: 2,
+                  border: "1px solid #eee",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Avatar
+                  src={"/img/flag/VietNamflag.jpg"}
+                  sx={{ width: 56, height: 56 }}
+                />
+                <Box
+                  sx={{
+                    color: "black",
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left",
+                  }}
+                >
+                  <Typography fontWeight="bold">{user.name}</Typography>
+                  <Typography fontSize={13}>{user.email}</Typography>
+                  <Typography fontSize={13}>{user.phone}</Typography>
+                </Box>
+
+                {/* BÊN PHẢI: ICON HÀNH ĐỘNG */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    sx={{
+                      "&:focus": {
+                        outline: "none",
+                      },
+                    }}
+                    onClick={() => handleOpenDialogEdit(user)}
+                  >
+                    {/* <i className="fas fa-edit" /> */}
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    sx={{
+                      "&:focus": {
+                        outline: "none",
+                      },
+                    }}
+                    onClick={() => handleDelete(user.id, user.version ?? 0)}
+                  >
+                    {/* <i className="fas fa-trash" /> */}
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* PAGINATION */}
+        <PaginationWrapper
+          page={page}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          onChange={handlePageChange}
+        />
       </Box>
 
       {/* NÚT THÊM USER */}
-      <Box mt={2}>
+      {/* <Box mt={2}>
         <Button
           onClick={handleClick}
           variant="contained"
@@ -248,8 +343,78 @@ const MainUser = () => {
         >
           THÊM USER
         </Button>
+      </Box> */}
+
+      {/* NÚT THÊM USER */}
+      <Box mt={2}>
+        <Button
+          onClick={handleOpenDialog}
+          variant="contained"
+          sx={{
+            display: "flex",
+            backgroundColor: "black",
+            borderRadius: 2,
+            alignItems: "flex-start",
+          }}
+        >
+          THÊM USER
+        </Button>
       </Box>
-    </>
+
+      {/* POPUP ADD USER */}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+        scroll="body"
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            p: 2,
+            backgroundColor: "#f9f9f9",
+          },
+        }}
+      >
+        <DialogContent>
+          <AddUser onSuccess={handleCloseDialog} selectedRoleId={selectedTab} />
+        </DialogContent>
+      </Dialog>
+
+      {/* POPUP EDIT USER */}
+      <Dialog
+        open={openDialogEdit}
+        onClose={handleCloseDialogEdit}
+        maxWidth="md"
+        fullWidth
+        scroll="body"
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            p: 2,
+            backgroundColor: "#f9f9f9",
+          },
+        }}
+      >
+        <DialogContent>
+          {/* <EditUser onSuccess={handleCloseDialogEdit} user={editingUser} /> */}
+          {/* <EditUser
+            user={editingUser}
+            onSuccess={() => {
+              setOpenDialog(false);
+              refetch();
+            }}
+          /> */}
+          <EditUser
+            user={editingUser}
+            onSuccess={() => {
+              setOpenDialogEdit(false);
+              refetch();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+    </Box>
   );
 };
 

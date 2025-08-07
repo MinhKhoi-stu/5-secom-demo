@@ -1,0 +1,23 @@
+export type ParentOptDto = {
+  id: string;
+  code: string;
+  name: string;
+  note?: string | null;
+  config?: string | null;
+  orderNo?: number;
+};
+
+export type OptionDto = {
+  id: string;
+  code: string;
+  name: string;
+  note: string | null;
+  image: string | null;
+  orderNo: number;
+  parentOpt: ParentOptDto | null;
+  att1: string | null;
+  att2: string | null;
+  att3: string | null;
+  att4: string | null;
+  att5: string | null;
+};

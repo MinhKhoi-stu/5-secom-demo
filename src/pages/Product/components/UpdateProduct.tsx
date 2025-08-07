@@ -1,33 +1,46 @@
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import UploadImage from "components/common/UploadImage";
-import { useRef, useState } from "react";
+import { OptionDto } from "dto/option/option.dto";
+import { useRef, useState, useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { FormField } from "pages/User/components/FormField";
 
-const AddProduct = () => {
+interface UpdateProductProps {
+  mode: "create" | "update";
+  product?: OptionDto | null;
+  open: boolean;
+  onClose: () => void;
+}
+
+const UpdateProduct: React.FC<UpdateProductProps> = ({
+  mode,
+  product,
+  open,
+  onClose,
+}) => {
   const [fileName, setFileName] = useState("hinhanh.png");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
 
-  const handleButtonClick = () => {
-    inputRef.current?.click();
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
+  useEffect(() => {
+    if (mode === "update" && product) {
+      setProductName(product.name || "");
+      setProductCode(product.code || "");
+      setFileName(product.image || "hinhanh.png");
+    } else {
+      setProductName("");
+      setProductCode("");
+      setFileName("hinhanh.png");
     }
-  };
+  }, [mode, product, open]);
 
   const handleImageUpload = (file: File) => {
     console.log("Ảnh đã chọn:", file);
   };
 
   //THÊM NHÓM
-  const [sizeGroups, setSizeGroups] = useState<number[]>([1]);
+  const [sizeGroups, setSizeGroups] = useState<number[]>([1]); // ban đầu 1 nhóm
 
   const addSizeGroup = () => {
     setSizeGroups((prev) => [...prev, prev.length + 1]);
@@ -45,63 +58,68 @@ const AddProduct = () => {
           display: "flex",
           color: "black",
           fontWeight: "bold",
+          mb: 2,
         }}
       >
-        THÊM SẢN PHẨM
+        {mode === "update" ? "SỬA SẢN PHẨM" : "THÊM SẢN PHẨM"}
       </Typography>
-
-      {/* THÊM SẢN PHẨM*/}
       <Box
         sx={{
-          // width: "1180px",
-          width: "flex",
-          height: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "12px",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {/* THẺ INPUT TÊN SẢN PHẨM */}
-        <div
-          style={{
+        {/* INPUT TÊN SẢN PHẨM */}
+        <Box
+          sx={{
             display: "flex",
             flexDirection: "column",
+            alignItems: "flex-start",
+            mb: 3,
           }}
         >
-          <FormField
-            label="Tên sản phẩm"
-            name="productName"
+          <Typography sx={{ color: "black", mr: 2 }}>Tên sản phẩm</Typography>
+          <TextField
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
+            type="text"
+            size="small"
+            sx={{
+              width: "400px",
+              backgroundColor: "white",
+              borderRadius: "10px",
+            }}
           />
+        </Box>
 
-          {/* INPUT MÃ SẢN PHẨM */}
-          <FormField
-            label="Mã sản phẩm"
-            name="productCode"
-            value={productCode}
-            onChange={(e) => setProductCode(e.target.value)}
-          />
-        </div>
-
-        {/* THẺ INPUT HÌNH ẢNH SẢN PHẨM */}
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            flexDirection: "column",
+        <Box
+          sx={{
+            mb: 3,
           }}
         >
-          <Typography
-            sx={{ display: "flex", color: "black", alignItems: "flex-start" }}
-          >
+          <Typography sx={{ color: "black", mr: 2 }}>Mã sản phẩm</Typography>
+          <TextField
+            value={productCode}
+            onChange={(e) => setProductCode(e.target.value)}
+            type="text"
+            size="small"
+            sx={{
+              width: "400px",
+              backgroundColor: "white",
+              borderRadius: "10px",
+            }}
+          />
+        </Box>
+
+        {/* INPUT HÌNH ẢNH */}
+        <Box sx={{ mb: 3 }}>
+          <Typography sx={{ color: "black", mb: 1 }}>
             Hình ảnh đại diện
           </Typography>
-
-          {/* NÚT CHỌN TỆP */}
           <UploadImage onFileSelect={handleImageUpload} />
-        </div>
+        </Box>
 
         {/* SIZE OPTIONS */}
         {sizeGroups.map((groupIndex, idx) => (
@@ -167,33 +185,13 @@ const AddProduct = () => {
           </Box>
         ))}
 
-        {/* NÚT THÊM SẢN PHẨM */}
-        <div
-          style={{
-            display: "flex",
-            marginTop: "30px",
-          }}
-        >
-          <Button
-            sx={{
-              backgroundColor: "red",
-              color: "white",
-              fontWeight: "bold",
-              textTransform: "none",
-              borderRadius: "10px",
-              px: 3,
-              py: 1.5,
-              boxShadow: 2,
-              "&:hover": { backgroundColor: "#ffa07a" },
-            }}
-            // onClick={handleClick}
-          >
-            Thêm sản phẩm
-          </Button>
-        </div>
+        {/* BUTTON LƯU */}
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
+          <button>Lưu</button>
+        </Box>
       </Box>
     </>
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;

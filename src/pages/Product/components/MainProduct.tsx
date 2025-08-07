@@ -1,108 +1,267 @@
-import { Box, Typography, Button, Avatar } from "@mui/material";
-import {productData} from "../../../data";
-import { useNavigate } from "react-router-dom";
-import {ProductList} from "types/OrderTable";
+import {
+  Box,
+  Typography,
+  Button,
+  Avatar,
+  CircularProgress,
+  Grid,
+  DialogContent,
+  Dialog,
+  IconButton,
+} from "@mui/material";
+import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
+import { useState } from "react";
+import AddProduct from "./AddProduct";
+import PaginationWrapper from "components/common/PaginationWrapper";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { OptionDto } from "dto/option/option.dto";
+import UpdateProduct from "./UpdateProduct";
 
 const MainProduct = () => {
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate("add-product");
+  //MỞ DIALOG ADD PRODUCT
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
+
+  // const [openUpdate, setOpenUpdate] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<OptionDto | null>(
+    null
+  );
+
+  const handleOpenUpdate = (product: OptionDto) => {
+    setSelectedProduct(product);
+    setOpenUpdateDialog(true);
   };
-  const prod : ProductList[] = productData;
+
+  const handleCloseUpdate = () => {
+    setSelectedProduct(null);
+    setOpenUpdateDialog(false);
+  };
+
+  //PAGINATION
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 6;
+
+  const { data, isLoading, isError } = useFindOptionsByGroup(
+    "products",
+    page - 1,
+    itemsPerPage
+  );
+
+  const totalItems = data?.totalElements ?? 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
 
   return (
     <>
-      <Typography
-        sx={{
-          display: "flex",
-          color: "black",
-          fontWeight: "bold",
-          fontSize: "20px",
-          mb: 2,
-        }}
-      >
-        QUẢN LÝ SẢN PHẨM
-      </Typography>
-
-      {/* BOC CHỨA SẢN PHẨM */}
-      <Box
-        sx={{
-          width: 'flex',
-          height: 'flex',
-          // width: "1180px",
-          backgroundColor: "white",
-          padding: 3,
-          borderRadius: "16px",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-        }}
-      >
+      <Box sx={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
         <Typography
-          variant="h6"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ 
-            display: 'flex',
-            color: "black", 
-            mb: 3,
-            alignItems:'flex-start' 
+          sx={{
+            fontWeight: "bold",
+            fontSize: "20px",
+            mb: 2,
+            display: "flex",
+            color: "black",
           }}
         >
-          Sản Phẩm hiện có
+          QUẢN LÝ SẢN PHẨM
         </Typography>
 
-        {/* DANH SÁCH SẢN PHẨM*/}
         <Box
           sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 2,
+            backgroundColor: "white",
+            p: { xs: 2, sm: 3 },
+            borderRadius: "16px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
           }}
         >
-          {prod.map((product, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: "calc(50% - 8px)",
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                color: "black",
-              }}
-            >
-              <Avatar
-                src={product.img}
-                alt={product.name}
-                variant="rounded"
-                sx={{ width: 40, height: 40 }}
-              />
-              <Typography>{product.name}</Typography>
-            </Box>
-          ))}
-        </Box>
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            gutterBottom
+            sx={{
+              display: "flex",
+              color: "black",
+              mb: 3,
+              alignItems: "flex-start",
+            }}
+          >
+            Sản phẩm hiện có
+          </Typography>
 
-        {/* NÚT THÊM SẢN PHẨM */}
+          {isLoading && (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
+              <CircularProgress />
+            </Box>
+          )}
+
+          {isError && (
+            <Typography color="error">Lỗi khi tải sản phẩm</Typography>
+          )}
+
+          {data && (
+            <>
+              {/* <Grid container spacing={2}> */}
+              <Grid container columnSpacing={12} rowSpacing={2}>
+                {data.content.map((product) => (
+                  <Grid
+                    key={product.id}
+                    item
+                    xs={12}
+                    sm={6}
+                    sx={{
+                      flexBasis: { xs: "100%", sm: "40%" }, //để 50 là tràn đó ba
+                      maxWidth: { xs: "100%", sm: "40%" },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        padding: 2,
+                        borderRadius: 2,
+                        border: "1px solid #eee",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Avatar
+                        src={product.image || ""}
+                        alt={product.name}
+                        variant="rounded"
+                        sx={{ width: 56, height: 56 }}
+                      />
+                      <Typography sx={{ color: "black", fontWeight: "500" }}>
+                        {product.name}
+                      </Typography>
+
+                      {/* BÊN PHẢI: ICON HÀNH ĐỘNG */}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 1,
+                          alignItems: "center",
+                        }}
+                      >
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          sx={{
+                            "&:focus": {
+                              outline: "none",
+                            },
+                          }}
+                          onClick={() => handleOpenUpdate(product)}
+                        >
+                          {/* <i className="fas fa-edit" /> */}
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          color="error"
+                          sx={{
+                            "&:focus": {
+                              outline: "none",
+                            },
+                          }}
+                          onClick={() => {
+                            /* handle delete */
+                          }}
+                        >
+                          {/* <i className="fas fa-trash" /> */}
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </>
+          )}
+
+          {/* PAGINATION */}
+          <PaginationWrapper
+            page={page}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage}
+            onChange={handlePageChange}
+          />
+        </Box>
         <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 5 }}>
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "red",
+              backgroundColor: "black",
               color: "white",
               fontWeight: "bold",
               textTransform: "none",
               borderRadius: "10px",
-              paddingX: 3,
-              paddingY: 1.5,
-              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
-              "&:hover": {
-                backgroundColor: "#ffa07a",
-              },
+              px: 3,
+              py: 1.5,
+              boxShadow: 2,
+              // "&:hover": { backgroundColor: "#ffa07a" },
             }}
-            onClick={handleClick}
+            onClick={handleOpenDialog}
           >
             THÊM SẢN PHẨM
           </Button>
         </Box>
       </Box>
+
+      {/* POPUP ADD PRODUCT */}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+        scroll="body"
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            p: 2,
+            backgroundColor: "#f9f9f9",
+          },
+        }}
+      >
+        <DialogContent>
+          <AddProduct />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={openUpdateDialog}
+        onClose={handleCloseUpdate}
+        maxWidth="md"
+        fullWidth
+        scroll="body"
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            p: 2,
+            backgroundColor: "#f9f9f9",
+          },
+        }}
+      >
+        <DialogContent>
+          <UpdateProduct
+            open={openUpdateDialog}
+            onClose={handleCloseUpdate}
+            product={selectedProduct}
+            mode={"update"}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

@@ -11,10 +11,10 @@ import {
   Chip,
 } from "@mui/material";
 import { useState } from "react";
-import {themeStyles} from "themes/styles";
+import { themeStyles } from "themes/styles";
 import PaginationWrapper from "components/common/PaginationWrapper";
-import {Order} from "types/OrderTable";
-import {mockOrders} from "../../../../data";
+import { Order } from "types/OrderTable";
+import { mockOrders } from "../../../../data";
 
 const OrderTable = () => {
   const orders: Order[] = mockOrders;
@@ -88,8 +88,8 @@ const OrderTable = () => {
                         : row.status.includes("Đợi")
                         ? themeStyles.warning
                         : themeStyles.successDark,
-                        // : themeStyles.grey400,
-                      color: "#fff", 
+                      // : themeStyles.grey400,
+                      color: "#fff",
                       fontWeight: "bold",
                     }}
                     size="small"
