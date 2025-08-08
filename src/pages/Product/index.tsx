@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import AddProduct from "./components/AddProduct";
+import AddProduct from "./components/CreateProduct";
 import MainProduct from "./components/MainProduct";
 
 const Product = () => {

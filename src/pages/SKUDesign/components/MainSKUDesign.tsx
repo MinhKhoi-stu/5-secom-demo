@@ -260,17 +260,29 @@ import {
   TableRow,
   TextField,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useFindOptionGroup } from "hooks/option-group/useFindAllOptionGroup";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
+import AddSKUDesign from "./CreateSKUDesign";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useDeleteOption } from "hooks/option/useDeleteOption";
+import UpdateSKUDesign from "./UpdateSKUDesign";
+import { OptionDto } from "dto/option/option.dto";
+import CreateSKUDesign from "./CreateSKUDesign";
+import { useFindAllOrgunit } from "hooks/orgunit/useFindAllOrgunit";
 
 const MainSKUDesign = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [previewImg, setPreviewImg] = useState<string>("");
-  const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
 
   const optionGroupCode = "skudesigns";
   const page = 0;
@@ -284,9 +296,8 @@ const MainSKUDesign = () => {
   );
   const options = data?.content || [];
 
-  const handleClickAdd = () => {
-    navigate("add-skudesign");
-  };
+  const handleOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
 
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement>,
@@ -303,8 +314,50 @@ const MainSKUDesign = () => {
 
   const open = Boolean(anchorEl);
 
+  //ICON EDIT DELETE
+  //EDIT
+  // State lưu mở/đóng và data row
+  const [openDialogEdit, setOpenDialogEdit] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<OptionDto | null>(null);
+
+  const handleOpenDialogEdit = (row: OptionDto) => {
+    setSelectedRow(row);
+    setOpenDialogEdit(true);
+  };
+
+  const handleCloseDialogEdit = () => {
+    setSelectedRow(null);
+    setOpenDialogEdit(false);
+  };
+
+  //DELETE
+  const { mutate: deleteOption } = useDeleteOption();
+  const handleDelete = (id: string, version: number) => {
+    if (window.confirm("Bạn có chắc muốn xóa SKU Design này không?")) {
+      deleteOption({ id, version });
+    }
+  };
+
+  //LẤY name ORGUNIT BẰNG id
+  //CÓ LẼ BE ĐÃ THAY ĐỔI GÌ ĐÓ LÀM CHO KO CÒN LOAD LÊN BẰNG ID ĐƯỢC NỮA-------------------------------------
+  const { data: orgUnitData, isLoading: loadingOrgUnits } = useFindAllOrgunit({
+    orgUnitId: "",
+    page: 0,
+    size: 50,
+  });
+  const orgUnits = orgUnitData?.content || [];
+
+  const getOrgUnitNameById = (id: string) => {
+    const unit = orgUnits.find((ou) => ou.id === id);
+    return unit ? unit.namePath?.join(" / ") || unit.name : id || "-";
+  };
+
   return (
-    <Grid container spacing={2} sx={{ mt: 3, display: "flex", flexDirection: "column" }}>
+    <Grid
+      container
+      spacing={2}
+      sx={{ mt: 3, display: "flex", flexDirection: "column" }}
+    >
       {/* Tìm kiếm */}
       <Grid item xs={12}>
         <TextField
@@ -417,9 +470,43 @@ const MainSKUDesign = () => {
 
                       <TableCell>{row.parentOpt?.name || "-"}</TableCell>
                       <TableCell>-</TableCell>
-                      <TableCell>{row.att4 || "-"}</TableCell>
-                      <TableCell>{row.att2 || "-"}</TableCell>
-                      <TableCell>-</TableCell>
+                      {/* <TableCell>{row.att4 || "-"}</TableCell> */}
+                      <TableCell>
+                        {getOrgUnitNameById(row.att4 || "")}
+                      </TableCell>
+                      <TableCell>{row.att3}</TableCell>
+                      <TableCell>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 1,
+                            alignItems: "center",
+                          }}
+                        >
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            sx={{ "&:focus": { outline: "none" } }}
+                            onClick={() => handleOpenDialogEdit(row)}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+
+                          <IconButton
+                            size="small"
+                            color="error"
+                            sx={{
+                              "&:focus": { outline: "none" },
+                            }}
+                            onClick={() =>
+                              handleDelete(row.id, row.version ?? 0)
+                            }
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -459,25 +546,83 @@ const MainSKUDesign = () => {
         </Paper>
       </Grid>
 
-      {/* Button thêm SKU */}
-        <Box display="flex" justifyContent={{ xs: "center", sm: "flex-start" }}>
-          <Button
-            onClick={handleClickAdd}
-            variant="contained"
-            sx={{
-              backgroundColor: "#333",
-              borderRadius: "8px",
-              px: 3,
-              py: 1,
-              fontWeight: "bold",
-              ":hover": {
-                backgroundColor: "#555",
-              },
-            }}
-          >
-            THÊM SKU DESIGN
-          </Button>
-        </Box>
+      {/* Button mở Dialog */}
+      <Box display="flex" justifyContent={{ xs: "center", sm: "flex-start" }}>
+        <Button
+          onClick={handleOpenDialog}
+          variant="contained"
+          sx={{
+            backgroundColor: "#333",
+            borderRadius: "8px",
+            px: 3,
+            py: 1,
+            fontWeight: "bold",
+            ":hover": {
+              backgroundColor: "#555",
+            },
+          }}
+        >
+          THÊM SKU DESIGN
+        </Button>
+      </Box>
+
+      {/* Dialog chứa AddSKUDesign */}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="md"
+        fullWidth
+        scroll="body"
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            p: 2,
+            backgroundColor: "#f9f9f9",
+          },
+        }}
+      >
+        {/* <IconButton
+          aria-label="close"
+          onClick={handleCloseDialog}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton> */}
+
+        <DialogContent dividers>
+          <CreateSKUDesign onClose={handleCloseDialog} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog chứa UpdateSKUDesign */}
+      <Dialog
+        open={openDialogEdit}
+        onClose={handleCloseDialogEdit}
+        maxWidth="md"
+        fullWidth
+        scroll="body"
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            p: 2,
+            backgroundColor: "#f9f9f9",
+          },
+        }}
+      >
+        <DialogContent dividers>
+          {selectedRow && (
+            <UpdateSKUDesign
+              data={selectedRow}
+              onClose={handleCloseDialogEdit}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Grid>
   );
 };

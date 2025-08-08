@@ -7,7 +7,10 @@ export const QUERY_KEY = {
   FIND_ALL: "FIND_ALL_ADMIN_ROLES",
 };
 
-export function useFindAllAdminRoles(params: FindAllAdminRoleDto = {}) {
+export function useFindAllAdminRoles(params: FindAllAdminRoleDto = {
+  page: 0,
+  size: 0
+}) {
   return useQuery<PagingDataDto<AdminRoleDto>>({
     queryKey: [QUERY_KEY.FIND_ALL, params],
     queryFn: () => adminRolesAPI.findAll(params),

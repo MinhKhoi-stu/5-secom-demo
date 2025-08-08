@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainSKUDesign from "./components/MainSKUDesign";
-import AddSKUDesign from "./components/AddSKUDesign";
+import AddSKUDesign from "./components/CreateSKUDesign";
 
 const SKUDesign = () => {
   return (

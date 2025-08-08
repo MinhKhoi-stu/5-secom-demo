@@ -1,5 +1,5 @@
 import axiosClient from "utils/axios-client";
-import { PagingDataDto } from "dto/common";
+import { DefaultResponseDto, PagingDataDto } from "dto/common";
 import { OptionGroupDto } from "dto/option-group/option-group.dto";
 import { FindAllOptionDto } from "dto/option/find-all-option.dto";
 import { OptionDto } from "dto/option/option.dto";
@@ -20,6 +20,12 @@ export const optionAPI = {
     });
   },
   createOption(data: CreateOptionDto): Promise<OptionDto> {
-    return axiosClient.post("option", data);
+    return axiosClient.post<OptionDto>("option", data).then((res) => res.data);
+  },
+  deleteOption(id: string, version: number): Promise<DefaultResponseDto> {
+    // return axiosClient.delete(`option/${id}`);
+    return axiosClient.delete("option", {
+      params: { id, version },
+    });
   },
 };

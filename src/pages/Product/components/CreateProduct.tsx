@@ -14,11 +14,11 @@ import { useRef, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { FormField } from "pages/User/components/FormField";
-import { useFindOptionGroupByCodeOrName } from "hooks/option-group/useFindOptionGroupByCodeOrName";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useCreateOption } from "hooks/option/useCreateOption";
+import { CreateOptionDto } from "dto/option/create-option.dto";
 
-const AddProduct = () => {
+const CreateProduct = ({ onClose }: { onClose?: () => void }) => {
   const [fileName, setFileName] = useState("hinhanh.png");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [productName, setProductName] = useState("");
@@ -26,8 +26,13 @@ const AddProduct = () => {
   // const { data: productOptionGroup, isLoading } =
   //   useFindOptionGroupByCodeOrName("products");
 
-  const { data: productOptionGroup, isLoading } =
-    useFindOptionGroupByCodeOrName("products");
+  const { data: productOption, isLoading } = useFindOptionsByGroup(
+    "products",
+    0,
+    50
+  );
+
+  //UPLOAD ẢNH MÒ
   const handleButtonClick = () => {
     inputRef.current?.click();
   };
@@ -43,14 +48,14 @@ const AddProduct = () => {
     console.log("Ảnh đã chọn:", file);
   };
 
-  //THÊM NHÓM
+  //THÊM NHÓM SIZE
   const [sizeGroups, setSizeGroups] = useState([{ sizeCode: "" }]);
-  // THÊM
+  // ADD
   const addSizeGroup = () => {
     setSizeGroups((prev) => [...prev, { sizeCode: "" }]);
   };
 
-  //XÓA
+  //DELETE
   const removeSizeGroup = (index: number) => {
     setSizeGroups((prev) => prev.filter((_, i) => i !== index));
   };
@@ -65,73 +70,67 @@ const AddProduct = () => {
   };
 
   //BUTTON ADD
-  // const handleAddProduct = () => {
-  //   if (!productOptionGroup) return;
+  const { mutateAsync: createOption } = useCreateOption(
+    "5r2izQqBvjb6w6N59Lce4g==",
+    0,
+    50
+  );
+  const { data: stateTestOptionGroup } = useFindOptionsByGroup(
+    "state-test",
+    0,
+    50
+  );
 
-  //   const payload = {
-  //     name: productName,
-  //     code: productCode,
-  //     optionGroup: { id: productOptionGroup.id },
-  //     // thêm các trường khác (image, sizes...) nếu có
-  //   };
-
-  //   console.log("Payload gửi lên BE:", payload);
-  //   // Gọi API tạo sản phẩm ở đây
-  // };
-
-  const { mutateAsync: createOption } = useCreateOption();
-  const { data: stateTestOptionGroup } =
-    useFindOptionGroupByCodeOrName("state-test");
-
+  const createOptionMutation = useCreateOption(
+    "5r2izQqBvjb6w6N59Lce4g==",
+    0,
+    50
+  );
   const handleAddProduct = async () => {
     try {
-      if (!productOptionGroup || !stateTestOptionGroup) return;
+      if (!productOption || !stateTestOptions) return;
+
+      const optionGroupId = "5r2izQqBvjb6w6N59Lce4g==";
 
       const productPayload = {
         name: productName,
         code: productCode,
         optionGroup: {
-          id: productOptionGroup.id,
+          id: productOption.id,
         },
       };
 
-      const createdProduct = await createOption(productPayload);
+      const createdProduct = await createOptionMutation.mutateAsync(
+        productPayload
+      );
+
       const parentOpt = {
-        id: createdProduct.id,
-        code: createdProduct.code,
-        name: createdProduct.name,
-        note: createdProduct.note,
-        config: createdProduct.config,
-        orderNo: createdProduct.orderNo,
+        id: createdProduct!.id,
       };
 
       for (const group of sizeGroups) {
         if (!group.sizeCode) continue;
 
-        const sizePayload = {
-          name: group.sizeCode,
+        const sizePayload: CreateOptionDto = {
           code: group.sizeCode,
-          optionGroup: {
-            id: stateTestOptionGroup.id,
-          },
+          name: group.sizeCode,
+          optionGroup: { id: optionGroupId }, // dùng đúng key 'optionGroup'
           parentOpt,
         };
 
-        await createOption(sizePayload);
+        await createOptionMutation.mutateAsync(sizePayload);
       }
 
-      console.log("Đã tạo sản phẩm và các size thành công.");
-      // TODO: Reset form hoặc hiện thông báo
+      console.log("Thành công.");
     } catch (err) {
-      console.error("Lỗi khi tạo sản phẩm:", err);
+      console.error("Lỗi:", err);
     }
   };
 
-  //STATE-TEST
+  //LOAD STATE-TEST
 
   const { data: stateTestOptions, isLoading: isStateTestLoading } =
     useFindOptionsByGroup("state-test", 0, 50);
-
   const [selectedOption, setSelectedOption] = useState("");
 
   return (
@@ -203,7 +202,7 @@ const AddProduct = () => {
         {/* SIZE OPTIONS */}
         {sizeGroups.map((groupIndex, idx) => (
           <Box
-            // key={groupIndex}
+            key={groupIndex}
             sx={{
               mt: 3,
               display: "flex",
@@ -306,4 +305,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default CreateProduct;

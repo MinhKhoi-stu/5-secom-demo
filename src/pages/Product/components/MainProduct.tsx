@@ -11,13 +11,14 @@ import {
 } from "@mui/material";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useEffect, useState } from "react";
-import AddProduct from "./AddProduct";
+import AddProduct from "./CreateProduct";
 import PaginationWrapper from "components/common/PaginationWrapper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { OptionDto } from "dto/option/option.dto";
 import UpdateProduct from "./UpdateProduct";
 import { useFindOptionGroupByCodeOrName } from "hooks/option-group/useFindOptionGroupByCodeOrName";
+import CreateProduct from "./CreateProduct";
 
 const MainProduct = () => {
   //MỞ DIALOG ADD PRODUCT
@@ -252,7 +253,9 @@ const MainProduct = () => {
         }}
       >
         <DialogContent>
-          <AddProduct />
+          <CreateProduct 
+          onClose={handleCloseDialog} 
+          />
         </DialogContent>
       </Dialog>
 

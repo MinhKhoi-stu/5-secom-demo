@@ -32,7 +32,8 @@ export function FormField({
         size="small"
         variant="outlined"
         sx={{
-          width: "400px",
+          // width: "400px",
+          width: "flex",
           mt: 2,
           backgroundColor: "white",
           borderRadius: "10px",

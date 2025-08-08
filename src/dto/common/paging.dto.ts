@@ -8,6 +8,7 @@ export type PagingDto = {
 };
 
 export type PagingDataDto<T> = {
+  id: string; //dùng cho handleAddProduct
   content: T[]; //thêm
   count: number;
   rows: T[];
