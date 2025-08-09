@@ -2,8 +2,9 @@ import { locales } from 'utils/constants';
 import { Yup } from 'utils/yup';
 
 export type UpdateMyPasswordDto = {
-  currentPassword: string;
-  password: string;
+  id: string;
+  oldPassword: string;
+  newPassword: string;
 };
 
 export const updateMyPasswordSchema = Yup.object().shape({

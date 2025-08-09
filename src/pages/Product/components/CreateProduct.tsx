@@ -93,16 +93,28 @@ const CreateProduct = ({ onClose }: { onClose?: () => void }) => {
       const optionGroupId = "5r2izQqBvjb6w6N59Lce4g==";
 
       const productPayload = {
+        id: "",
         name: productName,
         code: productCode,
         optionGroup: {
+          id: optionGroupId,
+        },
+        parentOpt: {
           id: productOption.id,
         },
+        image: "",
+        att1: "",
+        att2: "",
+        att3: "",
+        att4: "",
+        att5: "",
       };
 
       const createdProduct = await createOptionMutation.mutateAsync(
         productPayload
       );
+
+      console.log(createdProduct);
 
       const parentOpt = {
         id: createdProduct!.id,
@@ -114,7 +126,7 @@ const CreateProduct = ({ onClose }: { onClose?: () => void }) => {
         const sizePayload: CreateOptionDto = {
           code: group.sizeCode,
           name: group.sizeCode,
-          optionGroup: { id: optionGroupId }, // dùng đúng key 'optionGroup'
+          optionGroup: { id: optionGroupId },
           parentOpt,
         };
 

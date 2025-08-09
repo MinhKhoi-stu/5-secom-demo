@@ -9,6 +9,9 @@ interface FormFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   sx?: object;
   placeholder?: string;
+  disabled?: boolean;
+  error?: boolean;
+  helperText?: string;
 }
 
 export function FormField({
@@ -20,8 +23,12 @@ export function FormField({
   sx = {},
 }: FormFieldProps) {
   return (
-    <div style={{ marginTop: "20px", display: "flex", flexDirection: "column" }}>
-      <Typography sx={{ color: "black", alignItems: "flex-start", textAlign: "left" }}>
+    <div
+      style={{ marginTop: "20px", display: "flex", flexDirection: "column" }}
+    >
+      <Typography
+        sx={{ color: "black", alignItems: "flex-start", textAlign: "left" }}
+      >
         {label}
       </Typography>
       <TextField

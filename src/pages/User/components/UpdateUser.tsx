@@ -283,6 +283,7 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
       >
         <DialogContent dividers sx={{ p: 3 }}>
           <ChangePasswordDialog
+            user={user}
             open={true}
             onClose={handleCloseDialog}
             onConfirm={() => {
