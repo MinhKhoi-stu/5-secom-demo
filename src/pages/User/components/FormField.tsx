@@ -5,7 +5,7 @@ interface FormFieldProps {
   label: string;
   name: string;
   type?: string;
-  value: string;
+  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   sx?: object;
   placeholder?: string;
@@ -24,7 +24,7 @@ export function FormField({
 }: FormFieldProps) {
   return (
     <div
-      style={{ marginTop: "20px", display: "flex", flexDirection: "column" }}
+      style={{ marginTop: "15px", display: "flex", flexDirection: "column" }}
     >
       <Typography
         sx={{ color: "black", alignItems: "flex-start", textAlign: "left" }}
@@ -41,7 +41,7 @@ export function FormField({
         sx={{
           // width: "400px",
           width: "flex",
-          mt: 2,
+          mt: 1,
           backgroundColor: "white",
           borderRadius: "10px",
           ...sx,

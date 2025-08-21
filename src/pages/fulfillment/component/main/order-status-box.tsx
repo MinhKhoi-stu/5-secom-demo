@@ -14,15 +14,15 @@ const OrderStatusBox = ({ color, count, label }: Props) => {
         color: "#fff",
         borderRadius: 2,
         padding: 2,
-        minWidth: 80,
+        minWidth: 150,
         textAlign: "center",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
       }}
     >
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h4" fontWeight="bold" color="black">
         {count}
       </Typography>
-      <Typography variant="body2">{label}</Typography>
+      <Typography variant="body1" color="black">{label}</Typography>
     </Box>
   );
 };

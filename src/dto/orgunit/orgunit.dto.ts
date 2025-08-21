@@ -8,5 +8,6 @@ export type OrgunitDto = {
   name: string;
   lvl: number;
   note: null;
+  parentId?: string | null;
   namePath: string[];
 };

@@ -1,61 +1,148 @@
-import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from "@mui/material";
 import UploadImage from "components/common/UploadImage";
 import { OptionDto } from "dto/option/option.dto";
 import { useRef, useState, useEffect } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
+import CreateSize from "./CreateSize";
+import { useDeleteOption } from "hooks/option/useDeleteOption";
+import ConfirmDeleteDialog from "components/common/ConfirmDeleteDialog";
+import { useUpdateOption } from "hooks/option/useUpdateOption";
+import EditSize from "./EditSize";
 
 interface UpdateProductProps {
   mode: "create" | "update";
   product?: OptionDto | null;
   open: boolean;
   onClose: () => void;
+  onDelete?: (id: string, version: number) => void; // Thêm prop onDelete
 }
 
 const UpdateProduct: React.FC<UpdateProductProps> = ({
   mode,
   product,
   open,
-  onClose,
+  onDelete,
 }) => {
   const [fileName, setFileName] = useState("hinhanh.png");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
+  const [initialProduct, setInitialProduct] = useState({
+    name: "",
+    code: "",
+    image: "hinhanh.png",
+  });
+
+  //STATE-TEST
+
+  const { mutateAsync: updateOption } = useUpdateOption();
 
   useEffect(() => {
     if (mode === "update" && product) {
       setProductName(product.name || "");
       setProductCode(product.code || "");
       setFileName(product.image || "hinhanh.png");
+
+      // lưu state ban đầu để so sánh
+      setInitialProduct({
+        name: product.name || "",
+        code: product.code || "",
+        image: product.image || "hinhanh.png",
+      });
     } else {
       setProductName("");
       setProductCode("");
       setFileName("hinhanh.png");
+      setInitialProduct({
+        name: "",
+        code: "",
+        image: "hinhanh.png",
+      });
     }
   }, [mode, product, open]);
 
+  const isChanged =
+    productName !== initialProduct.name ||
+    productCode !== initialProduct.code ||
+    fileName !== initialProduct.image;
+
   const handleImageUpload = (file: File) => {
-    console.log("Ảnh đã chọn:", file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // reader.result sẽ là chuỗi base64
+      setFileName(reader.result as string);
+    };
+    reader.readAsDataURL(file); // Chuyển ảnh sang Base64
   };
 
-  //THÊM NHÓM SIZE
-  const [sizeGroups, setSizeGroups] = useState<number[]>([1]); // ban đầu 1 nhóm
+  const handleSave = async () => {
+    if (!product) return;
 
-  const addSizeGroup = () => {
-    setSizeGroups((prev) => [...prev, prev.length + 1]);
+    await updateOption({
+      id: product.id,
+      version: product.version,
+      name: productName,
+      code: productCode,
+      image: fileName,
+      note: product.note,
+      orderNo: product.orderNo,
+      optionGroup: { id: product.optionGroup?.id ?? "" },
+      parentOpt: product.parentOpt ? { id: product.parentOpt.id } : undefined,
+      att1: product.att1,
+      att2: product.att2,
+      att3: product.att3,
+      att4: product.att4,
+      att5: product.att5,
+    });
   };
 
-  const removeSizeGroup = (index: number) => {
-    setSizeGroups((prev) => prev.filter((_, i) => i !== index));
-  };
+  const [openCreateSize, setOpenCreateSize] = useState(false);
 
-  //STATE-TEST
   const { data: stateTestOptions, isLoading: isStateTestLoading } =
     useFindOptionsByGroup("state-test", 0, 50);
 
-  const [selectedOption, setSelectedOption] = useState("");
+  const childOptions =
+    stateTestOptions?.content?.filter(
+      (opt) => opt.parentOpt?.id === product?.id
+    ) || [];
+
+  // Hàm xử lý xóa sản phẩm
+  const handleDeleteClick = () => {
+    if (product && onDelete) {
+      onDelete(product.id, product.version ?? 0);
+    }
+  };
+
+  //DELETE SIZE
+  const [deleteState, setDeleteState] = useState<{
+    open: boolean;
+    id?: string;
+    version?: number;
+  }>({ open: false });
+  const { mutateAsync: deleteOption } = useDeleteOption();
+
+  const handleOpenDelete = (id: string, version: number) => {
+    setDeleteState({ open: true, id, version });
+  };
+
+  //EDIT SIZE
+  const [openEditSize, setOpenEditSize] = useState(false);
+  const [selectedSize, setSelectedSize] = useState<OptionDto | null>(null);
 
   return (
     <>
@@ -72,6 +159,7 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
       </Typography>
       <Box
         sx={{
+          width: "flex",
           backgroundColor: "white",
           padding: 3,
           borderRadius: "12px",
@@ -126,90 +214,180 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
             Hình ảnh đại diện
           </Typography>
           <UploadImage onFileSelect={handleImageUpload} />
-        </Box>
-
-        {/* SIZE OPTIONS */}
-        {sizeGroups.map((groupIndex, idx) => (
-          <Box
-            key={groupIndex}
-            sx={{
-              mt: 3,
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-              flexWrap: "wrap",
-              position: "relative",
-            }}
-          >
-            {/* Field: Inches */}
-            <FormControl
-              size="small"
-              sx={{
-                width: 100,
-                backgroundColor: "white",
-                borderRadius: 1,
-                mr: 2,
-              }}
-            >
-              <InputLabel id="inches-select-label">Inches</InputLabel>
-              <Select
-                size="small"
-                value={selectedOption}
-                onChange={(e) => setSelectedOption(e.target.value)}
-                sx={{ width: 120, backgroundColor: "white", borderRadius: 1 }}
-              >
-                {stateTestOptions?.content?.map((option) => (
-                  <MenuItem key={option.id} value={option.code}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            {/* Các field: Weight, Length, Width, Height */}
-            {["Weight", "Length", "Width", "Height"].map((label) => (
-              <Box
-                key={label}
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <TextField
-                  type="text"
-                  size="small"
-                  sx={{
-                    width: 100,
-                    backgroundColor: "white",
-                    borderRadius: 1,
+          {fileName && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="caption" color="textSecondary">
+                {"Ảnh hiện tại"}
+              </Typography>
+              <Box sx={{ mt: 1, maxWidth: 200 }}>
+                <img
+                  src={fileName}
+                  alt="Preview"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    borderRadius: "8px",
+                    border: "1px solid #ddd",
                   }}
                 />
-                <Typography sx={{ color: "black", whiteSpace: "nowrap" }}>
-                  {label}
-                </Typography>
               </Box>
-            ))}
-
-            {/* Nút hành động bên phải */}
-            <Box sx={{ marginLeft: "auto", display: "flex", gap: 1 }}>
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => removeSizeGroup(idx)}
-              >
-                <RemoveIcon fontSize="small" />
-              </IconButton>
-              {idx === sizeGroups.length - 1 && (
-                <IconButton size="small" color="primary" onClick={addSizeGroup}>
-                  <AddIcon fontSize="small" />
-                </IconButton>
-              )}
             </Box>
-          </Box>
-        ))}
+          )}
+        </Box>
 
-        {/* BUTTON LƯU */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
-          <button>Lưu</button>
+        {/* BUTTON LƯU VÀ XÓA */}
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 4 }}
+        >
+          {mode === "update" && (
+            <Button
+              variant="contained"
+              color="error"
+              sx={{
+                fontWeight: "bold",
+                textTransform: "none",
+                borderRadius: "10px",
+                px: 3,
+                py: 1.5,
+                boxShadow: 2,
+                "&:hover": { backgroundColor: "red" },
+              }}
+              onClick={handleDeleteClick}
+            >
+              Xóa
+            </Button>
+          )}
+
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: isChanged ? "green" : "gray",
+              color: "white",
+              fontWeight: "bold",
+              textTransform: "none",
+              borderRadius: "10px",
+              px: 3,
+              py: 1.5,
+              boxShadow: 2,
+              cursor: isChanged ? "pointer" : "not-allowed",
+              "&:hover": isChanged ? { backgroundColor: "lightgreen" } : {},
+            }}
+            disabled={!isChanged}
+            onClick={handleSave}
+          >
+            Lưu
+          </Button>
         </Box>
       </Box>
+
+      {/* BẢNG HIỂN THỊ STATE-TEST (SIZE) */}
+      {open && product && (
+        <Box sx={{ mt: 3 }}>
+          <Typography sx={{ color: "black", fontWeight: "bold", mb: 2 }}>
+            Danh sách Size của sản phẩm
+          </Typography>
+
+          <TableContainer component={Paper} sx={{ borderRadius: "10px" }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: "bold" }}>STT</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Tên</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Mã</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Tùy chỉnh</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {childOptions.length > 0 ? (
+                  childOptions.map((opt, index) => (
+                    <TableRow key={opt.id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{opt.name}</TableCell>
+                      <TableCell>{opt.code}</TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="error"
+                          onClick={() =>
+                            setDeleteState({
+                              open: true,
+                              id: opt.id,
+                              version: opt.version ?? 0,
+                            })
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            setSelectedSize(opt);
+                            setOpenEditSize(true);
+                          }}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      Sản phẩm này chưa có size
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      )}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 4 }}>
+        <Button
+          variant="contained"
+          sx={{
+            fontWeight: "bold",
+            textTransform: "none",
+            borderRadius: "10px",
+            px: 2,
+            py: 1.5,
+            boxShadow: 2,
+            backgroundColor: "orange",
+            "&:hover": { backgroundColor: "lightsalmon" },
+          }}
+          onClick={() => setOpenCreateSize(true)}
+        >
+          Thêm size
+        </Button>
+      </Box>
+
+      {/* DIALOG CREATE SIZE */}
+      <CreateSize
+        open={openCreateSize}
+        onClose={() => setOpenCreateSize(false)}
+        parentProduct={product}
+      />
+
+      {/* DIALOG CONFIRM DELETE SIZE */}
+      <ConfirmDeleteDialog
+        open={deleteState.open}
+        title="Xóa option"
+        description="Bạn có chắc muốn xóa?"
+        onClose={() => setDeleteState({ open: false })}
+        onConfirm={async () => {
+          if (!deleteState.id || deleteState.version === undefined) return;
+          await deleteOption({
+            id: deleteState.id,
+            version: deleteState.version,
+          });
+        }}
+      />
+
+      <EditSize
+        open={openEditSize}
+        onClose={() => setOpenEditSize(false)}
+        sizeData={selectedSize}
+      />
     </>
   );
 };

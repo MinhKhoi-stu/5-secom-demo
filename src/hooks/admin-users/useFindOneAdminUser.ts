@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
 import {adminUsersAPI} from "api/admin-users";
 import {AdminUserDto} from "dto/admin-users";
+import {useQuery} from "react-query";
 
 export const QUERY_KEY = {
   FIND_ONE: "FIND_ONE_ADMIN_USER",

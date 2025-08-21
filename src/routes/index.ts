@@ -9,12 +9,12 @@ import DetailsTracking from "pages/Tracking/components/DetailsTracking";
 import MainSKUDesign from "pages/SKUDesign/components/MainSKUDesign";
 import AddSKUDesign from "pages/SKUDesign/components/CreateSKUDesign";
 import MainUser from "pages/User/components/MainUser";
-import AddUser from "pages/User/components/AddUser";
+import AddUser from "pages/User/components/CreateUser";
 import MainProduct from "pages/Product/components/MainProduct";
 import AddProduct from "pages/Product/components/CreateProduct";
 import MainFulfillment from "pages/Fulfillment/component/Main/MainFulfillment";
-import AddOrder from "pages/Fulfillment/component/AddOrder/AddOrder";
-import AddOrderDetails from "pages/Fulfillment/component/AddOrder/AddOrderDetails";
+import AddOrder from "pages/Fulfillment/component/CreateOrder/CreateOrder";
+import AddOrderDetails from "pages/Fulfillment/component/CreateOrder/CreateOrderDetails";
 import MainPage2D from "pages/Page2D/components/Main2D/MainPage2D";
 import UpdateOrderPage from "pages/Page2D/components/Update2D/Update2D";
 

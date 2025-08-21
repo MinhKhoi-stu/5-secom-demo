@@ -22,7 +22,7 @@ export type AdminUserDto = {
   address: string | null;
   dob: string | null;
   phone: string | null;
-  email: string | null;
+  email: string | null; 
   idCardNumber: string | null;
   idCardDate: string | null;
   createdBy: string | null;

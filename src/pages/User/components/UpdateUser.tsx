@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Dialog,
   DialogContent,
   FormControl,
@@ -21,11 +22,15 @@ import KeyIcon from "@mui/icons-material/Key";
 import ChangePasswordDialog from "./ChangePassword";
 
 interface UpdateUserProps {
+  mode: "create" | "update";
   user: AdminUserDto | null;
   onSuccess?: () => void;
+  onDelete?: (id: string, version: number) => void;
 }
 
-const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
+const UpdateUser = ({ mode, user, onSuccess, onDelete }: UpdateUserProps) => {
+  const [fileName, setFileName] = useState("");
+  const [isChanged, setIsChanged] = useState(false);
   const updateAdminUser = useUpdateAdminUsers();
   const { data: rolesData, isLoading: loadingRoles } = useFindAllAdminRoles();
   const { data: orgUnitData } = useFindAllOrgunit({
@@ -51,6 +56,54 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
     role: { id: "" },
     orgUnitId: "",
     status: "ACTIVE",
+    idCardNumber: "",
+  });
+
+  // const [initialUser, setInitialUser] = useState({
+  //   name: "",
+  //   code: "",
+  //   idCardNumber: "hinhanh.png",
+  // });
+
+  // useEffect(() => {
+  //   if (!user || !rolesData?.content?.length) return;
+
+  //   const matchingRole = rolesData.content.find(
+  //     (role) => String(role.id) === String(user.roleId)
+  //   );
+
+  //   setForm({
+  //     id: user.id,
+  //     version: user.version ?? 0,
+  //     username: user.username || "",
+  //     name: user.name || "",
+  //     address: user.address || "",
+  //     email: user.email || "",
+  //     password: "",
+  //     phone: user.phone || "",
+  //     facebook: "",
+  //     birthday: user.dob || "",
+  //     adminRoleId: matchingRole ? String(matchingRole.id) : "",
+  //     role: { id: matchingRole ? String(matchingRole.id) : "" },
+  //     orgUnitId: "",
+  //     status: "ACTIVE",
+  //     idCardNumber: user.idCardNumber || "",
+  //   });
+
+  //   // Set file name từ data
+  //   if (user.idCardNumber) {
+  //     setFileName("Ảnh hiện tại");
+  //   } else {
+  //     setFileName("");
+  //   }
+  // }, [user, rolesData]);
+
+  //SAVE BUTTON CONFIG
+  const [initialUser, setInitialUser] = useState({
+    name: "",
+    id: "",
+    idCardNumber: "",
+    // image: "hinhanh.png",
   });
 
   useEffect(() => {
@@ -60,7 +113,7 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
       (role) => String(role.id) === String(user.roleId)
     );
 
-    setForm({
+    const newForm = {
       id: user.id,
       version: user.version ?? 0,
       username: user.username || "",
@@ -75,7 +128,17 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
       role: { id: matchingRole ? String(matchingRole.id) : "" },
       orgUnitId: "",
       status: "ACTIVE",
-    });
+      idCardNumber: user.idCardNumber || "",
+    };
+
+    setForm(newForm);
+    setInitialUser(newForm);
+
+    if (user.idCardNumber) {
+      setFileName("Ảnh hiện tại");
+    } else {
+      setFileName("");
+    }
   }, [user, rolesData]);
 
   const handleChange = (e: { target: { name: string; value: any } }) => {
@@ -83,12 +146,18 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  //UPLOAD ẢNH MÒ
+  useEffect(() => {
+    const formString = JSON.stringify(form);
+    const initialString = JSON.stringify(initialUser);
+    setIsChanged(formString !== initialString);
+  }, [form, initialUser]);
+
+  //UPLOAD ẢNH
   const handleImageUpload = (file: File) => {
     console.log("Ảnh đã chọn:", file);
   };
 
-  //MỞ DIALOG
+  //MỞ DIALOG CHANGE PASSWORD
   const [openDialogChange, setOpenDialogChange] = useState(false);
 
   const handleOpenDialog = () => setOpenDialogChange(true);
@@ -121,12 +190,15 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
     return <Typography>Đang tải...</Typography>;
   }
 
+  //DELETE - Hàm xử lý xóa user
+  const handleDeleteClick = () => {
+    if (user && onDelete) {
+      onDelete(user.id, user.version ?? 0);
+    }
+  };
+
   return (
     <>
-      {/* <Typography sx={{ fontWeight: "bold", fontSize: "20px", mb: 2 }}>
-        CHỈNH SỬA USER
-      </Typography> */}
-
       <Box
         sx={{
           display: "flex",
@@ -136,28 +208,31 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
         }}
       >
         <Typography sx={{ fontWeight: "bold", fontSize: "20px" }}>
-          CHỈNH SỬA USER
+          {mode === "update" ? "CHỈNH SỬA USER" : "THÊM USER"}
         </Typography>
 
-        <Box>
-          <button
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              backgroundColor: "red",
-              color: "white",
-              padding: "6px 12px",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-            onClick={ handleOpenDialog }
-          >
-            Đổi mật khẩu
-            <KeyIcon fontSize="small" />
-          </button>
-        </Box>
+        {/* Chỉ hiển thị nút đổi mật khẩu khi ở mode update */}
+        {mode === "update" && (
+          <Box>
+            <button
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                backgroundColor: "red",
+                color: "white",
+                padding: "6px 12px",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+              onClick={handleOpenDialog}
+            >
+              Đổi mật khẩu
+              <KeyIcon fontSize="small" />
+            </button>
+          </Box>
+        )}
       </Box>
 
       <Box
@@ -244,54 +319,106 @@ const UpdateUser = ({ user, onSuccess }: UpdateUserProps) => {
             <Box sx={{ mt: 4 }}>
               <Typography sx={{ mb: 1 }}>Hình ảnh đại diện</Typography>
               <UploadImage onFileSelect={handleImageUpload} />
+              {form.idCardNumber && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="caption" color="textSecondary">
+                    {fileName || "Ảnh hiện tại"}
+                  </Typography>
+                  <Box sx={{ mt: 1, maxWidth: 200 }}>
+                    <img
+                      src={form.idCardNumber}
+                      alt="Preview"
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        borderRadius: "8px",
+                        border: "1px solid #ddd",
+                      }}
+                    />
+                  </Box>
+                </Box>
+              )}
             </Box>
 
-            <Box sx={{ mt: 4 }}>
-              <button
-                onClick={handleUpdateUser}
-                style={{
-                  width: "200px",
-                  backgroundColor: "red",
+            {/* BUTTON LƯU VÀ XÓA */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 2,
+                mt: 4,
+              }}
+            >
+              {/* Chỉ hiển thị nút Xóa khi ở mode update */}
+              {mode === "update" && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  sx={{
+                    fontWeight: "bold",
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    px: 3,
+                    py: 1.5,
+                    boxShadow: 2,
+                    "&:hover": { backgroundColor: "red" },
+                  }}
+                  onClick={handleDeleteClick}
+                >
+                  Xóa
+                </Button>
+              )}
+
+              <Button
+                variant="contained"
+                disabled={!isChanged}
+                sx={{
+                  backgroundColor: isChanged ? "green" : "#ccc",
                   color: "white",
-                  padding: "10px",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
+                  fontWeight: "bold",
+                  textTransform: "none",
+                  borderRadius: "10px",
+                  px: 3,
+                  py: 1.5,
+                  boxShadow: 2,
+                  "&:hover": {
+                    backgroundColor: isChanged ? "lightgreen" : "#ccc",
+                  },
                 }}
+                onClick={handleUpdateUser}
               >
-                Lưu thay đổi
-              </button>
+                Lưu
+              </Button>
             </Box>
           </Grid>
         </Grid>
       </Box>
 
-      {/* POPUP ADD USER */}
-      <Dialog
-        open={openDialogChange}
-        onClose={handleCloseDialog}
-        maxWidth="md"
-        fullWidth
-        scroll="body"
-        PaperProps={{
-          sx: {
-            borderRadius: "16px",
-            p: 2,
-            backgroundColor: "#f9f9f9",
-          },
-        }}
-      >
-        <DialogContent dividers sx={{ p: 3 }}>
-          <ChangePasswordDialog
-            user={user}
-            open={true}
-            onClose={handleCloseDialog}
-            onConfirm={() => {
-              handleCloseDialog();
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+      {/* POPUP CHANGE PASSWORD */}
+      {mode === "update" && (
+        <Dialog
+          open={openDialogChange}
+          onClose={handleCloseDialog}
+          maxWidth="md"
+          fullWidth
+          scroll="body"
+          PaperProps={{
+            sx: {
+              borderRadius: "16px",
+              p: 2,
+              backgroundColor: "#f9f9f9",
+            },
+          }}
+        >
+          <DialogContent dividers sx={{ p: 3 }}>
+            <ChangePasswordDialog
+              user={user}
+              open={true}
+              onClose={handleCloseDialog}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };

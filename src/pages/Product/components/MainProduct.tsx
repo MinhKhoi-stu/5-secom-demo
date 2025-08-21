@@ -2,38 +2,36 @@ import {
   Box,
   Typography,
   Button,
-  Avatar,
   CircularProgress,
   Grid,
   DialogContent,
   Dialog,
-  IconButton,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useEffect, useState } from "react";
-import AddProduct from "./CreateProduct";
 import PaginationWrapper from "components/common/PaginationWrapper";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { OptionDto } from "dto/option/option.dto";
 import UpdateProduct from "./UpdateProduct";
-import { useFindOptionGroupByCodeOrName } from "hooks/option-group/useFindOptionGroupByCodeOrName";
 import CreateProduct from "./CreateProduct";
+import { useDeleteOption } from "hooks/option/useDeleteOption";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 const MainProduct = () => {
   //MỞ DIALOG ADD PRODUCT
   const [openDialog, setOpenDialog] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
-
+  const [searchKeyword, setSearchKeyword] = useState("");
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
 
-  // const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<OptionDto | null>(
     null
   );
 
-  const handleOpenUpdate = (product: OptionDto) => {
+  // Thay đổi: Click vào thẻ sản phẩm sẽ mở dialog update
+  const handleProductClick = (product: OptionDto) => {
     setSelectedProduct(product);
     setOpenUpdateDialog(true);
   };
@@ -47,10 +45,11 @@ const MainProduct = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 6;
 
-  const { data, isLoading, isError } = useFindOptionsByGroup(
+  const { data, isLoading, isError, refetch } = useFindOptionsByGroup(
     "products",
     page - 1,
-    itemsPerPage
+    itemsPerPage,
+    searchKeyword
   );
 
   const totalItems = data?.totalElements ?? 0;
@@ -63,21 +62,64 @@ const MainProduct = () => {
     setPage(value);
   };
 
-  //FIND codeOrName
-  // Tìm optionGroup có codeOrName = 'products'
-  const { data: productOptionGroup } =
-    useFindOptionGroupByCodeOrName("products");
-
-  const handleSubmit = (formValues: any) => {
-    if (!productOptionGroup) return;
-
-    const payload = {
-      ...formValues,
-      optionGroup: { id: productOptionGroup.id },
-    };
-
-    // Gọi API tạo Option/Product
+  const handleCreateSuccess = () => {
+    setOpenDialog(false);
+    refetch();
   };
+
+  //DELETE
+  const { mutate: deleteOption } = useDeleteOption();
+  const handleDelete = (id: string, version: number) => {
+    if (window.confirm("Bạn có chắc muốn xóa SKU Design này không?")) {
+      deleteOption(
+        { id, version },
+        {
+          onSuccess: () => {
+            const remainingItems = totalItems - 1;
+            const maxPage = Math.ceil(remainingItems / itemsPerPage);
+
+            if (page > maxPage) {
+              setPage(maxPage);
+            }
+            handleCloseUpdate();
+            refetch();
+          },
+        }
+      );
+    }
+  };
+
+  //FIND codeOrName
+  // const { data: productOptionGroup } = useFindOptionGroupByCodeOrName(
+  //   "products",
+  //   0,
+  //   50
+  // );
+
+  // const handleSubmit = (formValues: any) => {
+  //   if (!productOptionGroup) return;
+
+  //   const payload = {
+  //     ...formValues,
+  //     optionGroup: { id: productOptionGroup.id },
+  //   };
+  // };
+
+  //TÌM KIẾM
+
+  const optionGroupCode = "products";
+  // const page = 0;
+  const size = 50;
+
+  // Gọi API tìm kiếm theo codeOrName trực tiếp
+  const { data: optionData, isLoading: isLoadingOptions } =
+    useFindOptionsByGroup(optionGroupCode, page, size, searchKeyword);
+
+  const options = optionData?.content || [];
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchKeyword]);
 
   return (
     <>
@@ -94,12 +136,36 @@ const MainProduct = () => {
           QUẢN LÝ SẢN PHẨM
         </Typography>
 
+        {/* Tìm kiếm */}
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            type="text"
+            placeholder="Tìm kiếm SKU Design theo mã SKU hoặc tên sản phẩm"
+            variant="outlined"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchOutlinedIcon sx={{ color: "#888" }} />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              backgroundColor: "white",
+              borderRadius: "20px",
+            }}
+          />
+        </Grid>
+
         <Box
           sx={{
             backgroundColor: "white",
             p: { xs: 2, sm: 3 },
             borderRadius: "16px",
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            mt: 2,
           }}
         >
           <Typography
@@ -128,7 +194,6 @@ const MainProduct = () => {
 
           {data && (
             <>
-              {/* <Grid container spacing={2}> */}
               <Grid container columnSpacing={12} rowSpacing={2}>
                 {data.content.map((product) => (
                   <Grid
@@ -137,7 +202,7 @@ const MainProduct = () => {
                     xs={12}
                     sm={6}
                     sx={{
-                      flexBasis: { xs: "100%", sm: "40%" }, //để 50 là tràn đó ba
+                      flexBasis: { xs: "100%", sm: "40%" },
                       maxWidth: { xs: "100%", sm: "40%" },
                     }}
                   >
@@ -149,57 +214,29 @@ const MainProduct = () => {
                         padding: 2,
                         borderRadius: 2,
                         border: "1px solid #eee",
-                        justifyContent: "space-between",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "#f5f5f5",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                        },
                       }}
+                      onClick={() => handleProductClick(product)}
                     >
-                      <Avatar
-                        src={product.image || ""}
-                        alt={product.name}
-                        variant="rounded"
-                        sx={{ width: 56, height: 56 }}
+                      <img
+                        src={product.image ?? "/img/flag/VietNamflag.jpg"}
+                        // alt={product.code ?? ""}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          cursor: "zoom-in",
+                        }}
                       />
-                      <Typography sx={{ color: "black", fontWeight: "500" }}>
+                      <Typography
+                        sx={{ color: "black", fontWeight: "500", flex: 1 }}
+                      >
                         {product.name}
                       </Typography>
-
-                      {/* BÊN PHẢI: ICON HÀNH ĐỘNG */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 1,
-                          alignItems: "center",
-                        }}
-                      >
-                        <IconButton
-                          size="small"
-                          color="primary"
-                          sx={{
-                            "&:focus": {
-                              outline: "none",
-                            },
-                          }}
-                          onClick={() => handleOpenUpdate(product)}
-                        >
-                          {/* <i className="fas fa-edit" /> */}
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          color="error"
-                          sx={{
-                            "&:focus": {
-                              outline: "none",
-                            },
-                          }}
-                          onClick={() => {
-                            /* handle delete */
-                          }}
-                        >
-                          {/* <i className="fas fa-trash" /> */}
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
                     </Box>
                   </Grid>
                 ))}
@@ -228,7 +265,6 @@ const MainProduct = () => {
               px: 3,
               py: 1.5,
               boxShadow: 2,
-              // "&:hover": { backgroundColor: "#ffa07a" },
             }}
             onClick={handleOpenDialog}
           >
@@ -253,12 +289,14 @@ const MainProduct = () => {
         }}
       >
         <DialogContent>
-          <CreateProduct 
-          onClose={handleCloseDialog} 
+          <CreateProduct
+            onClose={handleCloseDialog}
+            onSuccess={handleCreateSuccess}
           />
         </DialogContent>
       </Dialog>
 
+      {/* POPUP UPDATE PRODUCT */}
       <Dialog
         open={openUpdateDialog}
         onClose={handleCloseUpdate}
@@ -279,6 +317,7 @@ const MainProduct = () => {
             onClose={handleCloseUpdate}
             product={selectedProduct}
             mode={"update"}
+            onDelete={handleDelete}
           />
         </DialogContent>
       </Dialog>

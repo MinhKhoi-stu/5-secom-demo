@@ -8,6 +8,8 @@ export type ParentOptDto = {
 };
 
 export type OptionDto = {
+  // result: any;
+  // data: any;
   version: number;
   // config: any;
   id: string;
@@ -16,7 +18,7 @@ export type OptionDto = {
   note: string | null;
   image: string | null;
   orderNo: number;
-  // optionGroup: {"id" :string},
+  optionGroup?: {"id" :string},
   parentOpt: ParentOptDto | null;
   att1: string | null;
   att2: string | null;

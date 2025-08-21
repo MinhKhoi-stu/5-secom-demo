@@ -106,12 +106,13 @@ import {AdminUserDto} from "dto/admin-users";
 // export default ChangePasswordDialog;
 
 interface ChangePasswordDialogProps {
-  user: AdminUserDto | null;
+  user: AdminUserDto;
   open: boolean;
   onClose: () => void;
+  // onCofirm: () => void;
 }
 
-const ChangePasswordDialog = ({ open, onClose, user }: ChangePasswordDialogProps) => {
+const ChangePasswordDialog = ({ open, onClose, user, onCofirm }: ChangePasswordDialogProps) => {
   const [form, setForm] = React.useState({
     oldPassword: "",
     newPassword: "",

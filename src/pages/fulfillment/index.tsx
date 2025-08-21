@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainFulfillment from "./component/Main/MainFulfillment";
-import AddOrder from "./component/AddOrder/AddOrder";
+import AddOrder from "./component/CreateOrder/CreateOrder";
 
 const Fulfillment = () => {
   return (

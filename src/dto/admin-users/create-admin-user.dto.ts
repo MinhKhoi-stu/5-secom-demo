@@ -11,6 +11,7 @@ export type CreateAdminUserDto = {
   password: string;
   phone?: string;
   birthday?: Date;
+  // idCardNumber: string;
   // gender?: string;
   adminRoleId?: string;
   // role: {"id": "adminRoleId"},

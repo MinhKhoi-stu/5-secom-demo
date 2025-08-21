@@ -14,6 +14,7 @@ export type PagingDataDto<T> = {
   rows: T[];
   totalElements: number; //pagination
   totalPages: number; //pagination
+  items: T[];
 
   page: number;
   size: number;

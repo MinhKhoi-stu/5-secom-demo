@@ -1,0 +1,23 @@
+import { PagingDataDto } from "dto/common";
+import { CreateFacilityDto } from "dto/facility/create-facility.dto";
+import { FacilityDto } from "dto/facility/facility.dto";
+import { FindAllFacilityDto } from "dto/facility/find-all-facility.dto";
+import axiosClient from "utils/axios-client";
+
+export const facilityAPI = {
+  findAll(
+    findAllFacilityDto: FindAllFacilityDto
+  ): Promise<PagingDataDto<FacilityDto>> {
+    return axiosClient.get("facility/find", { params: findAllFacilityDto });
+  },
+  // createFacility(
+  //   createFacilityDto: CreateFacilityDto
+  // ): Promise<PagingDataDto<FacilityDto>> {
+  //   return axiosClient.post("facility", { params: createFacilityDto });
+  // },
+  createFacility(createFacilityDto: CreateFacilityDto) {
+    return axiosClient
+      .post("facility", createFacilityDto)
+      .then((res) => res.data);
+  },
+};

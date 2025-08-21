@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainUser from "./components/MainUser";
-import AddUser from "./components/AddUser";
+import AddUser from "./components/CreateUser";
 
 const User = () => {
   return (

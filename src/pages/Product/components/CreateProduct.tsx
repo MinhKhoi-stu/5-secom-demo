@@ -1,108 +1,108 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import UploadImage from "components/common/UploadImage";
 import { useRef, useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import { FormField } from "pages/User/components/FormField";
-import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useCreateOption } from "hooks/option/useCreateOption";
-import { CreateOptionDto } from "dto/option/create-option.dto";
+import { processImageUpload } from "utils/convert-img";
+import { OptionDto } from "dto/option/option.dto";
+import {toast} from "react-toastify";
 
-const CreateProduct = ({ onClose }: { onClose?: () => void }) => {
+const CreateProduct = ({
+  onClose,
+  onSuccess,
+}: {
+  onClose?: () => void;
+  onSuccess?: () => void;
+}) => {
   const [fileName, setFileName] = useState("hinhanh.png");
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  // const inputRef = useRef<HTMLInputElement | null>(null);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
-  // const { data: productOptionGroup, isLoading } =
-  //   useFindOptionGroupByCodeOrName("products");
 
-  const { data: productOption, isLoading } = useFindOptionsByGroup(
-    "products",
-    0,
-    50
-  );
+  const [formData, setFormData] = useState<OptionDto>({
+    version: 0,
+    id: "",
+    code: "",
+    name: "",
+    note: null,
+    //
+    image: "",
+    orderNo: 0,
+    parentOpt: null,
+    att1: null,
+    att2: "",
+    att3: "",
+    att4: null,
+    att5: null,
+  });
 
   //UPLOAD ẢNH MÒ
-  const handleButtonClick = () => {
-    inputRef.current?.click();
-  };
+  const handleImageUpload = async (file: File) => {
+    try {
+      console.log("Ảnh đã chọn:", file);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
+      // Sử dụng utility function để xử lý upload
+      const result = await processImageUpload(
+        file,
+        {
+          maxSizeInMB: 5,
+          allowedTypes: [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+          ],
+        },
+        false
+      );
+
+      if (!result.success) {
+        alert(result.error);
+        return;
+      }
+
+      if (!result.data) {
+        throw new Error("Không có dữ liệu trả về");
+      }
+
+      const { data } = result;
+
+      // Cập nhật formData với base64 string
+      setFormData((prev) => ({
+        ...prev,
+        image: data.base64,
+      }));
+
+      // Cập nhật tên file
+      setFileName(data.fileName);
+    } catch (error) {
+      console.error("Lỗi khi xử lý ảnh:", error);
+      alert("Có lỗi xảy ra khi xử lý ảnh. Vui lòng thử lại.");
     }
   };
-
-  const handleImageUpload = (file: File) => {
-    console.log("Ảnh đã chọn:", file);
-  };
-
-  //THÊM NHÓM SIZE
-  const [sizeGroups, setSizeGroups] = useState([{ sizeCode: "" }]);
-  // ADD
-  const addSizeGroup = () => {
-    setSizeGroups((prev) => [...prev, { sizeCode: "" }]);
-  };
-
-  //DELETE
-  const removeSizeGroup = (index: number) => {
-    setSizeGroups((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  // SELECT
-  const handleSizeChange = (value: string, index: number) => {
-    setSizeGroups((prev) => {
-      const newGroups = [...prev];
-      newGroups[index].sizeCode = value;
-      return newGroups;
-    });
-  };
-
   //BUTTON ADD
-  const { mutateAsync: createOption } = useCreateOption(
-    "5r2izQqBvjb6w6N59Lce4g==",
-    0,
-    50
-  );
-  const { data: stateTestOptionGroup } = useFindOptionsByGroup(
-    "state-test",
-    0,
-    50
-  );
 
   const createOptionMutation = useCreateOption(
     "5r2izQqBvjb6w6N59Lce4g==",
     0,
     50
   );
+
+  //CREATE
   const handleAddProduct = async () => {
     try {
-      if (!productOption || !stateTestOptions) return;
-
-      const optionGroupId = "5r2izQqBvjb6w6N59Lce4g==";
+      // Kiểm tra dữ liệu đầu vào
+      if (!productName || !productCode) {
+        toast.error("Tên sản phẩm và mã sản phẩm không được để trống");
+        return;
+      }
 
       const productPayload = {
-        id: "",
         name: productName,
         code: productCode,
-        optionGroup: {
-          id: optionGroupId,
-        },
-        parentOpt: {
-          id: productOption.id,
-        },
-        image: "",
+        optionGroup: { id: "5r2izQqBvjb6w6N59Lce4g==" }, // ID này của group "products"
+        image: formData.image || "",
         att1: "",
         att2: "",
         att3: "",
@@ -113,37 +113,12 @@ const CreateProduct = ({ onClose }: { onClose?: () => void }) => {
       const createdProduct = await createOptionMutation.mutateAsync(
         productPayload
       );
-
-      console.log(createdProduct);
-
-      const parentOpt = {
-        id: createdProduct!.id,
-      };
-
-      for (const group of sizeGroups) {
-        if (!group.sizeCode) continue;
-
-        const sizePayload: CreateOptionDto = {
-          code: group.sizeCode,
-          name: group.sizeCode,
-          optionGroup: { id: optionGroupId },
-          parentOpt,
-        };
-
-        await createOptionMutation.mutateAsync(sizePayload);
-      }
-
-      console.log("Thành công.");
-    } catch (err) {
-      console.error("Lỗi:", err);
+      onSuccess?.();
+      onClose?.();
+    } catch (error) {
+      console.error("Lỗi khi tạo product option:", error);
     }
   };
-
-  //LOAD STATE-TEST
-
-  const { data: stateTestOptions, isLoading: isStateTestLoading } =
-    useFindOptionsByGroup("state-test", 0, 50);
-  const [selectedOption, setSelectedOption] = useState("");
 
   return (
     <>
@@ -209,84 +184,26 @@ const CreateProduct = ({ onClose }: { onClose?: () => void }) => {
 
           {/* NÚT CHỌN TỆP */}
           <UploadImage onFileSelect={handleImageUpload} />
-        </div>
-
-        {/* SIZE OPTIONS */}
-        {sizeGroups.map((groupIndex, idx) => (
-          <Box
-            key={groupIndex}
-            sx={{
-              mt: 3,
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-              flexWrap: "wrap",
-              position: "relative",
-            }}
-          >
-            {/* Field: Inches */}
-            <FormControl
-              size="small"
-              sx={{
-                width: 100,
-                backgroundColor: "white",
-                borderRadius: 1,
-                mr: 2,
-              }}
-            >
-              <InputLabel id="inches-select-label">Inches</InputLabel>
-              <Select
-                size="small"
-                value={sizeGroups[idx].sizeCode}
-                onChange={(e) => handleSizeChange(e.target.value, idx)}
-                sx={{ width: 120, backgroundColor: "white", borderRadius: 1 }}
-              >
-                {stateTestOptions?.content?.map((option) => (
-                  <MenuItem key={option.id} value={option.code}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            {/* Các field: Weight, Length, Width, Height */}
-            {["Weight", "Length", "Width", "Height"].map((label) => (
-              <Box
-                key={label}
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <TextField
-                  type="text"
-                  size="small"
-                  sx={{
-                    width: 100,
-                    backgroundColor: "white",
-                    borderRadius: 1,
+          {formData.image && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="caption" color="textSecondary">
+                Đã chọn: {fileName}
+              </Typography>
+              <Box sx={{ mt: 1, maxWidth: 200 }}>
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    borderRadius: "8px",
+                    border: "1px solid #ddd",
                   }}
                 />
-                <Typography sx={{ color: "black", whiteSpace: "nowrap" }}>
-                  {label}
-                </Typography>
               </Box>
-            ))}
-
-            {/* Nút hành động bên phải */}
-            <Box sx={{ marginLeft: "auto", display: "flex", gap: 1 }}>
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => removeSizeGroup(idx)}
-              >
-                <RemoveIcon fontSize="small" />
-              </IconButton>
-              {idx === sizeGroups.length - 1 && (
-                <IconButton size="small" color="primary" onClick={addSizeGroup}>
-                  <AddIcon fontSize="small" />
-                </IconButton>
-              )}
             </Box>
-          </Box>
-        ))}
+          )}
+        </div>
 
         {/* NÚT THÊM SẢN PHẨM */}
         <div

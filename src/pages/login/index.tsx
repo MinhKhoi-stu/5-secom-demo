@@ -3,10 +3,6 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin } from "hooks/auth";
 import { LoginDto } from "dto/auth";
-import { toast } from "react-toastify";
-import { authAPI } from "api/auth";
-import {PATH} from "routes/constants";
-
 const Login = () => {
   const [show, setShow] = useState(false);
   const login = useLogin();

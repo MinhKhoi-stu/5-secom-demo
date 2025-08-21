@@ -15,6 +15,7 @@ import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useFindAllOrgunit } from "hooks/orgunit/useFindAllOrgunit";
 import { useCreateOption } from "hooks/option/useCreateOption";
 import { useQueryClient } from "react-query";
+import { processImageUpload, formatFileSize } from "utils/convert-img";
 
 const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
   const [fileName, setFileName] = useState("hinhanh.png");
@@ -27,25 +28,67 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
     code: "",
     name: "",
     note: null,
-    image: null,
+    //
+    image: "",
     orderNo: 0,
     parentOpt: null,
     att1: null,
-    att2: null,
+    att2: "",
     att3: "",
     att4: null,
     att5: null,
   });
 
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  // const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Gọi API lấy danh sách sản phẩm (optionGroupCode = "products")
   const { data: productOptions, isLoading: loadingProducts } =
     useFindOptionsByGroup("products", 0, 50);
 
-  const handleImageUpload = (file: File) => {
-    console.log("Ảnh đã chọn:", file);
-    // Xử lý upload file tại đây
+  //ẢNH MÒ
+  const handleImageUpload = async (file: File) => {
+    try {
+      console.log("Ảnh đã chọn:", file);
+
+      // Sử dụng utility function để xử lý upload
+      const result = await processImageUpload(
+        file,
+        {
+          maxSizeInMB: 5,
+          allowedTypes: [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+          ],
+        },
+        false
+      );
+
+      if (!result.success) {
+        alert(result.error);
+        return;
+      }
+
+      if (!result.data) {
+        throw new Error("Không có dữ liệu trả về");
+      }
+
+      const { data } = result;
+
+      // Cập nhật formData với base64 string
+      setFormData((prev) => ({
+        ...prev,
+        image: data.base64,
+      }));
+
+      // Cập nhật tên file
+      setFileName(data.fileName);
+    } catch (error) {
+      console.error("Lỗi khi xử lý ảnh:", error);
+      alert("Có lỗi xảy ra khi xử lý ảnh. Vui lòng thử lại.");
+    }
   };
 
   const handleChange = (
@@ -102,7 +145,6 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
       optionGroup: { id: optionGroupIdSkudesigns },
       parentOpt: { id: formData.parentOpt.id },
       image: formData.image || "",
-
       att1: formData.att1 || "",
       att2: formData.att2 || "",
       att3: formData.att3 || "",
@@ -110,11 +152,19 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
       att5: formData.att5 || "",
     };
 
+    console.log("Payload gửi lên BE:", {
+      ...payload,
+      image: payload.image ? payload.image.substring(0, 100) + "..." : "",
+    });
+
     createOptionMutation.mutate(payload, {
       onSuccess: () => {
-        // alert("Tạo SKU Design thành công!");
         if (onClose) onClose();
         queryClient.invalidateQueries(["FIND_ALL_OPTION", "skudesigns", 0, 50]);
+      },
+      onError: (error) => {
+        console.error("Lỗi khi tạo SKU Design:", error);
+        alert("Có lỗi xảy ra khi tạo SKU Design. Vui lòng thử lại.");
       },
     });
   };
@@ -184,10 +234,29 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
               Hình ảnh đại diện
             </Typography>
             <UploadImage onFileSelect={handleImageUpload} />
+            {formData.image && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="caption" color="textSecondary">
+                  Đã chọn: {fileName}
+                </Typography>
+                <Box sx={{ mt: 1, maxWidth: 200 }}>
+                  <img
+                    src={formData.image}
+                    alt="Preview"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      borderRadius: "8px",
+                      border: "1px solid #ddd",
+                    }}
+                  />
+                </Box>
+              </Box>
+            )}
           </Box>
 
           {/* FULFILLMENT */}
-          <FormControl fullWidth size="small" sx={{ mt: 2 }}>
+          {/* <FormControl fullWidth size="small" sx={{ mt: 2 }}>
             <InputLabel id="fulfill-label">Fulfillment tại</InputLabel>
             <Select
               labelId="fulfill-label"
@@ -206,13 +275,20 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
                 ))
               )}
             </Select>
-          </FormControl>
+          </FormControl> */}
+
+          <FormField
+            label="Kho"
+            name="att4"
+            value={formData.att4}
+            onChange={handleChange}
+          />
 
           {/* SỐ LƯỢNG */}
           <FormField
             label="Số lượng"
-            name="att3"
-            value={formData.att3 || ""}
+            name="att2"
+            value={formData.att2 || ""}
             onChange={handleChange}
           />
 
@@ -224,17 +300,24 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
           >
             <button
               style={{
-                backgroundColor: "rgba(232, 67, 12, 0.88)",
+                backgroundColor: createOptionMutation.isLoading
+                  ? "gray"
+                  : "rgba(232, 67, 12, 0.88)",
                 color: "white",
                 fontWeight: "bold",
                 padding: "10px 20px",
                 border: "none",
                 borderRadius: "8px",
-                cursor: "pointer",
+                cursor: createOptionMutation.isLoading
+                  ? "not-allowed"
+                  : "pointer",
               }}
               onClick={handleSubmit}
+              disabled={createOptionMutation.isLoading}
             >
-              Thêm SKU Design
+              {createOptionMutation.isLoading
+                ? "Đang tạo..."
+                : "Thêm SKU Design"}
             </button>
           </Box>
         </Grid>

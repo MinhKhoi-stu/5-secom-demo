@@ -9,30 +9,59 @@ import {
   Typography,
   Paper,
   Chip,
+  Dialog,
+  DialogContent,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { themeStyles } from "themes/styles";
 import PaginationWrapper from "components/common/PaginationWrapper";
-import { Order } from "types/OrderTable";
-import { mockOrders } from "../../../../data";
+import { useFindAllFacility } from "hooks/facility/useFindAllFacility";
+import { FacilityDto } from "dto/facility/facility.dto";
+import UpdateOrder from "../UpdateOrder/UpdateOrder";
 
-const OrderTable = () => {
-  const orders: Order[] = mockOrders;
-  //PAGINATION
+interface OrderTableProps {
+  search: string;
+  facilityTypeId?: string;
+}
+
+const OrderTable = ({ search, facilityTypeId }: OrderTableProps) => {
+  const [selectedFacility, setSelectedFacility] = useState<FacilityDto | null>(
+    null
+  );
+  const [openUpdate, setOpenUpdate] = useState(false);
+
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  useEffect(() => {
+    setPage(1);
+  }, [search, facilityTypeId]);
+
+  const { data, isLoading, isError } = useFindAllFacility({
+    page: page - 1,
+    size: itemsPerPage,
+    codeOrName: search,
+    facilityTypeId: facilityTypeId,
+    sort: "createdDate,desc",
+  });
+
+  const facilities: FacilityDto[] = data?.content ?? [];
+  const totalItems = data?.totalElements ?? 0;
+  const totalPages = data?.totalPages ?? 0;
+
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
-  const paginatedOrders = orders.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+  //OPEN DIALOG
+  const handleRowClick = (facility: FacilityDto) => {
+    setSelectedFacility(facility);
+    setOpenUpdate(true);
+  };
+
+  if (isLoading) return <Typography>Đang tải dữ liệu...</Typography>;
+  if (isError) return <Typography>Lỗi khi tải dữ liệu</Typography>;
+
   return (
     <Box
       sx={{
@@ -52,52 +81,52 @@ const OrderTable = () => {
         <Table>
           <TableHead>
             <TableRow sx={{ "& th": { fontWeight: "bold" } }}>
+              <TableCell>Ngày tạo</TableCell>
               <TableCell>SKU</TableCell>
               <TableCell>Order ID</TableCell>
-              <TableCell>Ngày</TableCell>
               <TableCell>Khách hàng</TableCell>
               <TableCell>Sản phẩm</TableCell>
-              <TableCell>Loại</TableCell>
+              {/* <TableCell>Loại</TableCell> */}
               <TableCell>Số lượng</TableCell>
               <TableCell>Trạng thái</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedOrders.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell>{row.sku}</TableCell>
-                <TableCell>{row.orderId}</TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.customer || "—"}</TableCell>
-                <TableCell>{row.product}</TableCell>
-                <TableCell>{row.type}</TableCell>
-                <TableCell>{row.quantity}</TableCell>
+            {facilities.map((facility: FacilityDto) => (
+              <TableRow
+                key={facility.id}
+                hover
+                sx={{ cursor: "pointer" }}
+                onClick={() => handleRowClick(facility)}
+              >
                 <TableCell>
+                  {facility.createdDate
+                    ? new Date(facility.createdDate).toLocaleDateString("vi-VN")
+                    : "-"}
+                </TableCell>
+                <TableCell>{facility.skuOpt?.name || "-"}</TableCell>
+                <TableCell>{facility.idNumber || "-"}</TableCell>
+                <TableCell>{facility.name || "-"}</TableCell>
+                <TableCell>{facility.labelingStandard || "-"}</TableCell>
+                {/* <TableCell>
                   <Chip
-                    label={row.status}
-                    // color={
-                    //   row.status.includes("Đã")
-                    //     ? "success"
-                    //     : row.status.includes("Đợi")
-                    //     ? "warning"
-                    //     : "default"
-                    // }
+                    label={facility.isException ? "Ngoại lệ" : "Bình thường"}
                     sx={{
-                      backgroundColor: row.status.includes("Đã")
-                        ? themeStyles.success
-                        : row.status.includes("Đợi")
+                      backgroundColor: facility.isException
                         ? themeStyles.warning
-                        : themeStyles.successDark,
-                      // : themeStyles.grey400,
+                        : themeStyles.success,
                       color: "#fff",
                       fontWeight: "bold",
                     }}
                     size="small"
                   />
-                </TableCell>
+                </TableCell> */}
+                <TableCell>{facility.area ?? "-"}</TableCell>
+                <TableCell>{facility.facilityType?.name || "-"}</TableCell>
               </TableRow>
             ))}
-            {orders.length === 0 && (
+
+            {facilities.length === 0 && (
               <TableRow>
                 <TableCell colSpan={8} align="center">
                   Không có đơn hàng nào
@@ -108,11 +137,26 @@ const OrderTable = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
+      <Dialog
+        open={openUpdate}
+        onClose={() => setOpenUpdate(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogContent>
+          {selectedFacility && (
+            <UpdateOrder
+              facility={selectedFacility}
+              onClose={() => setOpenUpdate(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       <PaginationWrapper
         page={page}
-        totalPages={Math.ceil(orders.length / itemsPerPage)}
-        totalItems={orders.length}
+        totalPages={totalPages}
+        totalItems={totalItems}
         itemsPerPage={itemsPerPage}
         onChange={handlePageChange}
       />
