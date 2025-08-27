@@ -3,8 +3,8 @@ import { useQuery } from "react-query";
 
 export const useFindOptionsByGroup = (
   optionGroupCode: string,
-  page: number,
-  size: number,
+  page?: number,
+  size?: number,
   codeOrName?: string,
   sort?: string,
   parentId?: string, 
@@ -14,8 +14,8 @@ export const useFindOptionsByGroup = (
     () =>
       optionAPI.findOptionsByGroup({
         optionGroupCode,
-        page,
-        size,
+        page: page || 0,
+        size: size || 10,
         codeOrName: codeOrName || "",
         sort: sort || "",
         parentId: parentId || "",

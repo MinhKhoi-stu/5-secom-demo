@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
-import {UpdateOrderForm} from "pages/Page2D/components/Update2D/UpdateOrderForm";
 import {Order} from "types/OrderTable";
+import {ReturnOrderForm} from "./ReturnOrderForm";
 
 const UpdateOrderPage = () => {
   const location = useLocation();
@@ -10,7 +10,7 @@ const UpdateOrderPage = () => {
     return <div>Không tìm thấy dữ liệu đơn hàng</div>;
   }
 
-  return <UpdateOrderForm orderId={order.orderId} demoImage={order.demoImage} />;
+  return <ReturnOrderForm orderId={order.orderId} demoImage={order.demoImage} />;
 };
 
 export default UpdateOrderPage;

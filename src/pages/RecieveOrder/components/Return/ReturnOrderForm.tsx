@@ -18,7 +18,7 @@ interface UpdateOrderFormProps {
   demoImage: string;
 }
 
-export const UpdateOrderForm = ({
+export const ReturnOrderForm = ({
   orderId,
   demoImage,
 }: UpdateOrderFormProps) => {
@@ -43,11 +43,14 @@ export const UpdateOrderForm = ({
   return (
     <>
       {/* TIÊu ĐỀ */}
-      <Box sx={{
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "left",
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          textAlign: "left",
+        }}
+      >
         <Typography color="black" variant="h6" fontWeight={"bold"} gutterBottom>
           ĐƠN HÀNG CẦN VẼ 2D - {orderId}
         </Typography>
@@ -55,13 +58,13 @@ export const UpdateOrderForm = ({
 
       <Box
         sx={{
-          width: "500px",
+          width: "flex",
           display: "flex",
           flexDirection: "column",
           textAlign: "left",
           p: 2,
           backgroundColor: "white",
-          borderRadius: "10px"
+          borderRadius: "10px",
         }}
       >
         {/* THẺ BỌC THÔNG TIN + HÌNH ẢNH KHÁCH GỬI */}
@@ -108,7 +111,8 @@ export const UpdateOrderForm = ({
               Hình ảnh khách gửi
             </Typography>
 
-            <Card variant="outlined" sx={{ flex: 1, borderRadius: "10px" }}>
+            <Card variant="outlined" sx={{ width: "flex" , 
+              borderRadius: "10px" }}>
               <CardContent>
                 <Box width={250} display="flex" gap={1} flexWrap="wrap">
                   <Box
@@ -133,53 +137,59 @@ export const UpdateOrderForm = ({
             </Card>
           </Box>
         </Box>
+        <Box sx={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}>
+          <Typography
+            sx={{ marginTop: "10px", color: "black" }}
+            fontWeight="bold"
+          >
+            Trạng thái đơn hàng
+          </Typography>
+          <Card
+            variant="outlined"
+            sx={{
+              width: "flex",
+              // flex: 1,
+              borderRadius: "20px",
+            }}
+          >
+            <CardContent>
+              <Box mt={2} display="flex" flexDirection="column" gap={2}>
+                {/* Nhóm chọn file */}
+                <UploadImage onFileSelect={handleImageUpload} />
 
-        <Typography
-          sx={{ marginTop: "10px", color: "black" }}
-          fontWeight="bold"
-        >
-          Trạng thái đơn hàng
-        </Typography>
-        <Card
-          variant="outlined"
-          sx={{
-            flex: 1,
-            borderRadius: "20px",
-          }}
-        >
-          <CardContent>
-            <Box mt={2} display="flex" flexDirection="column" gap={2}>
-              {/* Nhóm chọn file */}
-              <UploadImage onFileSelect={handleImageUpload}/>
-
-              {/* Nhóm trạng thái */}
-              <FormControl size="small" sx={{ width: "467px" }}>
-                <InputLabel id="combo-label">Trạng thái</InputLabel>
-                <Select
-                  labelId="combo-label"
-                  value={value}
-                  label="Loại sản phẩm"
-                  onChange={(e) => setValue(e.target.value)}
+                {/* Nhóm trạng thái */}
+                <FormControl size="small" sx={{ width: "467px" }}>
+                  <InputLabel id="combo-label">Trạng thái</InputLabel>
+                  <Select
+                    labelId="combo-label"
+                    value={value}
+                    label="Loại sản phẩm"
+                    onChange={(e) => setValue(e.target.value)}
+                  >
+                    <MenuItem value="drawing">Vẽ thêu</MenuItem>
+                    <MenuItem value="cutting">Cắt laser</MenuItem>
+                    <MenuItem value="produce">Sản xuất</MenuItem>
+                    <MenuItem value="package">Đóng gói</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box mt={3}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "red",
+                  }}
                 >
-                  <MenuItem value="drawing">Vẽ thêu</MenuItem>
-                  <MenuItem value="cutting">Cắt laser</MenuItem>
-                  <MenuItem value="produce">Sản xuất</MenuItem>
-                  <MenuItem value="package">Đóng gói</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-            <Box mt={3}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "red",
-                }}
-              >
-                Cập nhật trạng thái đơn hàng
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
+                  Cập nhật trạng thái đơn hàng
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
       </Box>
     </>
   );

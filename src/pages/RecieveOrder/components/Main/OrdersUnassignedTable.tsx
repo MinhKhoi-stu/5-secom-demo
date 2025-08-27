@@ -19,7 +19,7 @@ interface Props {
   onAccept: (order: Order) => void;
 }
 
-const OrdersToDrawTable = ({ orders, onAccept }: Props) => {
+const OrdersUnassignedTable = ({ orders, onAccept }: Props) => {
   //PAGINATION
   const [page, setPage] = useState(1);
   const itemsPerPage = 8;
@@ -116,4 +116,4 @@ const OrdersToDrawTable = ({ orders, onAccept }: Props) => {
   );
 };
 
-export default OrdersToDrawTable;
+export default OrdersUnassignedTable;

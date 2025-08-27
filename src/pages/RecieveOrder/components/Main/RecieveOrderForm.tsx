@@ -18,7 +18,7 @@ interface RecieveOrderModalProps {
   onSubmit: (data: { status: string; image?: File }) => void;
 }
 
-const RecieveOrderModal = ({
+const RecieveOrderForm = ({
   open,
   order,
   onClose,
@@ -136,4 +136,4 @@ const RecieveOrderModal = ({
   );
 };
 
-export default RecieveOrderModal;
+export default RecieveOrderForm;

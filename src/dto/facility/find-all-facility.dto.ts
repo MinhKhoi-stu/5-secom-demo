@@ -7,4 +7,7 @@ export type FindAllFacilityDto = PagingDto & {
   page?: number;
   size?: number;
   sort?: string;
+  // sort?: string[];
+  // sort?: Array<string>;
+  issuePlace?: string;
 };
