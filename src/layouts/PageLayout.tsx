@@ -32,8 +32,15 @@ const PageLayout = () => {
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <Header sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+    <Box
+      sx={{
+        display: "flex",
+      }}
+    >
+      <Header
+        sidebarOpen={sidebarOpen}
+        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+      />
       <Sidebar open={sidebarOpen} />
       <Box
         component="main"

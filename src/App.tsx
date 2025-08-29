@@ -88,7 +88,10 @@ function App() {
           <Box
             display="flex"
             alignItems="center"
-            sx={{ width: "100vw", height: "100vh" }}
+            sx={{
+              width: "100vw",
+              height: "100vh",
+            }}
           >
             <Loading text="Đang tải thông tin người dùng..." />
           </Box>
@@ -96,7 +99,7 @@ function App() {
           <RouterProvider router={router} />
         )}
       </Loadable>
-      
+
       <ToastContainer hideProgressBar autoClose={3000} />
     </ErrorBoundary>
   );

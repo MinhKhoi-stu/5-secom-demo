@@ -27,7 +27,7 @@ export const facilityAPI = {
       .post("facility", createFacilityDto)
       .then((res) => res.data);
   },
-  updateFacility(data: UpdateFacilityDto) : Promise<FacilityDto>{
+  updateFacility(id: string, data: UpdateFacilityDto) : Promise<FacilityDto>{
     return axiosClient.patch<FacilityDto>("facility", data).then((res) => res.data);
   },
 };
