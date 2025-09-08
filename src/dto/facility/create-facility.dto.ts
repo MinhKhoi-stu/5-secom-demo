@@ -1,5 +1,4 @@
 export interface CreateFacilityDto {
-  // Bắt buộc
   page: number;
   size: number;
   sort?: string;
@@ -14,8 +13,6 @@ export interface CreateFacilityDto {
   facilityType: {
     id: string;
   };
-
-  // Không bắt buộc
   address?: string;
   phone?: string;
   email?: string;

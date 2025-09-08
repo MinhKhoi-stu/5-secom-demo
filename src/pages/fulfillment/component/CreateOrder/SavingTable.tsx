@@ -20,8 +20,8 @@ import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { OptionDto } from "dto/option/option.dto";
 
 interface SavingTableProps {
-  items: FacilityDto[]; // rows passed from parent (CreateOrder)
-  onRemove?: (index: number) => void; // optional: remove handler
+  items: FacilityDto[]; 
+  onRemove?: (index: number) => void; 
   rowsPerPageOptions?: number[];
 }
 
@@ -30,7 +30,7 @@ const SavingTable: React.FC<SavingTableProps> = ({
   onRemove,
   rowsPerPageOptions = [5, 10, 25],
 }) => {
-  // Fetch state-test options (used to resolve code/name if row only contains id)
+
   const {
     data: stateTestData,
     isLoading: isLoadingStateTest,

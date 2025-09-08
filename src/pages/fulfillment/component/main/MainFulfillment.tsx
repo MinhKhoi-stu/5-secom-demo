@@ -119,7 +119,6 @@ const MainFulfillment = () => {
     setOrgLevel3(extractList(lvl3Data));
   }, [lvl3Data]);
 
-  // Optional: persist vào localStorage để "lưu 3 lvl đó vào web"
   useEffect(() => {
     if (orgLevel1.length || orgLevel2.length || orgLevel3.length) {
       try {
@@ -132,17 +131,10 @@ const MainFulfillment = () => {
     }
   }, [orgLevel1, orgLevel2, orgLevel3]);
 
-  // --- MỚI: queryClient + function target refetch only order list + statistic ---
   const queryClient = useQueryClient();
 
   const handleAfterCreate = async () => {
-    /**
-     * Mục tiêu:
-     * - Refetch chỉ những query FIND_ALL_FACILITY có liên quan đến MainFulfillment (codeOrName === current search
-     *   hoặc facilityTypeId === selectedFacilityTypeId). Không refetch mọi query FIND_ALL_FACILITY (ví dụ sidebar).
-     *
-     * Cách làm: dùng predicate để chọn queries hợp lệ.
-     */
+
     try {
       await queryClient.invalidateQueries({
         predicate: (q) => {

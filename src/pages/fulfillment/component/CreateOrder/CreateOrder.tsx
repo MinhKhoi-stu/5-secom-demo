@@ -11,9 +11,10 @@ import {
   Link,
   MenuItem,
   Select,
+  SelectChangeEvent,
   Typography,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import OriginLabel from "../../../../components/OriginLabel";
 import { useNavigate } from "react-router-dom";
 import { FacilityDto } from "dto/facility/facility.dto";
@@ -23,7 +24,8 @@ import SavingTable from "./SavingTable";
 import { toast } from "react-toastify";
 import { useCreateFacility } from "hooks/facility/useCreateFacility";
 import { CreateFacilityDto } from "dto/facility/create-facility.dto";
-// import { useQueryClient } from "react-query"; // removed: CreateOrder no longer manipulates global queries
+import { useOrgunitTree } from "hooks/orgunit/useOrgunitTree";
+import { TreeOrgunitDto } from "dto/orgunit/tree-orgunit.dto";
 
 type OrgUnit = {
   id: string;
@@ -113,12 +115,12 @@ const CreateOrder = ({
   level3Options = [],
   initialValues = {},
   orgUnitId,
-  onSaved, 
+  onSaved,
 }: CreateOrderDialogProps) => {
   const [fileName, setFileName] = useState("hinhanh.png");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // selects (editable)
+  // selects hold IDs when using orgunit tree; fall back to names or ids when tree not available
   const [selectedLevel1, setSelectedLevel1] = useState<string>("");
   const [selectedLevel2, setSelectedLevel2] = useState<string>("");
   const [selectedLevel3, setSelectedLevel3] = useState<string>("");
@@ -126,15 +128,152 @@ const CreateOrder = ({
   // main form (single source of truth for customer/general info)
   const [formData, setFormData] = useState<FacilityDto>(initialFormState);
 
-  // table data
   const [savedOrders, setSavedOrders] = useState<FacilityDto[]>([]);
 
   const navigate = useNavigate();
 
-  // react-query mutation
   const { mutateAsync: createFacilityAsync, isLoading: isCreating } =
     useCreateFacility();
 
+  const orgunitQuery = useOrgunitTree();
+
+  useEffect(() => {
+    if (open) {
+      orgunitQuery.refetch().catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const usingOrgunitTree = Boolean(
+    orgunitQuery.data &&
+      Array.isArray(orgunitQuery.data) &&
+      orgunitQuery.data.length > 0
+  );
+
+  // helper: recursively find a node by id in the tree
+  const findNodeById = (
+    nodes: TreeOrgunitDto[] | undefined,
+    id: string | undefined
+  ): TreeOrgunitDto | undefined => {
+    if (!nodes || !id) return undefined;
+    for (const n of nodes) {
+      if (n.id === id) return n;
+      if (n.children && (n.children as any).length) {
+        const found = findNodeById(n.children as any, id);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  };
+
+  // helper: recursively find a node by name in the tree
+  const findNodeByName = (
+    nodes: TreeOrgunitDto[] | undefined,
+    name: string | undefined
+  ): TreeOrgunitDto | undefined => {
+    if (!nodes || !name) return undefined;
+    for (const n of nodes) {
+      if (n.name === name) return n;
+      if (n.children && (n.children as any).length) {
+        const found = findNodeByName(n.children as any, name);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  };
+
+  // helper: resolve current selected orgUnit (deepest level) to {id,name}
+  const resolveSelectedOrgUnitFromSelections = (): {
+    id?: string;
+    name?: string;
+  } => {
+    // using tree: selectedLevel values are ids
+    if (usingOrgunitTree) {
+      const id =
+        selectedLevel3 || selectedLevel2 || selectedLevel1 || undefined;
+      if (!id) return {};
+      const node = findNodeById(orgunitQuery.data as TreeOrgunitDto[], id);
+      return { id: node?.id, name: node?.name };
+    }
+
+    // fallback: selectedLevel values may be names or ids; try to resolve by checking options arrays
+    const tryResolve = (val: string | undefined, arr?: OrgUnit[]) => {
+      if (!val || !arr || arr.length === 0) return undefined;
+      return arr.find((o) => o.id === val) || arr.find((o) => o.name === val);
+    };
+
+    // try deepest first
+    if (selectedLevel3) {
+      const found = tryResolve(selectedLevel3, level3Options);
+      if (found) return { id: found.id, name: found.name };
+    }
+    if (selectedLevel2) {
+      const found = tryResolve(selectedLevel2, level2Options);
+      if (found) return { id: found.id, name: found.name };
+    }
+    if (selectedLevel1) {
+      const found = tryResolve(selectedLevel1, level1Options);
+      if (found) return { id: found.id, name: found.name };
+    }
+
+    // last fallback: if parent provided a single orgUnitId prop
+    if (orgUnitId) {
+      return { id: orgUnitId };
+    }
+
+    return {};
+  };
+
+  // level options derived from tree based on selection
+  const level1Nodes: TreeOrgunitDto[] = useMemo(() => {
+    if (!usingOrgunitTree) return [];
+    // top-level nodes from API
+    return orgunitQuery.data as TreeOrgunitDto[];
+  }, [orgunitQuery.data, usingOrgunitTree]);
+
+  const level2Nodes: TreeOrgunitDto[] = useMemo(() => {
+    if (!usingOrgunitTree || !selectedLevel1) return [];
+    const node = findNodeById(
+      orgunitQuery.data as TreeOrgunitDto[],
+      selectedLevel1
+    );
+    return (node?.children as unknown as TreeOrgunitDto[]) || [];
+  }, [orgunitQuery.data, usingOrgunitTree, selectedLevel1]);
+
+  const level3Nodes: TreeOrgunitDto[] = useMemo(() => {
+    if (!usingOrgunitTree || !selectedLevel2) return [];
+    const node = findNodeById(level2Nodes, selectedLevel2);
+    return (node?.children as unknown as TreeOrgunitDto[]) || [];
+  }, [level2Nodes, usingOrgunitTree, selectedLevel2]);
+
+  // the final selected orgUnit id should be the deepest selected level's id (or undefined)
+  const finalSelectedOrgUnitId = useMemo(() => {
+    // if using tree we expect selectedLevelX to be ids
+    if (selectedLevel3) return selectedLevel3;
+    if (selectedLevel2) return selectedLevel2;
+    if (selectedLevel1) return selectedLevel1;
+    return "";
+  }, [selectedLevel1, selectedLevel2, selectedLevel3]);
+
+  const finalSelectedOrgUnitName = useMemo(() => {
+    if (usingOrgunitTree && finalSelectedOrgUnitId) {
+      const node = findNodeById(
+        orgunitQuery.data as TreeOrgunitDto[],
+        finalSelectedOrgUnitId
+      );
+      return node?.name || "";
+    }
+    // fallback (when not using tree): use selected values which may be names
+    return selectedLevel3 || selectedLevel2 || selectedLevel1 || "";
+  }, [
+    usingOrgunitTree,
+    finalSelectedOrgUnitId,
+    selectedLevel1,
+    selectedLevel2,
+    selectedLevel3,
+  ]);
+
+  // --- rest of original handlers ---
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) setFileName(file.name);
@@ -206,9 +345,32 @@ const CreateOrder = ({
         ...details,
       })
     );
+    const hasOrgUnitInDetails = !!(
+      snapshot.orgUnit &&
+      (snapshot.orgUnit.id || snapshot.orgUnit.name)
+    );
 
-    if ((!snapshot.orgUnit || !snapshot.orgUnit.name) && selectedLevel3) {
-      snapshot.orgUnit = { id: "", name: selectedLevel3 } as any;
+    if (
+      !hasOrgUnitInDetails &&
+      (selectedLevel1 || selectedLevel2 || selectedLevel3 || orgUnitId)
+    ) {
+      // resolve selection into id + name by checking tree first, then fallback options
+      const resolved = resolveSelectedOrgUnitFromSelections();
+
+      if (resolved.id) {
+        snapshot.orgUnit = {
+          id: resolved.id,
+          name: resolved.name || "",
+        } as any;
+      } else if (resolved.name) {
+        // name-only fallback
+        snapshot.orgUnit = { id: "", name: resolved.name } as any;
+      } else {
+        // last fallback: use prop orgUnitId if provided
+        if (orgUnitId) {
+          snapshot.orgUnit = { id: orgUnitId, name: "" } as any;
+        }
+      }
     }
 
     if ((!snapshot.skuOpt || !snapshot.skuOpt.id) && snapshot.code) {
@@ -240,12 +402,59 @@ const CreateOrder = ({
     return errs;
   };
 
+  // resolve an orgUnit id for a given row using available sources (tree -> props -> current selection -> orgUnitId prop)
+  const getEffectiveOrgUnitIdForRow = (
+    row: FacilityDto
+  ): string | undefined => {
+    // 1) if row already has id, use it
+    if (row.orgUnit && (row.orgUnit as any).id) return (row.orgUnit as any).id;
+
+    // 2) if row has a name, try to resolve it against tree first
+    if (row.orgUnit && (row.orgUnit as any).name) {
+      const name = (row.orgUnit as any).name;
+      if (usingOrgunitTree) {
+        const found = findNodeByName(
+          orgunitQuery.data as TreeOrgunitDto[],
+          name
+        );
+        if (found) return found.id;
+      } else {
+        // try fallback options arrays
+        const found1 = level1Options.find(
+          (o) => o.id === name || o.name === name
+        );
+        if (found1) return found1.id;
+        const found2 = level2Options.find(
+          (o) => o.id === name || o.name === name
+        );
+        if (found2) return found2.id;
+        const found3 = level3Options.find(
+          (o) => o.id === name || o.name === name
+        );
+        if (found3) return found3.id;
+      }
+    }
+
+    // 3) try the current selects (deepest selected)
+    const resolved = resolveSelectedOrgUnitFromSelections();
+    if (resolved.id) return resolved.id;
+
+    // 4) try the prop orgUnitId
+    if (orgUnitId) return orgUnitId;
+
+    // unable to determine
+    return undefined;
+  };
+
   const mapToCreateFacilityDto = (row: FacilityDto): CreateFacilityDto => {
+    const effectiveOrgUnitId = getEffectiveOrgUnitIdForRow(row);
+
     const dto: any = {
       page: 0,
       size: 10,
       code: row.code || row.skuOpt?.code || "",
       skuCode: row.code || row.skuOpt?.code || "",
+      orgUnitId: effectiveOrgUnitId,
       name: row.name || "",
       idNumber: row.idNumber || "",
       area: row.area ?? 0,
@@ -253,7 +462,9 @@ const CreateOrder = ({
       phone: row.phone || "",
       address: row.address || "",
       labelingStandard: row.labelingStandard || "",
-      issuePlace: row.issuePlace ?? "unassigned",
+      // REQUIREMENT: ensure issuePlace is explicitly "unassigned" when creating.
+      // This overrides any value that might come from initialValues or the logged-in user.
+      issuePlace: "unassigned",
     };
 
     if (row.skuOpt?.id) {
@@ -268,8 +479,16 @@ const CreateOrder = ({
       dto.facilityType = { code: row.facilityType.code };
 
     if (row.stateOpt?.id) dto.stateOpt = { id: row.stateOpt.id };
-    if (row.orgUnit?.id) dto.orgUnit = { id: row.orgUnit.id };
-    else if (row.orgUnit?.name) dto.orgUnit = { name: row.orgUnit.name };
+
+    // Ensure orgUnit field exists (backend expects it). Prefer id.
+    if (effectiveOrgUnitId) {
+      dto.orgUnit = { id: effectiveOrgUnitId };
+    } else if (row.orgUnit && (row.orgUnit as any).name) {
+      // As last resort, include name only (backend may accept it)
+      dto.orgUnit = { id: "", name: (row.orgUnit as any).name };
+    } else {
+      dto.orgUnit = { id: "" };
+    }
 
     return dto as CreateFacilityDto;
   };
@@ -280,6 +499,7 @@ const CreateOrder = ({
       return;
     }
 
+    // validate each row required fields first
     for (const row of savedOrders) {
       const errs = validateRow(row);
       if (errs.length) {
@@ -288,8 +508,42 @@ const CreateOrder = ({
       }
     }
 
+    // ensure we can determine orgUnit.id for every row
+    const unresolved: number[] = [];
+    const preparedRows = savedOrders.map((row, idx) => {
+      const effId = getEffectiveOrgUnitIdForRow(row);
+      if (!effId) unresolved.push(idx);
+
+      const resolvedName = effId
+        ? (usingOrgunitTree
+            ? findNodeById(orgunitQuery.data as TreeOrgunitDto[], effId)?.name
+            : (
+                level1Options.find((o) => o.id === effId) ||
+                level2Options.find((o) => o.id === effId) ||
+                level3Options.find((o) => o.id === effId)
+              )?.name) ||
+          (row.orgUnit as any)?.name ||
+          ""
+        : (row.orgUnit as any)?.name || "";
+
+      return {
+        ...row,
+        orgUnit: { id: effId || "", name: resolvedName } as any,
+      } as FacilityDto;
+    });
+
+    if (unresolved.length > 0) {
+      toast.error(
+        "Không thể xác định orgUnit.id cho một hoặc nhiều đơn. Vui lòng chọn OrgUnit (cấp phù hợp) trước khi lưu."
+      );
+      return;
+    }
+
+    // update savedOrders state to include resolved orgUnit ids
+    setSavedOrders(preparedRows);
+
     try {
-      for (const [idx, row] of savedOrders.entries()) {
+      for (const [idx, row] of preparedRows.entries()) {
         const dto = mapToCreateFacilityDto(row);
         const created = await createFacilityAsync(dto);
         console.debug(`Created facility ${idx}:`, created);
@@ -307,7 +561,7 @@ const CreateOrder = ({
         console.warn("Error during onSaved callback:", e);
       }
 
-      toast.success(`Đã lưu ${savedOrders.length} đơn hàng.`);
+      toast.success(`Đã lưu ${preparedRows.length} đơn hàng.`);
       resetAllAndClose();
     } catch (err: any) {
       console.error("Lỗi khi lưu đơn:", err);
@@ -317,6 +571,25 @@ const CreateOrder = ({
         "Lưu đơn thất bại";
       toast.error(msg);
     }
+  };
+
+  // --- select handlers which reset deeper levels when parent changes ---
+  const handleLevel1Change = (e: SelectChangeEvent<string>) => {
+    const val = e.target.value as string;
+    setSelectedLevel1(val);
+    setSelectedLevel2("");
+    setSelectedLevel3("");
+  };
+
+  const handleLevel2Change = (e: SelectChangeEvent<string>) => {
+    const val = e.target.value as string;
+    setSelectedLevel2(val);
+    setSelectedLevel3("");
+  };
+
+  const handleLevel3Change = (e: SelectChangeEvent<string>) => {
+    const val = e.target.value as string;
+    setSelectedLevel3(val);
   };
 
   return (
@@ -373,17 +646,31 @@ const CreateOrder = ({
                 height: "100%",
               }}
             >
+              {/* LEVEL 1 */}
               <FormControl size="small" fullWidth>
                 <InputLabel id="level1-label">Loại cửa hàng</InputLabel>
                 <Select
                   labelId="level1-label"
                   value={selectedLevel1}
                   label="Loại cửa hàng"
-                  onChange={(e) => setSelectedLevel1(e.target.value)}
+                  onChange={handleLevel1Change}
                 >
-                  {level1Options.length > 0 ? (
+                  {usingOrgunitTree ? (
+                    level1Nodes.length > 0 ? (
+                      level1Nodes.map((opt) => (
+                        <MenuItem key={opt.id} value={opt.id}>
+                          {opt.name}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem value="" disabled>
+                        Không có dữ liệu
+                      </MenuItem>
+                    )
+                  ) : level1Options.length > 0 ? (
                     level1Options.map((opt) => (
-                      <MenuItem key={opt.id} value={opt.name}>
+                      // fallback keeps old behavior of showing name but stores id/value where possible
+                      <MenuItem key={opt.id} value={opt.id || opt.name}>
                         {opt.name}
                       </MenuItem>
                     ))
@@ -395,17 +682,37 @@ const CreateOrder = ({
                 </Select>
               </FormControl>
 
+              {/* LEVEL 2 - disabled until level1 selected */}
               <FormControl size="small" fullWidth>
                 <InputLabel id="level2-label">Quốc gia</InputLabel>
                 <Select
                   labelId="level2-label"
                   value={selectedLevel2}
                   label="Quốc gia"
-                  onChange={(e) => setSelectedLevel2(e.target.value)}
+                  onChange={handleLevel2Change}
+                  disabled={!selectedLevel1}
                 >
-                  {level2Options.length > 0 ? (
+                  {usingOrgunitTree ? (
+                    selectedLevel1 ? (
+                      level2Nodes.length > 0 ? (
+                        level2Nodes.map((opt) => (
+                          <MenuItem key={opt.id} value={opt.id}>
+                            {opt.name}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem value="" disabled>
+                          Không có dữ liệu
+                        </MenuItem>
+                      )
+                    ) : (
+                      <MenuItem value="" disabled>
+                        Vui lòng chọn Loại cửa hàng trước
+                      </MenuItem>
+                    )
+                  ) : level2Options.length > 0 ? (
                     level2Options.map((opt) => (
-                      <MenuItem key={opt.id} value={opt.name}>
+                      <MenuItem key={opt.id} value={opt.id || opt.name}>
                         {opt.name}
                       </MenuItem>
                     ))
@@ -417,17 +724,37 @@ const CreateOrder = ({
                 </Select>
               </FormControl>
 
+              {/* LEVEL 3 - disabled until level2 selected */}
               <FormControl size="small" fullWidth>
                 <InputLabel id="level3-label">Cửa hàng</InputLabel>
                 <Select
                   labelId="level3-label"
                   value={selectedLevel3}
                   label="Cửa hàng"
-                  onChange={(e) => setSelectedLevel3(e.target.value)}
+                  onChange={handleLevel3Change}
+                  disabled={!selectedLevel2}
                 >
-                  {level3Options.length > 0 ? (
+                  {usingOrgunitTree ? (
+                    selectedLevel2 ? (
+                      level3Nodes.length > 0 ? (
+                        level3Nodes.map((opt) => (
+                          <MenuItem key={opt.id} value={opt.id}>
+                            {opt.name}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem value="" disabled>
+                          Không có dữ liệu
+                        </MenuItem>
+                      )
+                    ) : (
+                      <MenuItem value="" disabled>
+                        Vui lòng chọn Quốc gia trước
+                      </MenuItem>
+                    )
+                  ) : level3Options.length > 0 ? (
                     level3Options.map((opt) => (
-                      <MenuItem key={opt.id} value={opt.name}>
+                      <MenuItem key={opt.id} value={opt.id || opt.name}>
                         {opt.name}
                       </MenuItem>
                     ))

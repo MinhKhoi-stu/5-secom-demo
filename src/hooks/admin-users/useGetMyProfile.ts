@@ -23,7 +23,6 @@ export function useGetMyProfile(props?: PropsType) {
   });
 
   function clearToken() {
-    //TODO: call api to get user's info ---- 
     localStorage.removeItem(localStorageKey.accessToken);
     localStorage.removeItem(localStorageKey.refreshToken);
     queryClient.setQueryData(QUERY_KEY.GET_MY_PROFILE, null);

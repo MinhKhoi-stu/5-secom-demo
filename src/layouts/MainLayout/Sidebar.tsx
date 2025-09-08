@@ -171,8 +171,8 @@ const FACILITY_BASE = "/facility";
 
 type NavTarget = {
   href: string;
-  isFacilityLike: boolean; 
-  typeCodeFromHref: string | null; 
+  isFacilityLike: boolean;
+  typeCodeFromHref: string | null;
   componentTarget: "mainFulfillment" | "receiveOrder" | "other";
 };
 
@@ -189,9 +189,8 @@ const RECEIVE_ORDER_TYPECODES = new Set([
 
 const coerceHrefFromUrl = (url?: string | null): string => {
   const raw = (url ?? "").toString().trim();
-  if (!raw) return "/"; 
+  if (!raw) return "/";
 
-  
   if (raw.startsWith("/")) {
     if (raw === FACILITY_BASE || raw.startsWith(`${FACILITY_BASE}/`)) {
       return raw;
@@ -207,7 +206,6 @@ const coerceHrefFromUrl = (url?: string | null): string => {
   if (raw.includes("/")) {
     return raw.startsWith("facility/") ? `/${raw}` : `/${raw}`;
   }
-
 
   if (raw.startsWith("facility-")) {
     return `${FACILITY_BASE}/${encodeURIComponent(raw)}`;
@@ -280,8 +278,7 @@ const extractFacilityTypeIdFromOptions = (
         if (v && typeof v === "object") stack.push(v);
       }
     }
-  } catch (e) {
-  }
+  } catch (e) {}
 
   return undefined;
 };
@@ -296,7 +293,6 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const { loading, getChildrenOfParentCode, findByCode } = useMenu();
-
 
   const currentTypeCodeFromPath = getTypeCodeFromPath(location.pathname);
 
@@ -330,7 +326,6 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
   useEffect(() => {
     setResolvedFacilityTypeId(undefined);
   }, [selectedTypeCode]);
-
 
   useEffect(() => {
     if (!optionsFetching && !optionsLoading && optionsData) {
@@ -489,7 +484,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
       ? target.href.slice(1)
       : target.href;
     console.log("SIDEBAR CLICK", {
-      menuUrl: relative, // luôn facility/xxx
+      menuUrl: relative, 
       locationPathname: location.pathname,
     });
 

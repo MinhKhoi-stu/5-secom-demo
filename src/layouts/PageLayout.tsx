@@ -5,6 +5,7 @@ import Sidebar from "./MainLayout/Sidebar";
 import { useEffect, useState } from "react";
 import { localStorageKey } from "utils/constants";
 import { PATH } from "routes/constants";
+import { FacilityTypeProvider } from "utils/facility/FacilityProvider";
 
 const PageLayout = () => {
   const theme = useTheme();
@@ -32,31 +33,31 @@ const PageLayout = () => {
   }
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-      }}
-    >
-      <Header
-        sidebarOpen={sidebarOpen}
-        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-      />
-      <Sidebar open={sidebarOpen} />
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
-          width: "100%",
-          padding: 3,
-          marginTop: "64px",
-          marginLeft: sidebarOpen ? { xs: 0, sm: "200px" } : 0,
-          backgroundColor: "#f9f9f9",
-          transition: "margin 0.3s ease",
+          display: "flex",
         }}
       >
-        <Outlet />
+        <Header
+          sidebarOpen={sidebarOpen}
+          toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        />
+        <Sidebar open={sidebarOpen} />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            width: "100%",
+            padding: 3,
+            marginTop: "64px",
+            marginLeft: sidebarOpen ? { xs: 0, sm: "200px" } : 0,
+            backgroundColor: "#f9f9f9",
+            transition: "margin 0.3s ease",
+          }}
+        >
+          <Outlet />
+        </Box>
       </Box>
-    </Box>
   );
 };
 

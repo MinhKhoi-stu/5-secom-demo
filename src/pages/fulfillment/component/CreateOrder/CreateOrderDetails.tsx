@@ -1,6 +1,8 @@
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -8,17 +10,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
 import UploadImage from "components/common/UploadImage";
 import { FacilityDto } from "dto/facility/facility.dto";
-import { useFindAllFacility } from "hooks/facility/useFindAllFacility";
+import { useFindAllFacility } from "hooks/facility/useFindAllFacilityCustom";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
-import { OptionDto } from "dto/option/option.dto";
-import { FormField } from "pages/User/components/FormField";
+import { processImageUpload } from "utils/convert-img";
 
 interface Props {
-  facility: FacilityDto; // parent customer/general info (used only to copy customer-level fields into snapshot)
-  onAddOrder: (snapshot: FacilityDto) => void; // called when user clicks '+'
+  facility: FacilityDto;
+  onAddOrder: (snapshot: FacilityDto) => void;
   open: boolean;
 }
 
@@ -39,14 +39,12 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
     isError: isErrorFacilityType,
   } = useFindOptionsByGroup("facility-type", 0, 50, "", "orderNo,asc");
 
-  const facilityTypeOptions: OptionDto[] = facilityTypeData?.content || [];
+  const facilityTypeOptions: any[] = facilityTypeData?.content || [];
 
-  // --- SKU Design & State-Test hooks (kept here) ---
   const { data: skuDesignsData, isLoading: isLoadingSku } =
     useFindOptionsByGroup("skudesigns", 0, 200, "");
   const skuDesigns: any[] = skuDesignsData?.content || [];
 
-  // local skuParentId used to filter state-test options (call BE with parentId if supported)
   const [skuParentId, setSkuParentId] = useState<string | null>(null);
 
   const {
@@ -66,34 +64,34 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
     ? rawStateTest.filter((opt) => (opt?.parentOpt as any)?.id === skuParentId)
     : rawStateTest;
 
-  // LOCAL UI STATES (detached from parent until user clicks '+')
   const [noteText, setNoteText] = useState<string>(
     (facility?.note ?? "").toString()
   );
   const [labelingValue, setLabelingValue] = useState<string>(
     (facility?.labelingStandard ?? "").toString()
   );
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(
-    facility?.sampleSource && facility.sampleSource.toString().length > 0
-      ? (facility.sampleSource as any as string)
-      : null
-  );
   const [facilityTypeName, setFacilityTypeName] = useState<string>(
     facility?.facilityType?.name ?? ""
   );
 
-  // ---- IMPORTANT: selectedSkuId luôn lưu "id" của skuDesign ----
   const [selectedSkuId, setSelectedSkuId] = useState<string>("");
   const [selectedStateId, setSelectedStateId] = useState<string>(
     facility?.stateOpt?.id ?? ""
   );
 
-  // local area (Số lượng) independent from parent
   const [localArea, setLocalArea] = useState<number | "">(
     (facility?.area ?? 0) === 0 ? "" : facility?.area ?? ""
   );
 
-  // Build unique labelingStandard options from facilities
+  // image upload states
+  const [imageUploading, setImageUploading] = useState<boolean>(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+
+  // IMPORTANT: keep local preview state instead of mutating props directly
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(
+    facility?.sampleSource ?? null
+  );
+
   const labelingOptions = useMemo(() => {
     const vals = facilities
       .map((f) => (f.labelingStandard ?? "").toString().trim())
@@ -101,25 +99,15 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
     return Array.from(new Set(vals));
   }, [facilities]);
 
-  // Prefill local UI states whenever parent facility or dialog open changes
   useEffect(() => {
     if (!open) {
-      // keep local state if dialog closed
       return;
     }
 
-    // sync from parent facility (but only to initialize local inputs)
     setNoteText((facility?.note ?? "").toString());
     setLabelingValue((facility?.labelingStandard ?? "").toString());
-    setImagePreviewUrl(
-      facility?.sampleSource && facility.sampleSource.toString().length > 0
-        ? (facility.sampleSource as any as string)
-        : null
-    );
     setFacilityTypeName(facility?.facilityType?.name ?? "");
 
-    // Synchronous mapping from facility.skuOpt -> selectedSkuId.
-    // Support several shapes: { id }, or only { code } or { name } (try to find id by code/name)
     if (facility?.skuOpt?.id) {
       setSelectedSkuId(facility.skuOpt.id);
     } else if (facility?.skuOpt?.code) {
@@ -132,12 +120,10 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
       setSelectedSkuId("");
     }
 
-    // sync selected state
     setSelectedStateId(facility?.stateOpt?.id ?? "");
 
     setLocalArea((facility?.area ?? 0) === 0 ? "" : facility?.area ?? "");
 
-    // if we have a selectedSkuId and skuDesigns loaded, compute parentId
     if ((facility?.skuOpt?.id || selectedSkuId) && skuDesigns.length > 0) {
       const idToCheck = facility?.skuOpt?.id ?? selectedSkuId;
       const sel = skuDesigns.find((s) => s.id === idToCheck);
@@ -146,20 +132,23 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
     } else {
       setSkuParentId(null);
     }
+
+    // Reset upload error/uploading state and sync local preview from facility.sampleSource when opening
+    setImageUploading(false);
+    setImageUploadError(null);
+    setImagePreviewUrl(facility?.sampleSource ?? null);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facility, open, skuDesigns.length]);
 
-  // whenever selectedSkuId changes (user action), update parent and compute parentId locally
   const handleSkuChange = (newSkuId: string) => {
     setSelectedSkuId(newSkuId);
 
-    // const sel = skuDesigns.find((o: any) => o.id === newSkuId);
     const sel = skuDesigns.find((s) => s.id === newSkuId);
     if (sel) {
       const parentId = (sel as any)?.parentOpt?.id ?? null;
       setSkuParentId(parentId);
 
-      // clear local selectedStateId (size)
       setSelectedStateId("");
     } else {
       setSkuParentId(null);
@@ -181,22 +170,52 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
     setFacilityTypeName(v);
   };
 
-  const handleImageUpload = (file: File) => {
-    const url = URL.createObjectURL(file);
-    setImagePreviewUrl(url);
+  /**
+   * Xử lý upload ảnh:
+   * - validate & convert sang base64 data URL bằng processImageUpload
+   * - set imagePreviewUrl = base64 data URL (dùng để snapshot.sampleSource khi add)
+   * - hiển thị lỗi nếu có
+   */
+  const handleImageUpload = async (file: File) => {
+    setImageUploadError(null);
+    setImageUploading(true);
+
+    try {
+      const result: any = await processImageUpload(
+        file,
+        { maxSizeInMB: 5 },
+        false
+      );
+
+      if (!result || !result.success) {
+        throw new Error(result?.error || "Không thể xử lý ảnh");
+      }
+
+      // result.data.base64 là data URL (ví dụ "data:image/png;base64,....")
+      const base64 = result.data?.base64 ?? null;
+      if (!base64) {
+        throw new Error("Không nhận được dữ liệu ảnh từ xử lý.");
+      }
+
+      // store into local preview state (do NOT mutate props directly)
+      setImagePreviewUrl(base64);
+    } catch (err: any) {
+      console.error("Upload image error:", err);
+      setImageUploadError(err?.message ?? "Lỗi khi xử lý ảnh");
+    } finally {
+      setImageUploading(false);
+    }
   };
 
-  // --- handle area change locally ---
   const handleAreaChange = (e: any) => {
     const { name, value } = e.target;
     if (name === "area") {
       setLocalArea(value === "" ? "" : Number(value));
     } else {
-      // fallback in case other fields reused
+      // fallback
     }
   };
 
-  // Build snapshot and pass to parent on '+', then clear local inputs
   const handleAdd = () => {
     const skuSel = skuDesigns.find((s) => s.id === selectedSkuId);
     const stateSel = stateTestOptions.find((s) => s.id === selectedStateId);
@@ -206,7 +225,9 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
 
     const snapshot: FacilityDto = JSON.parse(JSON.stringify({ ...facility }));
 
-    // set skuOpt from skuSel (if found) — otherwise keep empty object with safe defaults
+    // ensure we include the uploaded image (local preview) into snapshot
+    snapshot.sampleSource = imagePreviewUrl ?? facility?.sampleSource ?? null;
+
     snapshot.skuOpt = skuSel
       ? { id: skuSel.id, code: skuSel.code ?? "", name: skuSel.name ?? "" }
       : {
@@ -236,8 +257,6 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
 
     snapshot.note = noteText || null;
     snapshot.labelingStandard = labelingValue || null;
-    snapshot.sampleSource = imagePreviewUrl || null;
-
     snapshot.facilityType = facilityTypeFound
       ? {
           id: facilityTypeFound.id,
@@ -252,18 +271,19 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
           description: facility?.facilityType?.description ?? null,
         };
 
-    // send snapshot up to parent (parent will add to its temp array)
     onAddOrder(snapshot);
 
-    // CLEAR local inputs in details only (parent `facility` is intentionally NOT modified)
+    // reset form fields (local to this component)
     setSelectedSkuId("");
     setSelectedStateId("");
     setSkuParentId(null);
     setNoteText("");
     setLabelingValue("");
-    setImagePreviewUrl(null);
     setFacilityTypeName("");
     setLocalArea("");
+    setImageUploadError(null);
+    setImageUploading(false);
+    setImagePreviewUrl(null);
   };
 
   return (
@@ -343,12 +363,13 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
       </Box>
 
       {/* --- SỐ LƯỢNG (moved here) --- */}
-      <FormField
+      <TextField
         label="Số lượng"
         name="area"
-        type="text"
-        value={localArea === 0 ? "" : (localArea as any)}
+        type="number"
+        value={localArea === "" ? "" : localArea}
         onChange={handleAreaChange}
+        size="small"
       />
 
       {/* Thông tin đơn hàng (note) */}
@@ -363,13 +384,6 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
           setNoteText(v);
         }}
       />
-      {/* <FormField
-        label="SKU Fulfill"
-        name="code"
-        type="text"
-        value={formData.code || ""}
-        onChange={handleChange}
-      /> */}
 
       <FormControl size="small" fullWidth>
         <InputLabel id="labeling-standard-label">Loại hàng</InputLabel>
@@ -399,7 +413,22 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <UploadImage onFileSelect={handleImageUpload} />
-        {imagePreviewUrl ? (
+
+        {/* upload status */}
+        {imageUploading && (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <CircularProgress size={18} />
+            <Typography variant="body2">Đang xử lý ảnh...</Typography>
+          </Box>
+        )}
+
+        {imageUploadError && (
+          <Typography variant="body2" color="error">
+            {imageUploadError}
+          </Typography>
+        )}
+
+        {imagePreviewUrl || facility.sampleSource ? (
           <Box
             sx={{
               mt: 1,
@@ -413,7 +442,7 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
               Xem trước hình (sampleSource):
             </Typography>
             <img
-              src={imagePreviewUrl}
+              src={imagePreviewUrl ?? (facility.sampleSource as any) ?? ""}
               alt="preview"
               style={{ width: "100%", borderRadius: 6 }}
             />
@@ -434,7 +463,7 @@ const CreateOrderDetails = ({ facility, onAddOrder, open }: Props) => {
           ) : isErrorFacilityType ? (
             <MenuItem disabled>Lỗi tải dữ liệu</MenuItem>
           ) : facilityTypeOptions.length > 0 ? (
-            facilityTypeOptions.map((opt: OptionDto) => (
+            facilityTypeOptions.map((opt: any) => (
               <MenuItem key={opt.id} value={opt.name ?? ""}>
                 {opt.name}
               </MenuItem>

@@ -21,7 +21,6 @@ export const useFindAllFacility = (
     issuePlace,
   } = params;
 
-  // Nếu caller không truyền explicit options.enabled, mặc định chỉ enable khi facilityTypeId hợp lệ.
   const enabled =
     typeof options?.enabled === "boolean"
       ? options!.enabled

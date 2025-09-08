@@ -143,7 +143,14 @@ const OrderTable = ({ search, facilityTypeId }: OrderTableProps) => {
         maxWidth="lg"
         fullWidth
       >
-        <DialogContent>
+        <DialogContent
+          sx={{
+            overflowX: "hidden",
+            overflowY: "auto",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+          }}
+        >
           {selectedFacility && (
             <UpdateOrder
               facility={selectedFacility}

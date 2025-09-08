@@ -1,141 +1,8 @@
-// import {
-//   Box,
-//   Button,
-//   InputAdornment,
-//   TextField,
-//   Typography,
-// } from "@mui/material";
-// import { useState } from "react";
-// import { Order } from "types/OrderTable";
-// import { mockOrders } from "../../../../data";
-
-// import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-// import OrdersUnassignedTable from "./OrdersUnassignedTable";
-// import RecieveOrderForm from "./RecieveOrderForm";
-
-// const MainPage = () => {
-//   const [ordersToDraw, setOrdersToDraw] = useState<Order[]>(mockOrders);
-//   const [inProgressOrders, setInProgressOrders] = useState<Order[]>([]);
-
-//   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-//   const [openDialog, setOpenDialog] = useState(false);
-
-//   const [searchKeyword, setSearchKeyword] = useState("");
-
-//   const handleAcceptOrder = (order: Order) => {
-//     setSelectedOrder(order);
-//     setOpenDialog(true);
-//   };
-
-//   const handleCloseDialog = () => {
-//     setOpenDialog(false);
-//     setSelectedOrder(null);
-//   };
-
-//   const handleConfirmUpdate = (updatedData?: {
-//     status: string;
-//     image?: File;
-//   }) => {
-//     if (selectedOrder) {
-//       const updatedOrder = {
-//         ...selectedOrder,
-//         status: updatedData?.status || "Đã cập nhật",
-//       };
-
-//       setOrdersToDraw((prev) => prev.filter((o) => o.id !== selectedOrder.id));
-//       setInProgressOrders((prev) => [...prev, updatedOrder]);
-//     }
-//     handleCloseDialog();
-//   };
-
-//   return (
-//     <Box
-//       sx={{
-//         display: "flex",
-//         flexDirection: "column",
-//         textAlign: "start",
-//         gap: 2,
-//       }}
-//     >
-//       <Box
-//         sx={{
-//           display: "flex",
-//           flexDirection: "row",
-//           gap: 10
-//         }}
-//       >
-//         <Box
-//           sx={{
-//             display: "flex",
-//             flexDirection: "column",
-//             textAlign: "start",
-//             gap: 2,
-//           }}
-//         >
-//           <Typography variant="h5" fontWeight="bold" color="black">
-//             Tiêu đề này truyền facilityTypeId vào
-//           </Typography>
-
-//           <TextField
-//             type="text"
-//             placeholder="Tìm kiếm đơn hàng"
-//             variant="outlined"
-//             value={searchKeyword}
-//             onChange={(e) => setSearchKeyword(e.target.value)}
-//             InputProps={{
-//               endAdornment: (
-//                 <InputAdornment position="end">
-//                   <SearchOutlinedIcon sx={{ color: "#888" }} />
-//                 </InputAdornment>
-//               ),
-//             }}
-//             sx={{
-//               backgroundColor: "white",
-//               borderRadius: "10px",
-//               width: "100%",
-//             }}
-//           />
-//         </Box>
-
-//         <Button
-//           sx={{
-//             backgroundColor: "transparent",
-//             color: "black",
-//             fontSize: "20px",
-//             fontWeight: "bold",
-//             width: "400px",
-//             height: "20vh",
-//           }}
-//           variant="contained"
-//           size="small"
-//           // onClick={() => onAccept(order)}
-//         >
-//           ĐÃ NHẬN
-//         </Button>
-//       </Box>
-
-//       <OrdersUnassignedTable
-//         orders={ordersToDraw}
-//         onAccept={handleAcceptOrder}
-//       />
-//       {/* <OrdersAssignTable orders={inProgressOrders} /> */}
-
-//       <RecieveOrderForm
-//         open={openDialog}
-//         order={selectedOrder}
-//         onClose={handleCloseDialog}
-//         onSubmit={handleConfirmUpdate}
-//       />
-//     </Box>
-//   );
-// };
-
-// export default MainPage;
-
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Grid,
   InputAdornment,
   TextField,
@@ -147,15 +14,23 @@ import { mockOrders } from "../../../../data";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import OrdersUnassignedTable from "./OrdersUnassignedTable";
 import RecieveOrderForm from "./RecieveOrderForm";
-import OrdersAssignTable from "./OrdersAssignTable";
+import OrdersAssignTable from "./OrdersAssignedTable";
+import { useLocation } from "react-router-dom";
+import {
+  extractFacilityTypeIdFromOptions,
+  extractFacilityTypeNameFromOptions,
+  getTypeCodeFromPath,
+  MAIN_FULFILLMENT_TYPECODE,
+} from "utils/facility/facility";
+import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
+import { useGetMyProfile } from "hooks/admin-users/useGetMyProfile";
+import { useFindAllFacility } from "hooks/facility/useFindAllFacilityCustom";
 
 const MainPage: React.FC = () => {
   const [ordersToDraw, setOrdersToDraw] = useState<Order[]>(mockOrders);
   const [inProgressOrders, setInProgressOrders] = useState<Order[]>([]);
-
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-
   const [searchKeyword, setSearchKeyword] = useState("");
   const [openAssignDialog, setOpenAssignDialog] = useState(false);
 
@@ -178,30 +53,83 @@ const MainPage: React.FC = () => {
         ...selectedOrder,
         status: updatedData?.status || "Đã cập nhật",
       };
-
       setOrdersToDraw((prev) => prev.filter((o) => o.id !== selectedOrder.id));
       setInProgressOrders((prev) => [...prev, updatedOrder]);
     }
     handleCloseDialog();
   };
-  
-  const filteredOrders = useMemo(() => {
-    const kw = searchKeyword.trim().toLowerCase();
-    if (!kw) return ordersToDraw;
-    return ordersToDraw.filter((o) => {
-      const parts = [
-        (o as any).id,
-        (o as any).code,
-        (o as any).customerName,
-        (o as any).status,
-        JSON.stringify(o),
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-      return parts.includes(kw);
-    });
-  }, [ordersToDraw, searchKeyword]);
+
+  const location = useLocation();
+
+  // dữ liệu hiển thị tiêu đề
+  const [facilityTypeId, setFacilityTypeId] = useState<string | undefined>(
+    undefined
+  );
+  const [facilityTypeName, setFacilityTypeName] = useState<string | undefined>(
+    undefined
+  );
+
+  const typeCodeFromPath = getTypeCodeFromPath(location.pathname);
+
+  const PAGE = 0;
+  const SIZE = 20;
+  const optionsQuery = useFindOptionsByGroup(
+    "facility-type",
+    PAGE,
+    SIZE,
+    typeCodeFromPath ?? undefined
+  ) as any;
+
+  const {
+    data: optionsData,
+    isLoading: optionsLoading,
+    isFetching: optionsFetching,
+  } = optionsQuery ?? {};
+
+  // khi optionsData về -> extract id/name
+  useEffect(() => {
+    if (!optionsLoading && !optionsFetching && optionsData) {
+      const id = extractFacilityTypeIdFromOptions(optionsData);
+      const name = extractFacilityTypeNameFromOptions(optionsData);
+      setFacilityTypeId(id);
+      setFacilityTypeName(name ?? undefined);
+    } else {
+      if (!typeCodeFromPath) {
+        setFacilityTypeId(undefined);
+        setFacilityTypeName(undefined);
+      }
+    }
+  }, [optionsData, optionsLoading, optionsFetching, typeCodeFromPath]);
+
+  // lấy user profile
+  const { data: profileData } = useGetMyProfile({ enabled: true });
+  const username = profileData?.username;
+
+  // query facility theo issuePlace = username
+  const { data: facilityData, isLoading: facilityLoading } = useFindAllFacility(
+    {
+      page: 0,
+      size: 50,
+      sort: ["createdDate,desc", "isException,desc"],
+      facilityTypeId,
+      issuePlace: username,
+    },
+    { enabled: !!facilityTypeId && !!username }
+  );
+
+  // mapping facility -> orders table
+  const facilitiesAsOrders = useMemo(() => {
+    if (!facilityData?.content) return [];
+    return facilityData.content.map((f: any) => ({
+      sku: f.code ?? "-",
+      orderId: f.id ?? "-",
+      date: f.createdAt ?? "-",
+      demoImage: f.imageUrl ?? "",
+      product: f.name ?? "-",
+      type: f.type ?? "-",
+      quantity: f.capacity ?? 0,
+    }));
+  }, [facilityData]);
 
   return (
     <>
@@ -210,12 +138,34 @@ const MainPage: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           textAlign: "start",
-          gap: 2,
+          gap: 1,
           width: "100%",
         }}
       >
-        <Grid container spacing={2} alignItems="stretch">
-          {/* Left column: title + search */}
+        {/* --- Tiêu đề chính lấy từ facilityTypeName --- */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Typography variant="h5" fontWeight="bold" color="black">
+            {typeCodeFromPath === MAIN_FULFILLMENT_TYPECODE
+              ? "Tổng hợp nhận đơn"
+              : facilityTypeName ??
+                (typeCodeFromPath ? typeCodeFromPath : "Danh sách đơn hàng")}
+          </Typography>
+          {optionsLoading || optionsFetching ? (
+            <CircularProgress size={18} />
+          ) : null}
+        </Box>
+
+        <Grid
+          container
+          spacing={0}
+          alignItems="center"
+          sx={{
+            columnGap: { xs: 0, md: 4 },
+            rowGap: 2,
+            justifyContent: "space-between",
+          }}
+        >
+          {/* Left column: search */}
           <Grid item xs={12} md={8}>
             <Box
               sx={{
@@ -224,12 +174,10 @@ const MainPage: React.FC = () => {
                 textAlign: "start",
                 gap: 2,
                 height: "100%",
+                alignItems: "flex-start",
+                justifyContent: "center",
               }}
             >
-              <Typography variant="h5" fontWeight="bold" color="black">
-                Tiêu đề này truyền facilityTypeId vào
-              </Typography>
-
               <TextField
                 type="text"
                 placeholder="Tìm kiếm đơn hàng"
@@ -249,53 +197,65 @@ const MainPage: React.FC = () => {
                   width: "100%",
                 }}
                 fullWidth
-                inputProps={{ "aria-label": "Tìm kiếm đơn hàng" }}
               />
             </Box>
           </Grid>
 
-          {/* Right column: big button */}
+          {/* Right column: button */}
           <Grid item xs={12} md={4}>
             <Box
               sx={{
                 height: "100%",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                p: { xs: 0, md: 1 },
+                justifyContent: { xs: "center", md: "flex-end" },
               }}
             >
-              <Box sx={{ width: { xs: "100%", md: 400 }, display: "flex" }}>
-                <Button
-                  sx={{
-                    flex: 1,
-                    backgroundColor: "transparent",
-                    color: "black",
-                    fontSize: { xs: "16px", md: "20px" },
-                    fontWeight: "bold",
-                    borderRadius: 2,
-                    textTransform: "uppercase",
-                    minHeight: { xs: 56, sm: 80, md: 120 },
-                    height: { xs: "auto", md: "100%" },
-                  }}
-                  variant="contained"
-                  size="large"
-                  onClick={() => setOpenAssignDialog(true)}
+              <Button
+                sx={{
+                  width: { xs: "100%", md: 360 },
+                  backgroundColor: "transparent",
+                  color: "black",
+                  fontSize: { xs: "16px", md: "20px" },
+                  fontWeight: "bold",
+                  borderRadius: 2,
+                  textTransform: "uppercase",
+                  minHeight: { xs: 56, sm: 80, md: 120 },
+                  flexDirection: "column",
+                  gap: 0.5,
+                }}
+                variant="contained"
+                size="large"
+                onClick={() => setOpenAssignDialog(true)}
+              >
+                <Typography
+                  variant="button"
+                  fontSize={{ xs: 16, md: 20 }}
+                  fontWeight="bold"
                 >
                   ĐÃ NHẬN
-                </Button>
-              </Box>
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontSize={{ xs: 20, md: 30 }}
+                  fontWeight="bold"
+                >
+                  {facilityLoading ? "..." : facilityData?.totalElements ?? 0}
+                </Typography>
+              </Button>
             </Box>
           </Grid>
         </Grid>
 
         {/* Bảng đơn hàng chưa phân công */}
         <OrdersUnassignedTable
-          // orders={filteredOrders}
+          facilityTypeId={facilityTypeId}
+          facilityTypeName={facilityTypeName}
+          typeCode={typeCodeFromPath ?? undefined}
           onAccept={handleAcceptOrder}
         />
 
-        {/* Form nhận đơn (popup) */}
+        {/* Form nhận đơn */}
         <RecieveOrderForm
           open={openDialog}
           order={selectedOrder}
@@ -304,8 +264,12 @@ const MainPage: React.FC = () => {
         />
       </Box>
 
+      {/* Assign Table, load từ facility API */}
       <OrdersAssignTable
-        orders={inProgressOrders}
+        // orders={facilitiesAsOrders}
+        // open={openAssignDialog}
+        // onClose={() => setOpenAssignDialog(false)}
+        orders={facilityData?.content ?? []}
         open={openAssignDialog}
         onClose={() => setOpenAssignDialog(false)}
       />
