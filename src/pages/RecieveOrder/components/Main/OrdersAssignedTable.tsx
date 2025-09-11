@@ -411,7 +411,7 @@ const OrdersAssignTable = ({ orders, open, onClose }: Props) => {
           }}
         >
           <Typography variant="h6" fontWeight="bold">
-            TRẢ ĐƠN
+             - TRẢ ĐƠN
           </Typography>
           <IconButton onClick={onClose} size="small">
             <CloseIcon />

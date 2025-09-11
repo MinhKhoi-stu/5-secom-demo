@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { menuAPI } from "api/menu"; // <-- chỉnh path nếu bạn export menuAPI ở nơi khác
+import { menuAPI } from "api/menu";
 
 export type RawMenu = {
   id: string;

@@ -192,6 +192,9 @@ const RECEIVE_ORDER_TYPECODES = new Set([
   "facility-manufactoring",
   "facility-packing",
   "facility-tracking",
+  "facility-tracking-waiting",
+  "facility-tracking-done",
+  // "upload-trackingnumber",
 ]);
 
 /** Quyết định component render dựa trên :typeCode từ URL */

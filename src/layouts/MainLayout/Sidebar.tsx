@@ -1,156 +1,155 @@
-// // import { ExpandLess, ExpandMore } from "@mui/icons-material";
-// // import {
-// //   Box,
-// //   Collapse,
-// //   List,
-// //   ListItemButton,
-// //   ListItemText,
-// // } from "@mui/material";
-// // import { useEffect, useState } from "react";
-// // import { useNavigate } from "react-router-dom";
-// // import axiosClient from "utils/axios-client";
+// import { ExpandLess, ExpandMore } from "@mui/icons-material";
+// import {
+//   Box,
+//   Collapse,
+//   List,
+//   ListItemButton,
+//   ListItemText,
+// } from "@mui/material";
+// import { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import axiosClient from "utils/axios-client";
 
-// // const menuItems = [
-// //   { label: "Admin Dashboard", path: "/AdminDashboard" },
-// //   {
-// //     label: "Quản lý đơn hàng",
-// //     children: [
-// //       { label: "Đơn hàng", path: "/Fulfillment" },
-// //       { label: "Chưa có hình", path: "/NoImage" },
-// //       { label: "Đang vẽ 2D", path: "/RecieveOrder" },
-// //       { label: "Đang vẽ thêu", path: "/Embroidery" },
-// //       { label: "Đang cắt laser", path: "/Laser" },
-// //       { label: "Sản xuất", path: "/Production" },
-// //       { label: "Đóng gói", path: "/Packaging" },
-// //       { label: "Tracking", path: "/Tracking" },
-// //       { label: "Đơn hàng đã đóng gói", path: "/Completed" },
-// //     ],
-// //   },
-// //   { label: "Quản lý Sản phẩm", path: "/Product" },
-// //   { label: "Quản lý User", path: "/User" },
-// //   { label: "Quản lý Tracking", path: "/Tracking" },
-// //   { label: "Quản lý SKU Design", path: "/SKUDesign" },
-// // ];
+// const menuItems = [
+//   { label: "Admin Dashboard", path: "/AdminDashboard" },
+//   {
+//     label: "Quản lý đơn hàng",
+//     children: [
+//       { label: "Đơn hàng", path: "/Fulfillment" },
+//       { label: "Chưa có hình", path: "/NoImage" },
+//       { label: "Đang vẽ 2D", path: "/RecieveOrder" },
+//       { label: "Đang vẽ thêu", path: "/Embroidery" },
+//       { label: "Đang cắt laser", path: "/Laser" },
+//       { label: "Sản xuất", path: "/Production" },
+//       { label: "Đóng gói", path: "/Packaging" },
+//       { label: "Tracking", path: "/Tracking" },
+//       { label: "Đơn hàng đã đóng gói", path: "/Completed" },
+//     ],
+//   },
+//   { label: "Quản lý Sản phẩm", path: "/Product" },
+//   { label: "Quản lý User", path: "/User" },
+//   { label: "Quản lý Tracking", path: "/Tracking" },
+//   { label: "Quản lý SKU Design", path: "/SKUDesign" },
+// ];
 
-// // interface SidebarProps {
-// //   open: boolean;
-// // }
+// interface SidebarProps {
+//   open: boolean;
+// }
 
-// // const Sidebar = ({ open }: SidebarProps) => {
-// //   const navigate = useNavigate();
-// //   const [openMenu, setOpenMenu] = useState<string | null>(null);
+// const Sidebar = ({ open }: SidebarProps) => {
+//   const navigate = useNavigate();
+//   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-// //   const handleToggle = (label: string) => {
-// //     setOpenMenu(openMenu === label ? null : label);
-// //   };
+//   const handleToggle = (label: string) => {
+//     setOpenMenu(openMenu === label ? null : label);
+//   };
 
-// //   //MENU
-// //   useEffect (() => {
-// //     const getMenu = async() => {
-// //       await axiosClient.get("menu/login");
-// //     }
-// //     getMenu()
-// //   },[])
+//   //MENU
+//   useEffect (() => {
+//     const getMenu = async() => {
+//       await axiosClient.get("menu/login");
+//     }
+//     getMenu()
+//   },[])
 
-// //   return (
-// //     <Box
-// //       sx={{
-// //         width: open ? { xs: 0, sm: "200px" } : 0,
-// //         minWidth: open ? { sm: "200px" } : 0,
-// //         overflowX: "hidden",
-// //         height: "100vh",
-// //         position: "fixed",
-// //         top: 0,
-// //         left: 0,
-// //         pt: "64px",
-// //         bgcolor: "white",
-// //         borderRight: "1px solid #eee",
-// //         transition: "width 0.3s ease, min-width 0.3s ease",
-// //         display: { xs: open ? "block" : "none", sm: "block" },
-// //       }}
-// //     >
-// //       <List>
-// //         {menuItems.map((item) => {
-// //           const isActive =
-// //             location.pathname === item.path ||
-// //             (item.children &&
-// //               item.children.some((child) => location.pathname === child.path));
+//   return (
+//     <Box
+//       sx={{
+//         width: open ? { xs: 0, sm: "200px" } : 0,
+//         minWidth: open ? { sm: "200px" } : 0,
+//         overflowX: "hidden",
+//         height: "100vh",
+//         position: "fixed",
+//         top: 0,
+//         left: 0,
+//         pt: "64px",
+//         bgcolor: "white",
+//         borderRight: "1px solid #eee",
+//         transition: "width 0.3s ease, min-width 0.3s ease",
+//         display: { xs: open ? "block" : "none", sm: "block" },
+//       }}
+//     >
+//       <List>
+//         {menuItems.map((item) => {
+//           const isActive =
+//             location.pathname === item.path ||
+//             (item.children &&
+//               item.children.some((child) => location.pathname === child.path));
 
-// //           if (item.children) {
-// //             return (
-// //               <Box key={item.label}>
-// //                 <ListItemButton
-// //                   onClick={() => handleToggle(item.label)}
-// //                   sx={{
-// //                     height: "60px",
-// //                     color: "black",
-// //                     backgroundColor: isActive
-// //                       ? "rgba(255, 21, 0, 0.44)"
-// //                       : "transparent",
-// //                     borderLeft: isActive ? "4px solid white" : "none",
-// //                     "&:hover": { backgroundColor: "#f5f5f5" },
-// //                   }}
-// //                 >
-// //                   <ListItemText primary={item.label} />
-// //                   {openMenu === item.label ? <ExpandLess /> : <ExpandMore />}
-// //                 </ListItemButton>
-// //                 <Collapse
-// //                   in={openMenu === item.label}
-// //                   timeout="auto"
-// //                   unmountOnExit
-// //                 >
-// //                   <List component="div" disablePadding>
-// //                     {item.children.map((child) => {
-// //                       const isChildActive = location.pathname === child.path;
-// //                       return (
-// //                         <ListItemButton
-// //                           key={child.path}
-// //                           onClick={() => navigate(child.path)}
-// //                           sx={{
-// //                             pl: 4,
-// //                             height: "50px",
-// //                             color: "black",
-// //                             backgroundColor: isChildActive
-// //                               ? "rgba(255, 21, 0, 0.2)"
-// //                               : "transparent",
-// //                             "&:hover": { backgroundColor: "#f5f5f5" },
-// //                           }}
-// //                         >
-// //                           <ListItemText primary={child.label} />
-// //                         </ListItemButton>
-// //                       );
-// //                     })}
-// //                   </List>
-// //                 </Collapse>
-// //               </Box>
-// //             );
-// //           }
+//           if (item.children) {
+//             return (
+//               <Box key={item.label}>
+//                 <ListItemButton
+//                   onClick={() => handleToggle(item.label)}
+//                   sx={{
+//                     height: "60px",
+//                     color: "black",
+//                     backgroundColor: isActive
+//                       ? "rgba(255, 21, 0, 0.44)"
+//                       : "transparent",
+//                     borderLeft: isActive ? "4px solid white" : "none",
+//                     "&:hover": { backgroundColor: "#f5f5f5" },
+//                   }}
+//                 >
+//                   <ListItemText primary={item.label} />
+//                   {openMenu === item.label ? <ExpandLess /> : <ExpandMore />}
+//                 </ListItemButton>
+//                 <Collapse
+//                   in={openMenu === item.label}
+//                   timeout="auto"
+//                   unmountOnExit
+//                 >
+//                   <List component="div" disablePadding>
+//                     {item.children.map((child) => {
+//                       const isChildActive = location.pathname === child.path;
+//                       return (
+//                         <ListItemButton
+//                           key={child.path}
+//                           onClick={() => navigate(child.path)}
+//                           sx={{
+//                             pl: 4,
+//                             height: "50px",
+//                             color: "black",
+//                             backgroundColor: isChildActive
+//                               ? "rgba(255, 21, 0, 0.2)"
+//                               : "transparent",
+//                             "&:hover": { backgroundColor: "#f5f5f5" },
+//                           }}
+//                         >
+//                           <ListItemText primary={child.label} />
+//                         </ListItemButton>
+//                       );
+//                     })}
+//                   </List>
+//                 </Collapse>
+//               </Box>
+//             );
+//           }
 
-// //           return (
-// //             <ListItemButton
-// //               key={item.path}
-// //               onClick={() => navigate(item.path!)}
-// //               sx={{
-// //                 height: "60px",
-// //                 color: "black",
-// //                 backgroundColor: isActive
-// //                   ? "rgba(255, 21, 0, 0.44)"
-// //                   : "transparent",
-// //                 borderLeft: isActive ? "4px solid white" : "none",
-// //                 "&:hover": { backgroundColor: "#f5f5f5" },
-// //               }}
-// //             >
-// //               <ListItemText primary={item.label} />
-// //             </ListItemButton>
-// //           );
-// //         })}
-// //       </List>
-// //     </Box>
-// //   );
-// // };
+//           return (
+//             <ListItemButton
+//               key={item.path}
+//               onClick={() => navigate(item.path!)}
+//               sx={{
+//                 height: "60px",
+//                 color: "black",
+//                 backgroundColor: isActive
+//                   ? "rgba(255, 21, 0, 0.44)"
+//                   : "transparent",
+//                 borderLeft: isActive ? "4px solid white" : "none",
+//                 "&:hover": { backgroundColor: "#f5f5f5" },
+//               }}
+//             >
+//               <ListItemText primary={item.label} />
+//             </ListItemButton>
+//           );
+//         })}
+//       </List>
+//     </Box>
+//   );
+// };
 
-// // export default Sidebar;
-
+// export default Sidebar;
 import React, { useState, useEffect } from "react";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
@@ -185,6 +184,8 @@ const RECEIVE_ORDER_TYPECODES = new Set([
   "facility-manufactoring",
   "facility-packing",
   "facility-tracking",
+  "facility-tracking-waiting",
+  "facility-tracking-done",
 ]);
 
 const coerceHrefFromUrl = (url?: string | null): string => {
@@ -292,7 +293,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-  const { loading, getChildrenOfParentCode, findByCode } = useMenu();
+  // <-- added tree destructure so we can read the sorted tree from useMenu
+  const { loading, getChildrenOfParentCode, findByCode, tree } = useMenu();
 
   const currentTypeCodeFromPath = getTypeCodeFromPath(location.pathname);
 
@@ -399,6 +401,41 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
   const manufactorParent = findByCode("manufactor");
   const manufactorChildren = getChildrenOfParentCode("manufactor");
 
+  // --- NEW: find tracking-manager parent and children (children are taken from tree if possible
+  // so they will be already sorted by orderNo asc from useMenu's tree; otherwise fallback to getChildrenOfParentCode)
+  const trackingManagerParent = findByCode("tracking-manager");
+
+  const trackingManagerChildrenRaw: RawMenu[] = (() => {
+    try {
+      // try to read from tree (which is already sorted by orderNo asc)
+      if (Array.isArray(tree) && tree.length > 0) {
+        const node = tree.find((n) => n.code === "tracking-manager");
+        if (node && Array.isArray(node.children)) {
+          // node.children is MenuNode[] which extends RawMenu => safe to return
+          return node.children as RawMenu[];
+        }
+      }
+    } catch (e) {
+      // ignore and fallback
+    }
+    // fallback to raw children (may be unsorted)
+    return getChildrenOfParentCode("tracking-manager");
+  })();
+
+  const sortByOrderNo = (a: RawMenu, b: RawMenu) => {
+    const ao = parseInt(a.orderNo ?? "0", 10);
+    const bo = parseInt(b.orderNo ?? "0", 10);
+    if (!isNaN(ao) || !isNaN(bo)) {
+      // if (ao !== bo) return ao - bo;
+      if (ao !== bo) return bo - ao;
+    }
+    return (a.name ?? "").localeCompare(b.name ?? "");
+  };
+
+  const trackingManagerChildren = trackingManagerChildrenRaw
+    ? [...trackingManagerChildrenRaw].sort(sortByOrderNo)
+    : [];
+
   const menuSections: Array<
     { label: string; path?: string } | { label: string; children: RawMenu[] }
   > = [];
@@ -438,6 +475,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
           parentId: null,
         },
       ] as RawMenu[],
+    });
+  }
+
+  // --- NEW: insert tracking-manager section (only added, nothing else changed)
+  if (!loading && trackingManagerParent) {
+    menuSections.push({
+      label: trackingManagerParent.name ?? "Quản lý Tracking",
+      children: trackingManagerChildren,
     });
   }
 
@@ -484,7 +529,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
       ? target.href.slice(1)
       : target.href;
     console.log("SIDEBAR CLICK", {
-      menuUrl: relative, 
+      menuUrl: relative,
       locationPathname: location.pathname,
     });
 

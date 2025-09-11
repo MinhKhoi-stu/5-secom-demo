@@ -8,9 +8,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Order } from "types/OrderTable";
-import { mockOrders } from "../../../../data";
-
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import OrdersUnassignedTable from "./OrdersUnassignedTable";
 import RecieveOrderForm from "./RecieveOrderForm";
@@ -25,6 +22,17 @@ import {
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useGetMyProfile } from "hooks/admin-users/useGetMyProfile";
 import { useFindAllFacility } from "hooks/facility/useFindAllFacilityCustom";
+import { Order } from "types/OrderTable";
+import { mockOrders } from "../../../../data";
+
+/**
+ * MainPage: ưu tiên đọc typeCode từ location.state.typeCode (Sidebar truyền vào).
+ * Nếu không có state -> fallback getTypeCodeFromPath(location.pathname).
+ * Khi effectiveTypeCode thay đổi, ép refetch options (nếu hook hỗ trợ).
+ */
+
+const PAGE = 0;
+const SIZE = 20;
 
 const MainPage: React.FC = () => {
   const [ordersToDraw, setOrdersToDraw] = useState<Order[]>(mockOrders);
@@ -38,12 +46,10 @@ const MainPage: React.FC = () => {
     setSelectedOrder(order);
     setOpenDialog(true);
   };
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setSelectedOrder(null);
   };
-
   const handleConfirmUpdate = (updatedData?: {
     status: string;
     image?: File;
@@ -61,7 +67,18 @@ const MainPage: React.FC = () => {
 
   const location = useLocation();
 
-  // dữ liệu hiển thị tiêu đề
+  // PRIORITY: typeCode passed in navigate state from Sidebar
+  const locState = (location.state as any) ?? {};
+  const stateTypeCode: string | undefined =
+    locState?.typeCode ?? locState?.preferredTypeCode ?? undefined;
+
+  // fallback: parse from pathname (/facility/<typeCode>)
+  const parsedTypeCode = getTypeCodeFromPath(location.pathname) ?? undefined;
+
+  // effective type code that we will use to query options
+  const effectiveTypeCode = stateTypeCode ?? parsedTypeCode;
+
+  // facility type info extracted from options API
   const [facilityTypeId, setFacilityTypeId] = useState<string | undefined>(
     undefined
   );
@@ -69,43 +86,158 @@ const MainPage: React.FC = () => {
     undefined
   );
 
-  const typeCodeFromPath = getTypeCodeFromPath(location.pathname);
-
-  const PAGE = 0;
-  const SIZE = 20;
+  // Query options with the effectiveTypeCode (state preferred)
   const optionsQuery = useFindOptionsByGroup(
     "facility-type",
     PAGE,
     SIZE,
-    typeCodeFromPath ?? undefined
+    effectiveTypeCode ?? undefined
   ) as any;
 
   const {
     data: optionsData,
     isLoading: optionsLoading,
     isFetching: optionsFetching,
+    refetch: refetchOptions,
   } = optionsQuery ?? {};
 
-  // khi optionsData về -> extract id/name
+  // If effectiveTypeCode changed, force refetch (safe even if hook auto-fetches)
+  useEffect(() => {
+    if (typeof refetchOptions === "function") {
+      try {
+        refetchOptions();
+      } catch (e) {
+        // ignore
+      }
+    }
+    // also reset facility ids while loading new options
+    setFacilityTypeId(undefined);
+    setFacilityTypeName(undefined);
+  }, [effectiveTypeCode]);
+
+  // extract facilityTypeId/name when optionsData arrives (robust search)
   useEffect(() => {
     if (!optionsLoading && !optionsFetching && optionsData) {
-      const id = extractFacilityTypeIdFromOptions(optionsData);
-      const name = extractFacilityTypeNameFromOptions(optionsData);
-      setFacilityTypeId(id);
-      setFacilityTypeName(name ?? undefined);
+      const expectedCode = effectiveTypeCode ?? undefined;
+
+      const findExactId = (
+        data: any,
+        expected?: string
+      ): string | undefined => {
+        if (!expected) return undefined;
+        const stack: any[] = [data];
+        while (stack.length) {
+          const node = stack.pop();
+          if (!node || typeof node !== "object") continue;
+
+          if (Array.isArray(node)) {
+            for (const el of node) {
+              if (!el || typeof el !== "object") continue;
+
+              if (
+                el.code === expected ||
+                el.value === expected ||
+                el.name === expected ||
+                el.label === expected
+              ) {
+                return (
+                  el.id ?? el.value ?? el.optionGroupId ?? el.optionGroup?.id
+                );
+              }
+
+              if (el.data && typeof el.data === "object") {
+                if (
+                  el.data.code === expected ||
+                  el.data.value === expected ||
+                  el.data.name === expected
+                ) {
+                  return (
+                    el.id ?? el.value ?? el.optionGroupId ?? el.optionGroup?.id
+                  );
+                }
+              }
+            }
+          }
+
+          for (const k of Object.keys(node)) {
+            const v = node[k];
+            if (v && typeof v === "object") stack.push(v);
+          }
+        }
+        return undefined;
+      };
+
+      const findExactName = (
+        data: any,
+        expected?: string
+      ): string | undefined => {
+        if (!expected) return undefined;
+        const stack: any[] = [data];
+        while (stack.length) {
+          const node = stack.pop();
+          if (!node || typeof node !== "object") continue;
+
+          if (Array.isArray(node)) {
+            for (const el of node) {
+              if (!el || typeof el !== "object") continue;
+              if (
+                el.code === expected ||
+                el.value === expected ||
+                el.name === expected ||
+                el.label === expected
+              ) {
+                return el.name ?? el.label ?? el.value ?? el.title;
+              }
+              if (el.data && typeof el.data === "object") {
+                if (
+                  el.data.code === expected ||
+                  el.data.value === expected ||
+                  el.data.name === expected
+                ) {
+                  return el.data.name ?? el.data.label ?? el.data.value;
+                }
+              }
+            }
+          }
+
+          for (const k of Object.keys(node)) {
+            const v = node[k];
+            if (v && typeof v === "object") stack.push(v);
+          }
+        }
+        return undefined;
+      };
+
+      const exactId = findExactId(optionsData, expectedCode);
+      if (exactId) {
+        setFacilityTypeId(exactId);
+        const exactName = findExactName(optionsData, expectedCode);
+        setFacilityTypeName(
+          exactName ??
+            extractFacilityTypeNameFromOptions(optionsData) ??
+            undefined
+        );
+      } else {
+        // fallback
+        const id = extractFacilityTypeIdFromOptions(optionsData);
+        const name = extractFacilityTypeNameFromOptions(optionsData);
+        setFacilityTypeId(id);
+        setFacilityTypeName(name ?? undefined);
+      }
     } else {
-      if (!typeCodeFromPath) {
+      // if no effectiveTypeCode -> reset
+      if (!effectiveTypeCode) {
         setFacilityTypeId(undefined);
         setFacilityTypeName(undefined);
       }
     }
-  }, [optionsData, optionsLoading, optionsFetching, typeCodeFromPath]);
+  }, [optionsData, optionsLoading, optionsFetching, effectiveTypeCode]);
 
-  // lấy user profile
+  // get user profile
   const { data: profileData } = useGetMyProfile({ enabled: true });
   const username = profileData?.username;
 
-  // query facility theo issuePlace = username
+  // facility query (enabled only when facilityTypeId + username available)
   const { data: facilityData, isLoading: facilityLoading } = useFindAllFacility(
     {
       page: 0,
@@ -117,7 +249,7 @@ const MainPage: React.FC = () => {
     { enabled: !!facilityTypeId && !!username }
   );
 
-  // mapping facility -> orders table
+  // map facility -> orders
   const facilitiesAsOrders = useMemo(() => {
     if (!facilityData?.content) return [];
     return facilityData.content.map((f: any) => ({
@@ -131,6 +263,26 @@ const MainPage: React.FC = () => {
     }));
   }, [facilityData]);
 
+  // debug logs (xóa nếu cần)
+  useEffect(() => {
+    // helpful to debug when you click menu — you will see which effectiveTypeCode is used
+    // eslint-disable-next-line no-console
+    console.log(
+      "MainPage: effectiveTypeCode, facilityTypeId, location.pathname, location.state:",
+      {
+        effectiveTypeCode,
+        facilityTypeId,
+        pathname: location.pathname,
+        state: locState,
+      }
+    );
+  }, [
+    effectiveTypeCode,
+    facilityTypeId,
+    location.pathname,
+    JSON.stringify(locState),
+  ]);
+
   return (
     <>
       <Box
@@ -142,13 +294,12 @@ const MainPage: React.FC = () => {
           width: "100%",
         }}
       >
-        {/* --- Tiêu đề chính lấy từ facilityTypeName --- */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Typography variant="h5" fontWeight="bold" color="black">
-            {typeCodeFromPath === MAIN_FULFILLMENT_TYPECODE
+            {effectiveTypeCode === MAIN_FULFILLMENT_TYPECODE
               ? "Tổng hợp nhận đơn"
               : facilityTypeName ??
-                (typeCodeFromPath ? typeCodeFromPath : "Danh sách đơn hàng")}
+                (effectiveTypeCode ? effectiveTypeCode : "Danh sách đơn hàng")}
           </Typography>
           {optionsLoading || optionsFetching ? (
             <CircularProgress size={18} />
@@ -165,7 +316,6 @@ const MainPage: React.FC = () => {
             justifyContent: "space-between",
           }}
         >
-          {/* Left column: search */}
           <Grid item xs={12} md={8}>
             <Box
               sx={{
@@ -201,7 +351,6 @@ const MainPage: React.FC = () => {
             </Box>
           </Grid>
 
-          {/* Right column: button */}
           <Grid item xs={12} md={4}>
             <Box
               sx={{
@@ -247,15 +396,13 @@ const MainPage: React.FC = () => {
           </Grid>
         </Grid>
 
-        {/* Bảng đơn hàng chưa phân công */}
         <OrdersUnassignedTable
           facilityTypeId={facilityTypeId}
           facilityTypeName={facilityTypeName}
-          typeCode={typeCodeFromPath ?? undefined}
+          typeCode={effectiveTypeCode ?? undefined}
           onAccept={handleAcceptOrder}
         />
 
-        {/* Form nhận đơn */}
         <RecieveOrderForm
           open={openDialog}
           order={selectedOrder}
@@ -264,11 +411,7 @@ const MainPage: React.FC = () => {
         />
       </Box>
 
-      {/* Assign Table, load từ facility API */}
       <OrdersAssignTable
-        // orders={facilitiesAsOrders}
-        // open={openAssignDialog}
-        // onClose={() => setOpenAssignDialog(false)}
         orders={facilityData?.content ?? []}
         open={openAssignDialog}
         onClose={() => setOpenAssignDialog(false)}

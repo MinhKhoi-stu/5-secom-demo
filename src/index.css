@@ -77,3 +77,11 @@ body,
   /* background-color: white; */
   background-color: #f9f9f9;
 }
+
+* {
+  outline: none !important;
+}
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
