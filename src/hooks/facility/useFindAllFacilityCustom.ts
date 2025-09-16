@@ -1,7 +1,4 @@
 import { facilityAPI } from "api/facility";
-import { PagingDataDto } from "dto/common";
-import { FacilityDto } from "dto/facility/facility.dto";
-import { FindAllFacilityDto } from "dto/facility/find-all-facility.dto";
 import { useQuery } from "react-query";
 
 type UseFindAllFacilityOptions = {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,7 +14,12 @@ import {
 } from "@mui/material";
 import PaginationWrapper from "components/common/PaginationWrapper";
 import { useLocation, useNavigate } from "react-router-dom";
+
+// KEEP original custom hook
 import useFindAllFacilityCustom from "hooks/facility/useFindAllFacilityCustom";
+// NEW: generic search hook (the one you asked to add)
+import { useFindAllFacility } from "hooks/facility/useFindAllFacility";
+
 import {
   UpdatePayload,
   useUpdateFacilityCustom,
@@ -44,6 +49,8 @@ interface Props {
   pageSize?: number;
   issuePlace?: string;
   onAccept?: (facility: any) => void;
+  // from MainPage search field
+  searchKeyword?: string;
 }
 
 const OrdersUnassignedTable: React.FC<Props> = ({
@@ -53,6 +60,7 @@ const OrdersUnassignedTable: React.FC<Props> = ({
   pageSize = 5,
   issuePlace = "unassigned",
   onAccept,
+  searchKeyword,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,7 +85,24 @@ const OrdersUnassignedTable: React.FC<Props> = ({
     return facilityTypeNameProp ?? (typeCode ? typeCode : undefined);
   }, [facilityTypeNameProp, typeCode]);
 
-  const facilityQuery = useFindAllFacilityCustom({
+  // ------------------- debounce search -------------------
+  const [debouncedSearch, setDebouncedSearch] = useState<string>(
+    (searchKeyword ?? "").trim()
+  );
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch((searchKeyword ?? "").trim());
+    }, 350);
+    return () => clearTimeout(t);
+  }, [searchKeyword]);
+
+  // whenever search changes, go back to page 1
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, resolvedFacilityTypeId, issuePlace]);
+
+  // ------------------- original (custom) query (keep it!) -------------------
+  const facilityQueryCustom = useFindAllFacilityCustom({
     page: page - 1,
     size,
     codeOrName: typeCode ?? "",
@@ -86,8 +111,23 @@ const OrdersUnassignedTable: React.FC<Props> = ({
     sort: ["createdDate,desc", "isException,desc"],
   }) as any;
 
-  const facilityData = facilityQuery?.data;
-  const facilityLoading = facilityQuery?.isLoading || facilityQuery?.isFetching;
+  // ------------------- new: search query (using useFindAllFacility) -------------------
+  const facilityQuerySearch = useFindAllFacility({
+    page: page - 1,
+    size,
+    codeOrName: debouncedSearch ?? "",
+    facilityTypeId: resolvedFacilityTypeId,
+    issuePlace,
+    // sort: "",
+  }) as any;
+
+  // If there's a search term, prefer search results; otherwise fallback to custom hook
+  const activeQuery = debouncedSearch
+    ? facilityQuerySearch
+    : facilityQueryCustom;
+  const facilityData = activeQuery?.data;
+  const facilityLoading = activeQuery?.isLoading || activeQuery?.isFetching;
+
   const facilities: any[] = useMemo(() => {
     if (!facilityData) return [];
     return (
@@ -110,7 +150,7 @@ const OrdersUnassignedTable: React.FC<Props> = ({
     );
   }, [facilityData, facilities]);
 
-  // original helper (kept) — used when mapping rows earlier
+  // image helper (unchanged)
   const getFirstImage = (sampleSource: any): string | undefined => {
     if (!sampleSource) return undefined;
     if (typeof sampleSource === "string") return sampleSource;
@@ -139,7 +179,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
           date: f?.createdDate
             ? new Date(f.createdDate).toLocaleString("vi-VN")
             : f?.date ?? "",
-          // keep original demoImage derived from sampleSource for backward compat
           demoImage: getFirstImage(
             f?.sampleSource ?? f?.sampleSources ?? f?.samples
           ),
@@ -165,13 +204,12 @@ const OrdersUnassignedTable: React.FC<Props> = ({
     []
   );
 
-  // --- New states for receive flow ---
+  // --- Receive flow (kept) ---
   const [openRecieve, setOpenRecieve] = useState<boolean>(false);
   const [selectedFacility, setSelectedFacility] = useState<any | null>(null);
 
   const updateFacilityMutation = useUpdateFacilityCustom();
 
-  // Open modal when user clicks "Nhận đơn" — we store raw facility in selectedFacility
   const openReceiveModalForRow = useCallback((row: any) => {
     setSelectedFacility(row.raw);
     setOpenRecieve(true);
@@ -191,7 +229,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
         return;
       }
 
-      // Lấy version từ selectedFacility; backend bắt buộc version
       const versionFromSelected =
         selectedFacility?.version ??
         selectedFacility?.ver ??
@@ -209,7 +246,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
           payload
         );
 
-        // Nếu parent có onAccept => gửi facility đã cập nhật để parent xử lý (ví dụ: đưa vào OrdersAssignTable)
         if (typeof onAccept === "function") {
           try {
             onAccept(updatedFacility);
@@ -217,7 +253,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
             console.warn("onAccept handler threw:", err);
           }
         } else {
-          // fallback: nếu không có onAccept, giữ hành vi cũ (navigate đến detail nếu có typeCode)
           if (typeCode) {
             navigate(
               `${FACILITY_BASE}/${encodeURIComponent(typeCode)}/detail/${id}`
@@ -225,36 +260,17 @@ const OrdersUnassignedTable: React.FC<Props> = ({
           }
         }
 
-        // Đóng modal và reset lựa chọn
         setOpenRecieve(false);
         setSelectedFacility(null);
       } catch (err) {
         console.error("Lỗi khi cập nhật facility:", err);
-        // bạn có thể show toast/alert ở đây nếu muốn
       }
     },
     [selectedFacility, updateFacilityMutation, onAccept, navigate, typeCode]
   );
 
-  const handleAcceptFallback = useCallback(
-    (row: any) => {
-      if (typeof onAccept === "function") {
-        onAccept(row.raw);
-        return;
-      }
-      console.log("Nhận đơn (default):", row.raw);
-      if (typeCode) {
-        navigate(
-          `${FACILITY_BASE}/${encodeURIComponent(typeCode)}/detail/${row.id}`
-        );
-      }
-    },
-    [onAccept, navigate, typeCode]
-  );
-
   const isLoading = facilityLoading;
 
-  // Prepare order info for RecieveOrderForm
   const modalOrder = useMemo(() => {
     if (!selectedFacility) return null;
     return {
@@ -275,15 +291,7 @@ const OrdersUnassignedTable: React.FC<Props> = ({
     };
   }, [selectedFacility]);
 
-  /**
-   * ---------- NEW: robust image resolver for rendering cell ----------
-   *
-   * Only used here when rendering the table cell. It checks many common fields
-   * on the raw facility object (sampleSource, sampleSources, samples, imageUrl,
-   * image, images, files, attachments, etc.) and returns the first usable
-   * string it finds (base64/dataURL or a URL). Falls back to the row.demoImage
-   * that we prepared earlier if nothing else found.
-   */
+  // robust image resolver (kept)
   const resolveImage = (value: any): string | undefined => {
     if (!value) return undefined;
 
@@ -302,7 +310,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
     }
 
     if (typeof value === "object") {
-      // common fields that might hold URL/base64
       const candidates = ["url", "path", "src", "imageUrl", "fileUrl", "data"];
       for (const c of candidates) {
         if (value[c] && typeof value[c] === "string" && value[c].trim()) {
@@ -310,7 +317,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
         }
       }
 
-      // sometimes object is nested, try to check nested arrays/objects
       for (const key of Object.keys(value)) {
         try {
           const maybe = (value as any)[key];
@@ -336,7 +342,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
   ): string | undefined => {
     if (!raw && !rowDemoImage) return undefined;
 
-    // Try many common fields in order of priority
     const fieldsToCheck = [
       raw?.demoImage,
       raw?.sampleSource,
@@ -356,7 +361,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
       if (resolved) return resolved;
     }
 
-    // fallback to prepared demoImage (string) if present
     if (
       rowDemoImage &&
       typeof rowDemoImage === "string" &&
@@ -420,7 +424,6 @@ const OrdersUnassignedTable: React.FC<Props> = ({
                 <TableCell>{row.date}</TableCell>
                 <TableCell>
                   {(() => {
-                    // Use robust resolver on row.raw first; fallback to row.demoImage
                     const imgSrc = getImageForRow(row.raw, row.demoImage);
                     return imgSrc ? (
                       <img

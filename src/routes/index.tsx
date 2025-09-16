@@ -182,7 +182,6 @@ const TrackingPage = lazy(() => import("pages/Tracking"));
 const UserPage = lazy(() => import("pages/User"));
 const ProductPage = lazy(() => import("pages/Product"));
 
-/** Constants cho Fulfillment switch */
 const MAIN_FULFILLMENT_TYPECODE = "facility-add-multiple-row";
 const RECEIVE_ORDER_TYPECODES = new Set([
   "facility-drawing",
@@ -197,7 +196,6 @@ const RECEIVE_ORDER_TYPECODES = new Set([
   // "upload-trackingnumber",
 ]);
 
-/** Quyết định component render dựa trên :typeCode từ URL */
 const FulfillmentSwitch: React.FC = () => {
   const { typeCode: raw } = useParams<{ typeCode: string }>();
   let typeCode = "";
@@ -262,15 +260,14 @@ export const routes: RouteObject[] = [
         ],
       },
 
-      /** 🔥 Fulfillment theo URL */
-      { path: "facility", Component: MainFulfillment }, // /facility
-      { path: "facility/:typeCode", Component: FulfillmentSwitch }, // /facility/:typeCode
+      /** Fulfillment theo URL */
+      { path: "facility", Component: MainFulfillment },
+      { path: "facility/:typeCode", Component: FulfillmentSwitch },
       {
         path: "facility/facility-add-multiple-row",
         Component: MainFulfillment,
       },
 
-      /** Phần ReceiveOrder cũ (nếu vẫn dùng riêng) */
       {
         path: PATH.RECIEVEORDER,
         Component: MainPage,

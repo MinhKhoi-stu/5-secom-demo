@@ -5,7 +5,6 @@ import Sidebar from "./MainLayout/Sidebar";
 import { useEffect, useState } from "react";
 import { localStorageKey } from "utils/constants";
 import { PATH } from "routes/constants";
-import { FacilityTypeProvider } from "utils/facility/FacilityProvider";
 
 const PageLayout = () => {
   const theme = useTheme();
@@ -36,6 +35,7 @@ const PageLayout = () => {
       <Box
         sx={{
           display: "flex",
+          // mb: 20
         }}
       >
         <Header

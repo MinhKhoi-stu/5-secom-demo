@@ -21,9 +21,9 @@ import {
 } from "utils/facility/facility";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useGetMyProfile } from "hooks/admin-users/useGetMyProfile";
-import { useFindAllFacility } from "hooks/facility/useFindAllFacilityCustom";
 import { Order } from "types/OrderTable";
 import { mockOrders } from "../../../../data";
+import useFindAllFacilityCustom from "hooks/facility/useFindAllFacilityCustom";
 
 /**
  * MainPage: ưu tiên đọc typeCode từ location.state.typeCode (Sidebar truyền vào).
@@ -238,7 +238,7 @@ const MainPage: React.FC = () => {
   const username = profileData?.username;
 
   // facility query (enabled only when facilityTypeId + username available)
-  const { data: facilityData, isLoading: facilityLoading } = useFindAllFacility(
+  const { data: facilityData, isLoading: facilityLoading } = useFindAllFacilityCustom(
     {
       page: 0,
       size: 50,
@@ -401,6 +401,7 @@ const MainPage: React.FC = () => {
           facilityTypeName={facilityTypeName}
           typeCode={effectiveTypeCode ?? undefined}
           onAccept={handleAcceptOrder}
+          searchKeyword={searchKeyword} 
         />
 
         <RecieveOrderForm
@@ -421,3 +422,5 @@ const MainPage: React.FC = () => {
 };
 
 export default MainPage;
+
+

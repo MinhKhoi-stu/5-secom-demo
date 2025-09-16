@@ -1,155 +1,3 @@
-// import { ExpandLess, ExpandMore } from "@mui/icons-material";
-// import {
-//   Box,
-//   Collapse,
-//   List,
-//   ListItemButton,
-//   ListItemText,
-// } from "@mui/material";
-// import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import axiosClient from "utils/axios-client";
-
-// const menuItems = [
-//   { label: "Admin Dashboard", path: "/AdminDashboard" },
-//   {
-//     label: "Quản lý đơn hàng",
-//     children: [
-//       { label: "Đơn hàng", path: "/Fulfillment" },
-//       { label: "Chưa có hình", path: "/NoImage" },
-//       { label: "Đang vẽ 2D", path: "/RecieveOrder" },
-//       { label: "Đang vẽ thêu", path: "/Embroidery" },
-//       { label: "Đang cắt laser", path: "/Laser" },
-//       { label: "Sản xuất", path: "/Production" },
-//       { label: "Đóng gói", path: "/Packaging" },
-//       { label: "Tracking", path: "/Tracking" },
-//       { label: "Đơn hàng đã đóng gói", path: "/Completed" },
-//     ],
-//   },
-//   { label: "Quản lý Sản phẩm", path: "/Product" },
-//   { label: "Quản lý User", path: "/User" },
-//   { label: "Quản lý Tracking", path: "/Tracking" },
-//   { label: "Quản lý SKU Design", path: "/SKUDesign" },
-// ];
-
-// interface SidebarProps {
-//   open: boolean;
-// }
-
-// const Sidebar = ({ open }: SidebarProps) => {
-//   const navigate = useNavigate();
-//   const [openMenu, setOpenMenu] = useState<string | null>(null);
-
-//   const handleToggle = (label: string) => {
-//     setOpenMenu(openMenu === label ? null : label);
-//   };
-
-//   //MENU
-//   useEffect (() => {
-//     const getMenu = async() => {
-//       await axiosClient.get("menu/login");
-//     }
-//     getMenu()
-//   },[])
-
-//   return (
-//     <Box
-//       sx={{
-//         width: open ? { xs: 0, sm: "200px" } : 0,
-//         minWidth: open ? { sm: "200px" } : 0,
-//         overflowX: "hidden",
-//         height: "100vh",
-//         position: "fixed",
-//         top: 0,
-//         left: 0,
-//         pt: "64px",
-//         bgcolor: "white",
-//         borderRight: "1px solid #eee",
-//         transition: "width 0.3s ease, min-width 0.3s ease",
-//         display: { xs: open ? "block" : "none", sm: "block" },
-//       }}
-//     >
-//       <List>
-//         {menuItems.map((item) => {
-//           const isActive =
-//             location.pathname === item.path ||
-//             (item.children &&
-//               item.children.some((child) => location.pathname === child.path));
-
-//           if (item.children) {
-//             return (
-//               <Box key={item.label}>
-//                 <ListItemButton
-//                   onClick={() => handleToggle(item.label)}
-//                   sx={{
-//                     height: "60px",
-//                     color: "black",
-//                     backgroundColor: isActive
-//                       ? "rgba(255, 21, 0, 0.44)"
-//                       : "transparent",
-//                     borderLeft: isActive ? "4px solid white" : "none",
-//                     "&:hover": { backgroundColor: "#f5f5f5" },
-//                   }}
-//                 >
-//                   <ListItemText primary={item.label} />
-//                   {openMenu === item.label ? <ExpandLess /> : <ExpandMore />}
-//                 </ListItemButton>
-//                 <Collapse
-//                   in={openMenu === item.label}
-//                   timeout="auto"
-//                   unmountOnExit
-//                 >
-//                   <List component="div" disablePadding>
-//                     {item.children.map((child) => {
-//                       const isChildActive = location.pathname === child.path;
-//                       return (
-//                         <ListItemButton
-//                           key={child.path}
-//                           onClick={() => navigate(child.path)}
-//                           sx={{
-//                             pl: 4,
-//                             height: "50px",
-//                             color: "black",
-//                             backgroundColor: isChildActive
-//                               ? "rgba(255, 21, 0, 0.2)"
-//                               : "transparent",
-//                             "&:hover": { backgroundColor: "#f5f5f5" },
-//                           }}
-//                         >
-//                           <ListItemText primary={child.label} />
-//                         </ListItemButton>
-//                       );
-//                     })}
-//                   </List>
-//                 </Collapse>
-//               </Box>
-//             );
-//           }
-
-//           return (
-//             <ListItemButton
-//               key={item.path}
-//               onClick={() => navigate(item.path!)}
-//               sx={{
-//                 height: "60px",
-//                 color: "black",
-//                 backgroundColor: isActive
-//                   ? "rgba(255, 21, 0, 0.44)"
-//                   : "transparent",
-//                 borderLeft: isActive ? "4px solid white" : "none",
-//                 "&:hover": { backgroundColor: "#f5f5f5" },
-//               }}
-//             >
-//               <ListItemText primary={item.label} />
-//             </ListItemButton>
-//           );
-//         })}
-//       </List>
-//     </Box>
-//   );
-// };
-
-// export default Sidebar;
 import React, { useState, useEffect } from "react";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
@@ -162,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PATH } from "routes/constants";
-import useMenu, { RawMenu } from "hooks/menu/useMenu";
+import useMenu, { RawMenu, MenuNode } from "hooks/menu/useMenu";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import useFindAllFacilityCustom from "hooks/facility/useFindAllFacilityCustom";
 
@@ -293,8 +141,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-  // <-- added tree destructure so we can read the sorted tree from useMenu
-  const { loading, getChildrenOfParentCode, findByCode, tree } = useMenu();
+  const { loading, tree } = useMenu();
 
   const currentTypeCodeFromPath = getTypeCodeFromPath(location.pathname);
 
@@ -391,110 +238,51 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
     }
   }, [resolvedFacilityTypeId]);
 
-  const staticAfter = [
-    { label: "Quản lý Sản phẩm", path: PATH.PRODUCT },
-    { label: "Quản lý User", path: PATH.USERS },
-    { label: "Quản lý Tracking", path: PATH.TRACKING },
-    { label: "Quản lý SKU Design", path: PATH.SKUDESIGN },
-  ];
-
-  const manufactorParent = findByCode("manufactor");
-  const manufactorChildren = getChildrenOfParentCode("manufactor");
-
-  // --- NEW: find tracking-manager parent and children (children are taken from tree if possible
-  // so they will be already sorted by orderNo asc from useMenu's tree; otherwise fallback to getChildrenOfParentCode)
-  const trackingManagerParent = findByCode("tracking-manager");
-
-  const trackingManagerChildrenRaw: RawMenu[] = (() => {
-    try {
-      // try to read from tree (which is already sorted by orderNo asc)
-      if (Array.isArray(tree) && tree.length > 0) {
-        const node = tree.find((n) => n.code === "tracking-manager");
-        if (node && Array.isArray(node.children)) {
-          // node.children is MenuNode[] which extends RawMenu => safe to return
-          return node.children as RawMenu[];
-        }
-      }
-    } catch (e) {
-      // ignore and fallback
-    }
-    // fallback to raw children (may be unsorted)
-    return getChildrenOfParentCode("tracking-manager");
-  })();
-
-  const sortByOrderNo = (a: RawMenu, b: RawMenu) => {
-    const ao = parseInt(a.orderNo ?? "0", 10);
-    const bo = parseInt(b.orderNo ?? "0", 10);
-    if (!isNaN(ao) || !isNaN(bo)) {
-      // if (ao !== bo) return ao - bo;
-      if (ao !== bo) return bo - ao;
-    }
-    return (a.name ?? "").localeCompare(b.name ?? "");
+  // Map các code từ database sang route tương ứng
+  const codeToRouteMap: Record<string, string> = {
+    dashboard: PATH.DASHBOARD,
+    products: PATH.PRODUCT,
+    skudesigns: PATH.SKUDESIGN,
+    user: PATH.USERS,
+    role: "/admin/roles",
+    right: "/admin/rights",
   };
 
-  const trackingManagerChildren = trackingManagerChildrenRaw
-    ? [...trackingManagerChildrenRaw].sort(sortByOrderNo)
-    : [];
-
+  // Tạo menu sections từ tree
   const menuSections: Array<
-    { label: string; path?: string } | { label: string; children: RawMenu[] }
+    { label: string; path?: string } | { label: string; children: MenuNode[] }
   > = [];
 
-  menuSections.push({ label: "Admin Dashboard", path: PATH.DASHBOARD });
+  // Thêm tất cả menu cha có children vào menuSections
+  tree.forEach((parentNode) => {
+    if (parentNode.children && parentNode.children.length > 0) {
+      menuSections.push({
+        label: parentNode.name ?? parentNode.code ?? "Unnamed",
+        children: parentNode.children,
+      });
+    } else if (!parentNode.parentId) {
+      // Nếu là menu cha không có children, thêm như một item đơn
+      const href = coerceHrefFromUrl(parentNode.url);
 
-  if (loading) {
-    menuSections.push({ label: "Quản lý đơn hàng (loading...)", children: [] });
-  } else if (manufactorParent) {
-    menuSections.push({
-      label: manufactorParent.name ?? "Quản lý đơn hàng",
-      children: manufactorChildren,
-    });
-  } else {
-    menuSections.push({
-      label: "Quản lý đơn hàng",
-      children: [
-        {
-          id: "fallback-1",
-          name: "Đơn hàng",
-          code: "donhang",
-          url: undefined,
-          parentId: null,
-        },
-        {
-          id: "fallback-2",
-          name: "Chưa có hình",
-          code: "noimage",
-          url: undefined,
-          parentId: null,
-        },
-        {
-          id: "fallback-3",
-          name: "Đang vẽ 2D",
-          code: "2d",
-          url: undefined,
-          parentId: null,
-        },
-      ] as RawMenu[],
-    });
-  }
+      // Ưu tiên sử dụng route từ map, nếu không có thì dùng href từ database
+      const path =
+        parentNode.code && codeToRouteMap[parentNode.code]
+          ? codeToRouteMap[parentNode.code]
+          : href;
 
-  // --- NEW: insert tracking-manager section (only added, nothing else changed)
-  if (!loading && trackingManagerParent) {
-    menuSections.push({
-      label: trackingManagerParent.name ?? "Quản lý Tracking",
-      children: trackingManagerChildren,
-    });
-  }
-
-  staticAfter.forEach((s) => menuSections.push(s));
-
+      menuSections.push({
+        label: parentNode.name ?? parentNode.code ?? "Unnamed",
+        path: path,
+      });
+    }
+  });
   const handleToggle = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
   };
 
   const typeCodeFromPath = getTypeCodeFromPath(location.pathname);
 
-  const getNavTarget = (item: RawMenu): NavTarget => {
+  const getNavTarget = (item: MenuNode): NavTarget => {
     const href = coerceHrefFromUrl(item.url);
     const isFacilityLike = href.startsWith(`${FACILITY_BASE}/`);
     const typeCodeFromHref = isFacilityLike ? getTypeCodeFromHref(href) : null;
@@ -512,7 +300,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
     return { href, isFacilityLike, typeCodeFromHref, componentTarget };
   };
 
-  const isChildActive = (child: RawMenu) => {
+  const isChildActive = (child: MenuNode) => {
     const target = getNavTarget(child);
     if (!target.isFacilityLike) {
       return location.pathname === target.href;
@@ -522,17 +310,19 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
       : false;
   };
 
-  const onChildClick = (child: RawMenu) => {
+  const onChildClick = (child: MenuNode) => {
     const target = getNavTarget(child);
 
-    const relative = target.href.startsWith("/")
-      ? target.href.slice(1)
-      : target.href;
-    console.log("SIDEBAR CLICK", {
-      menuUrl: relative,
-      locationPathname: location.pathname,
-    });
+    // Xử lý các route đặc biệt từ database
+    const childCode = child.code;
 
+    // Nếu code có trong map, sử dụng route được map
+    if (childCode && codeToRouteMap[childCode]) {
+      navigate(codeToRouteMap[childCode]);
+      return;
+    }
+
+    // Xử lý facility như cũ
     if (target.isFacilityLike && target.typeCodeFromHref) {
       const nextType = target.typeCodeFromHref;
 
@@ -555,14 +345,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
       return;
     }
 
+    // Fallback: sử dụng href từ menu
     navigate(target.href);
   };
-
   return (
     <Box
       sx={{
-        width: open ? { xs: 0, sm: "200px" } : 0,
-        minWidth: open ? { sm: "200px" } : 0,
+        width: open ? { xs: 0, sm: "220px" } : 0,
+        minWidth: open ? { sm: "220px" } : 0,
         overflowX: "hidden",
         overflowY: "auto",
         height: "100vh",
@@ -570,6 +360,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
         top: 0,
         left: 0,
         pt: "64px",
+        pb: 2,
         bgcolor: "white",
         borderRight: "1px solid #eee",
         transition: "width 0.3s ease, min-width 0.3s ease",
@@ -578,43 +369,53 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
         "&::-webkit-scrollbar": { display: "none" },
       }}
     >
-      <List>
-        {menuSections.map((item) => {
-          if ("children" in item) {
-            const label = item.label;
-            const children = item.children as RawMenu[];
+      <List
+        sx={{
+          maxHeight: "calc(100vh - 74px)",
+          overflowY: "auto",
+          pb: 2,
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
+        {loading ? (
+          <ListItemButton sx={{ height: "60px" }}>
+            <CircularProgress size={20} />
+            <ListItemText sx={{ ml: 1 }} primary="Đang tải menu..." />
+          </ListItemButton>
+        ) : (
+          menuSections.map((item, index) => {
+            if ("children" in item) {
+              const label = item.label;
+              const children = item.children;
 
-            return (
-              <Box key={label}>
-                <ListItemButton
-                  onClick={() => handleToggle(label)}
-                  sx={{
-                    height: "60px",
-                    color: "black",
-                    backgroundColor:
-                      openMenu === label
-                        ? "rgba(255, 21, 0, 0.12)"
-                        : "transparent",
-                    borderLeft: openMenu === label ? "4px solid white" : "none",
-                    "&:hover": { backgroundColor: "#f5f5f5" },
-                  }}
-                >
-                  <ListItemText primary={label} />
-                  {openMenu === label ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
+              return (
+                <Box key={`${label}-${index}`}>
+                  <ListItemButton
+                    onClick={() => handleToggle(label)}
+                    sx={{
+                      height: "60px",
+                      color: "black",
+                      backgroundColor:
+                        openMenu === label
+                          ? "rgba(255, 21, 0, 0.12)"
+                          : "transparent",
+                      borderLeft:
+                        openMenu === label ? "4px solid white" : "none",
+                      "&:hover": { backgroundColor: "#f5f5f5" },
+                    }}
+                  >
+                    <ListItemText primary={label} />
+                    {openMenu === label ? <ExpandLess /> : <ExpandMore />}
+                  </ListItemButton>
 
-                <Collapse in={openMenu === label} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {loading && label.includes("loading") ? (
-                      <ListItemButton sx={{ pl: 4, height: "50px" }}>
-                        <CircularProgress size={20} />
-                        <ListItemText
-                          sx={{ ml: 1 }}
-                          primary="Đang tải menu..."
-                        />
-                      </ListItemButton>
-                    ) : (
-                      children.map((child) => {
+                  <Collapse
+                    in={openMenu === label}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <List component="div" disablePadding>
+                      {children.map((child) => {
                         const active = isChildActive(child);
                         return (
                           <ListItemButton
@@ -633,34 +434,36 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
                             <ListItemText primary={child.name} />
                           </ListItemButton>
                         );
-                      })
-                    )}
-                  </List>
-                </Collapse>
-              </Box>
-            );
-          }
+                      })}
+                    </List>
+                  </Collapse>
+                </Box>
+              );
+            }
 
-          return (
-            <ListItemButton
-              key={item.path ?? item.label}
-              onClick={() => navigate(item.path ?? "/")}
-              sx={{
-                height: "60px",
-                color: "black",
-                backgroundColor:
-                  location.pathname === item.path
-                    ? "rgba(255, 21, 0, 0.44)"
-                    : "transparent",
-                borderLeft:
-                  location.pathname === item.path ? "4px solid white" : "none",
-                "&:hover": { backgroundColor: "#f5f5f5" },
-              }}
-            >
-              <ListItemText primary={item.label} />
-            </ListItemButton>
-          );
-        })}
+            return (
+              <ListItemButton
+                key={item.path ?? item.label}
+                onClick={() => navigate(item.path ?? "/")}
+                sx={{
+                  height: "60px",
+                  color: "black",
+                  backgroundColor:
+                    location.pathname === item.path
+                      ? "rgba(255, 21, 0, 0.44)"
+                      : "transparent",
+                  borderLeft:
+                    location.pathname === item.path
+                      ? "4px solid white"
+                      : "none",
+                  "&:hover": { backgroundColor: "#f5f5f5" },
+                }}
+              >
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            );
+          })
+        )}
       </List>
     </Box>
   );

@@ -54,10 +54,8 @@ export function useMenu() {
     menuAPI
       .menuLogin()
       .then((res: any) => {
-        // menuAPI.menuLogin() có thể trả data trực tiếp hoặc { data: [...] }
         const items: RawMenu[] = res?.data ?? res;
         const arr = Array.isArray(items) ? items : [];
-        // dedupe before setting to state
         const unique = dedupeMenus(arr);
         if (mounted) setRaw(unique);
       })
@@ -92,13 +90,18 @@ export function useMenu() {
 
     const sortNodes = (arr: MenuNode[]) => {
       arr.sort((a, b) => {
-        const ao = parseInt(a.orderNo ?? "0", 10);
-        const bo = parseInt(b.orderNo ?? "0", 10);
-        if (!isNaN(ao) || !isNaN(bo)) {
-          if (ao !== bo) return ao - bo;
+        const aOrder = a.orderNo;
+        const bOrder = b.orderNo;
+
+        if (aOrder && bOrder) {
+          return aOrder.localeCompare(bOrder);
         }
+
+        if (aOrder && !bOrder) return -1;
+        if (!aOrder && bOrder) return 1;
         return (a.name ?? "").localeCompare(b.name ?? "");
       });
+
       arr.forEach((n) => n.children && sortNodes(n.children));
     };
 
@@ -118,6 +121,34 @@ export function useMenu() {
     return raw.filter((r) => r.parentId === parent.id);
   };
 
+  const getSortedChildrenOfParentCode = (code?: string | null): RawMenu[] => {
+    if (!code) return [];
+    const parent = findByCode(code);
+    if (!parent) return [];
+
+    // Tìm node trong tree
+    const findNodeInTree = (
+      nodes: MenuNode[],
+      targetId: string
+    ): MenuNode | null => {
+      for (const node of nodes) {
+        if (node.id === targetId) return node;
+        if (node.children) {
+          const found = findNodeInTree(node.children, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const node = findNodeInTree(tree, parent.id);
+    if (node && node.children) {
+      return node.children;
+    }
+
+    return [];
+  };
+
   return {
     raw,
     tree,
@@ -125,6 +156,7 @@ export function useMenu() {
     error,
     findByCode,
     getChildrenOfParentCode,
+    getSortedChildrenOfParentCode,
   };
 }
 
