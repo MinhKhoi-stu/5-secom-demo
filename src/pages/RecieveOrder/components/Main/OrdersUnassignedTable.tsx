@@ -423,25 +423,70 @@ const OrdersUnassignedTable: React.FC<Props> = ({
                 <TableCell>{row.orderId}</TableCell>
                 <TableCell>{row.date}</TableCell>
                 <TableCell>
-                  {(() => {
-                    const imgSrc = getImageForRow(row.raw, row.demoImage);
-                    return imgSrc ? (
-                      <img
-                        src={imgSrc}
-                        alt="demo"
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 8,
-                          objectFit: "cover",
-                        }}
-                      />
-                    ) : (
-                      <Typography variant="body2" color="text.secondary">
-                        -
-                      </Typography>
-                    );
-                  })()}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      "&:hover .zoom-preview": {
+                        display: "block",
+                      },
+                    }}
+                  >
+                    {(() => {
+                      const imgSrc = getImageForRow(row.raw, row.demoImage);
+                      return imgSrc ? (
+                        <img
+                          src={imgSrc}
+                          alt="demo"
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 8,
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">
+                          -
+                        </Typography>
+                      );
+                    })()}
+                    <Box
+                      className="zoom-preview"
+                      sx={{
+                        display: "none",
+                        position: "absolute",
+                        top: "-50px",
+                        left: "50px",
+                        zIndex: 10,
+                        width: "200px",
+                        backgroundColor: "#fff",
+                        border: "2px solid #f44336",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                        padding: "4px",
+                      }}
+                    >
+                      {(() => {
+                        const imgSrc = getImageForRow(row.raw, row.demoImage);
+                        return imgSrc ? (
+                          <img
+                            src={imgSrc}
+                            alt="preview-demo"
+                            style={{
+                              width: "100%",
+                              height: "auto",
+                              display: "block",
+                            }}
+                          />
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            -
+                          </Typography>
+                        );
+                      })()}
+                    </Box>
+                  </Box>
+                  {/* </Box> */}
                 </TableCell>
                 <TableCell>{row.product}</TableCell>
                 <TableCell>{row.size}</TableCell>

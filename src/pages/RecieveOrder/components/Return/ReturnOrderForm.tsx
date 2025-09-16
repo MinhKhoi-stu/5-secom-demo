@@ -201,6 +201,7 @@ export const ReturnOrderForm: React.FC<UpdateOrderFormProps> = ({
       version: order.version ?? 0,
       facilityTypeId: selectedOptionId,
       issuePlace: "unassigned",
+      note: noteText,
     };
 
     console.log("Gửi cập nhật facility payload:", payload);

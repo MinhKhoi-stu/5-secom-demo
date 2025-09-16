@@ -40,7 +40,7 @@ type OrgUnit = {
 };
 
 interface UpdateOrderProps {
-  facility: any; // FacilityDto
+  facility: any;
   onClose: () => void;
   onSaved?: () => Promise<void>;
   level1Options?: OrgUnit[];

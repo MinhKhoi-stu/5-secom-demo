@@ -9,15 +9,13 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import UploadImage from "components/common/UploadImage";
 import { FormField } from "pages/User/components/FormField";
-import { OptionDto, ParentOptDto } from "dto/option/option.dto";
+import { OptionDto } from "dto/option/option.dto";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useFindAllOrgunit } from "hooks/orgunit/useFindAllOrgunit";
 import { useUpdateOption } from "hooks/option/useUpdateOption";
 import { UpdateOptionDto } from "dto/option/update-option.dto";
-// Import utility functions
-import { processImageUpload, formatFileSize } from "utils/convert-img";
+import {useFileUpload} from "hooks/file-upload/useFileUpload";
 
 const UpdateSKUDesign = ({
   onClose,
@@ -49,49 +47,18 @@ const UpdateSKUDesign = ({
 
   const [fileName, setFileName] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
-  // const [skuName, setSkuName] = useState("");
-  // const [skuCode, setSkuCode] = useState("");
   const [initialSKU, setInitialSKU] = useState({
     name: "",
     code: "",
     image: "hinhanh.png",
   });
   const updateOption = useUpdateOption();
-
-  // Khi nhận props data => set formData
-  // useEffect(() => {
-  //   if (data) {
-  //     setFormData({
-  //       version: data.version ?? 0,
-  //       id: data.id ?? "",
-  //       code: data.code ?? "",
-  //       name: data.name ?? "",
-  //       note: data.note ?? null,
-  //       image: data.image ?? null,
-  //       orderNo: data.orderNo ?? 0,
-  //       parentOpt: data.parentOpt
-  //         ? {
-  //             id: data.parentOpt.id,
-  //             code: data.parentOpt.code,
-  //             name: data.parentOpt.name,
-  //             note: data.parentOpt.note ?? null,
-  //             orderNo: data.parentOpt.orderNo ?? 0,
-  //           }
-  //         : null,
-  //       optionGroup: data.optionGroup ?? { id: "" },
-  //       att1: data.att1 ?? null,
-  //       att2: data.att2 ?? null,
-  //       att3: data.att3 ?? "",
-  //       att4: data.att4 ?? null,
-  //       att5: data.att5 ?? null,
-  //     });
-
-  //     // Set file name từ data nếu có
-  //     if (data.image) {
-  //       setFileName("Ảnh hiện tại");
-  //     }
-  //   }
-  // }, [data]);
+  const {
+    loading: uploading,
+    error: uploadError,
+    data: uploadData,
+    uploadFile,
+  } = useFileUpload();
 
   useEffect(() => {
     if (data) {
@@ -120,7 +87,6 @@ const UpdateSKUDesign = ({
         att5: data.att5 ?? null,
       });
 
-      // Set file name từ data
       if (data.image) {
         setFileName("Ảnh hiện tại");
       } else {
@@ -137,8 +103,6 @@ const UpdateSKUDesign = ({
 
   const isChanged = React.useMemo(() => {
     if (!data) return false;
-
-    // So sánh từng trường của formData với data ban đầu
     const hasDifferentFields =
       formData.name !== (data.name ?? "") ||
       formData.code !== (data.code ?? "") ||
@@ -149,19 +113,15 @@ const UpdateSKUDesign = ({
       formData.att3 !== (data.att3 ?? "") ||
       formData.att4 !== (data.att4 ?? null) ||
       formData.att5 !== (data.att5 ?? null) ||
-      // So sánh parentOpt
       (formData.parentOpt?.id ?? "") !== (data.parentOpt?.id ?? "") ||
-      // So sánh image (có thể so base64 hoặc chỉ so tên file)
       (formData.image || null) !== (data.image || null);
 
     return hasDifferentFields;
   }, [formData, data]);
 
-  // LOAD PRODUCTS
   const { data: productOptions, isLoading: loadingProducts } =
     useFindOptionsByGroup("products", 0, 50);
 
-  // LOAD ORGUNIT
   const { data: orgUnitData, isLoading: loadingOrgUnits } = useFindAllOrgunit({
     orgUnitId: "",
     page: 0,
@@ -169,55 +129,24 @@ const UpdateSKUDesign = ({
   });
   const orgUnits = orgUnitData?.content || [];
 
-  // UPLOAD ảnh
+  // UPLOAD ảnh với hook
   const handleImageUpload = async (file: File) => {
     try {
-      console.log("Ảnh đã chọn để cập nhật:", file);
-
-      // Sử dụng utility function để xử lý upload
-      const result = await processImageUpload(
-        file,
-        {
-          maxSizeInMB: 5,
-          allowedTypes: [
-            "image/jpeg",
-            "image/jpg",
-            "image/png",
-            "image/gif",
-            "image/webp",
-          ],
-        },
-        false // Không cần pure base64, sử dụng base64 có prefix
-      );
-
-      if (!result.success) {
-        alert(result.error);
+      const result = await uploadFile(file);
+      if (!result) {
+        alert("Upload thất bại");
         return;
       }
 
-      if (!result.data) {
-        throw new Error("Không có dữ liệu trả về");
-      }
+      setFormData((prev) => ({ ...prev, image: result.url }));
+      setFileName(file.name);
 
-      const { data: uploadData } = result;
-
-      // Cập nhật formData với base64 string
-      setFormData((prev) => ({ ...prev, image: uploadData.base64 }));
-
-      // Cập nhật tên file
-      setFileName(uploadData.fileName);
-
-      console.log("Ảnh đã được xử lý thành công:");
-      console.log("- Tên file:", uploadData.fileName);
-      console.log("- Kích thước:", formatFileSize(uploadData.fileSize));
-      console.log("- Loại file:", uploadData.fileType);
-      console.log(
-        "- Base64 preview:",
-        uploadData.base64.substring(0, 100) + "..."
-      );
+      console.log("Ảnh đã upload thành công:");
+      console.log("- URL:", result.url);
+      console.log("- Tên file:", file.name);
     } catch (error) {
-      console.error("Lỗi khi xử lý ảnh:", error);
-      alert("Có lỗi xảy ra khi xử lý ảnh. Vui lòng thử lại.");
+      console.error("Lỗi khi upload ảnh:", error);
+      alert("Có lỗi xảy ra khi upload ảnh. Vui lòng thử lại.");
     }
   };
 
@@ -250,7 +179,6 @@ const UpdateSKUDesign = ({
     }));
   };
 
-  // UPDATE API
   const handleUpdate = () => {
     const updateData: UpdateOptionDto = {
       version: formData.version,
@@ -291,7 +219,6 @@ const UpdateSKUDesign = ({
     });
   };
 
-  // DELETE HANDLER
   const handleDeleteClick = () => {
     if (onDelete && data) {
       onDelete(data.id, data.version ?? 0);
@@ -360,7 +287,14 @@ const UpdateSKUDesign = ({
             <Typography sx={{ color: "black", mt: 3 }}>
               Hình ảnh đại diện
             </Typography>
-            <UploadImage onFileSelect={handleImageUpload} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                e.target.files?.[0] && handleImageUpload(e.target.files[0])
+              }
+              disabled={uploading}
+            />
             {formData.image && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="caption" color="textSecondary">
@@ -379,6 +313,11 @@ const UpdateSKUDesign = ({
                   />
                 </Box>
               </Box>
+            )}
+            {uploadError && (
+              <Typography color="error" variant="caption">
+                {uploadError}
+              </Typography>
             )}
           </Box>
 

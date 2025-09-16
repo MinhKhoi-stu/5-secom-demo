@@ -7,20 +7,18 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import UploadImage from "components/common/UploadImage";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { FormField } from "pages/User/components/FormField";
 import { OptionDto } from "dto/option/option.dto";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import { useFindAllOrgunit } from "hooks/orgunit/useFindAllOrgunit";
 import { useCreateOption } from "hooks/option/useCreateOption";
 import { useQueryClient } from "react-query";
-import { processImageUpload, formatFileSize } from "utils/convert-img";
+import {useFileUpload} from "hooks/file-upload/useFileUpload";
 
 const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
   const [fileName, setFileName] = useState("hinhanh.png");
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState<OptionDto>({
     version: 0,
@@ -39,55 +37,30 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
     att5: null,
   });
 
-  // const inputRef = useRef<HTMLInputElement | null>(null);
+  // Hook upload ảnh
+  const { uploadFile, loading } = useFileUpload();
 
   // Gọi API lấy danh sách sản phẩm (optionGroupCode = "products")
   const { data: productOptions, isLoading: loadingProducts } =
     useFindOptionsByGroup("products", 0, 50);
 
-  //ẢNH MÒ
+  // Upload ảnh bằng hook
   const handleImageUpload = async (file: File) => {
     try {
-      console.log("Ảnh đã chọn:", file);
-
-      // Sử dụng utility function để xử lý upload
-      const result = await processImageUpload(
-        file,
-        {
-          maxSizeInMB: 5,
-          allowedTypes: [
-            "image/jpeg",
-            "image/jpg",
-            "image/png",
-            "image/gif",
-            "image/webp",
-          ],
-        },
-        false
-      );
-
-      if (!result.success) {
-        alert(result.error);
+      const uploaded = await uploadFile(file);
+      if (!uploaded) {
+        alert("Upload thất bại!");
         return;
       }
 
-      if (!result.data) {
-        throw new Error("Không có dữ liệu trả về");
-      }
-
-      const { data } = result;
-
-      // Cập nhật formData với base64 string
       setFormData((prev) => ({
         ...prev,
-        image: data.base64,
+        image: uploaded.url, 
       }));
-
-      // Cập nhật tên file
-      setFileName(data.fileName);
+      setFileName(file.name);
     } catch (error) {
-      console.error("Lỗi khi xử lý ảnh:", error);
-      alert("Có lỗi xảy ra khi xử lý ảnh. Vui lòng thử lại.");
+      console.error("Lỗi khi upload ảnh:", error);
+      alert("Có lỗi xảy ra khi upload ảnh. Vui lòng thử lại.");
     }
   };
 
@@ -112,17 +85,16 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
     }));
   };
 
-  //FULFILLMENT
+  // FULFILLMENT
   const { data: orgUnitData, isLoading: loadingOrgUnits } = useFindAllOrgunit({
     orgUnitId: "",
     page: 0,
     size: 50,
   });
 
-  // Nếu API trả ra content như PagingDataDto thì truy cập .content
   const orgUnits = orgUnitData?.content || [];
 
-  //SUBMIT
+  // SUBMIT
   const optionGroupIdSkudesigns = "vzE4PbdcCjdktHVGxO2TWw==";
 
   const createOptionMutation = useCreateOption(optionGroupIdSkudesigns, 0, 50);
@@ -233,7 +205,14 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
             <Typography sx={{ color: "black", mt: 3 }}>
               Hình ảnh đại diện
             </Typography>
-            <UploadImage onFileSelect={handleImageUpload} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                e.target.files?.[0] && handleImageUpload(e.target.files[0])
+              }
+              disabled={loading}
+            />
             {formData.image && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="caption" color="textSecondary">
@@ -254,28 +233,6 @@ const CreateSKUDesign = ({ onClose }: { onClose?: () => void }) => {
               </Box>
             )}
           </Box>
-
-          {/* FULFILLMENT */}
-          {/* <FormControl fullWidth size="small" sx={{ mt: 2 }}>
-            <InputLabel id="fulfill-label">Fulfillment tại</InputLabel>
-            <Select
-              labelId="fulfill-label"
-              value={formData.att4 || ""}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, att4: e.target.value }))
-              }
-            >
-              {loadingOrgUnits ? (
-                <MenuItem disabled>Đang tải...</MenuItem>
-              ) : (
-                orgUnits.map((unit) => (
-                  <MenuItem key={unit.id} value={unit.id}>
-                    {unit.namePath?.join(" / ") || unit.name}
-                  </MenuItem>
-                ))
-              )}
-            </Select>
-          </FormControl> */}
 
           <FormField
             label="Kho"

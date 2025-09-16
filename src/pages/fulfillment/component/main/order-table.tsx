@@ -108,19 +108,6 @@ const OrderTable = ({ search, facilityTypeId }: OrderTableProps) => {
                 <TableCell>{facility.idNumber || "-"}</TableCell>
                 <TableCell>{facility.name || "-"}</TableCell>
                 <TableCell>{facility.labelingStandard || "-"}</TableCell>
-                {/* <TableCell>
-                  <Chip
-                    label={facility.isException ? "Ngoại lệ" : "Bình thường"}
-                    sx={{
-                      backgroundColor: facility.isException
-                        ? themeStyles.warning
-                        : themeStyles.success,
-                      color: "#fff",
-                      fontWeight: "bold",
-                    }}
-                    size="small"
-                  />
-                </TableCell> */}
                 <TableCell>{facility.area ?? "-"}</TableCell>
                 <TableCell>{facility.facilityType?.name || "-"}</TableCell>
               </TableRow>

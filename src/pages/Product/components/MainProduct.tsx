@@ -89,22 +89,6 @@ const MainProduct = () => {
     }
   };
 
-  //FIND codeOrName
-  // const { data: productOptionGroup } = useFindOptionGroupByCodeOrName(
-  //   "products",
-  //   0,
-  //   50
-  // );
-
-  // const handleSubmit = (formValues: any) => {
-  //   if (!productOptionGroup) return;
-
-  //   const payload = {
-  //     ...formValues,
-  //     optionGroup: { id: productOptionGroup.id },
-  //   };
-  // };
-
   //TÌM KIẾM
 
   const optionGroupCode = "products";
@@ -206,7 +190,7 @@ const MainProduct = () => {
                       maxWidth: { xs: "100%", sm: "40%" },
                     }}
                   >
-                    <Box
+                    {/* <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
@@ -232,6 +216,75 @@ const MainProduct = () => {
                           cursor: "zoom-in",
                         }}
                       />
+                      <Typography
+                        sx={{ color: "black", fontWeight: "500", flex: 1 }}
+                      >
+                        {product.name}
+                      </Typography>
+                    </Box> */}
+
+                    <Box
+                      sx={{
+                        position: "relative",
+                        display: "flex",
+                        alignItems: "center",
+                        padding: 2,
+                        gap: 5,
+                        borderRadius: 2,
+                        border: "1px solid #eee",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "#f5f5f5",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                        },
+                      }}
+                      onClick={() => handleProductClick(product)}
+                    >
+                      <Box
+                        sx={{
+                          position: "relative",
+                          "&:hover .zoom-preview": {
+                            display: "block",
+                          },
+                        }}
+                      >
+                        <img
+                          src={product.image ?? "/img/flag/VietNamflag.jpg"}
+                          alt={product.code ?? ""}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            cursor: "zoom-in",
+                          }}
+                        />
+                        <Box
+                          className="zoom-preview"
+                          sx={{
+                            display: "none",
+                            position: "absolute",
+                            top: "-50px",
+                            left: "50px",
+                            zIndex: 10,
+                            width: "200px",
+                            backgroundColor: "#fff",
+                            border: "2px solid #f44336",
+                            borderRadius: "8px",
+                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                            padding: "4px",
+                          }}
+                        >
+                          <img
+                            src={product.image ?? "/img/flag/VietNamflag.jpg"}
+                            alt="preview"
+                            style={{
+                              width: "100%",
+                              height: "auto",
+                              display: "block",
+                            }}
+                          />
+                        </Box>
+                      </Box>
                       <Typography
                         sx={{ color: "black", fontWeight: "500", flex: 1 }}
                       >

@@ -12,7 +12,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import UploadImage from "components/common/UploadImage";
 import { OptionDto } from "dto/option/option.dto";
 import { useRef, useState, useEffect } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,6 +22,7 @@ import { useDeleteOption } from "hooks/option/useDeleteOption";
 import ConfirmDeleteDialog from "components/common/ConfirmDeleteDialog";
 import { useUpdateOption } from "hooks/option/useUpdateOption";
 import EditSize from "./EditSize";
+import { useFileUpload } from "hooks/file-upload/useFileUpload";
 
 interface UpdateProductProps {
   mode: "create" | "update";
@@ -36,10 +36,16 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
   mode,
   product,
   open,
+  onClose,
   onDelete,
 }) => {
   const [fileName, setFileName] = useState("hinhanh.png");
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const {
+    loading: uploading,
+    error: uploadError,
+    data: uploadData,
+    uploadFile,
+  } = useFileUpload();
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
   const [initialProduct, setInitialProduct] = useState({
@@ -56,49 +62,41 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
     if (mode === "update" && product) {
       setProductName(product.name || "");
       setProductCode(product.code || "");
-      setFileName(product.image || "hinhanh.png");
-
-      // lưu state ban đầu để so sánh
+      setFileName(product.image || "");
       setInitialProduct({
         name: product.name || "",
         code: product.code || "",
-        image: product.image || "hinhanh.png",
+        image: product.image || "",
       });
     } else {
       setProductName("");
       setProductCode("");
-      setFileName("hinhanh.png");
-      setInitialProduct({
-        name: "",
-        code: "",
-        image: "hinhanh.png",
-      });
+      setFileName("");
+      setInitialProduct({ name: "", code: "", image: "" });
     }
   }, [mode, product, open]);
 
+  const handleFileChange = async (file: File) => {
+    setFileName(file.name);
+    const res = await uploadFile(file);
+    if (res) {
+      setFileName(res.url);
+    }
+  };
   const isChanged =
     productName !== initialProduct.name ||
     productCode !== initialProduct.code ||
-    fileName !== initialProduct.image;
-
-  const handleImageUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      // reader.result sẽ là chuỗi base64
-      setFileName(reader.result as string);
-    };
-    reader.readAsDataURL(file); // Chuyển ảnh sang Base64
-  };
+    (fileName && fileName !== initialProduct.image);
 
   const handleSave = async () => {
     if (!product) return;
-
+    try {
     await updateOption({
       id: product.id,
       version: product.version,
       name: productName,
       code: productCode,
-      image: fileName,
+      image: fileName || undefined,
       note: product.note,
       orderNo: product.orderNo,
       optionGroup: { id: product.optionGroup?.id ?? "" },
@@ -109,6 +107,22 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
       att4: product.att4,
       att5: product.att5,
     });
+
+    if (onClose) {
+      onClose();
+    }
+  } catch (error) {
+    console.error("Update failed:", error);
+  }
+  };
+
+  const handleImageUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // reader.result sẽ là chuỗi base64
+      setFileName(reader.result as string);
+    };
+    reader.readAsDataURL(file); // Chuyển ảnh sang Base64
   };
 
   const [openCreateSize, setOpenCreateSize] = useState(false);
@@ -143,6 +157,7 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
   //EDIT SIZE
   const [openEditSize, setOpenEditSize] = useState(false);
   const [selectedSize, setSelectedSize] = useState<OptionDto | null>(null);
+  
 
   return (
     <>
@@ -209,19 +224,35 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
         </Box>
 
         {/* INPUT HÌNH ẢNH */}
-        <Box sx={{ mb: 3 }}>
-          <Typography sx={{ color: "black", mb: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "left",
+            mt: 2,
+          }}
+        >
+          <Typography sx={{ color: "black", mt: 1 }}>
             Hình ảnh đại diện
           </Typography>
-          <UploadImage onFileSelect={handleImageUpload} />
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              e.target.files?.[0] && handleFileChange(e.target.files[0])
+            }
+            style={{ marginTop: "8px" }}
+          />
+
           {fileName && (
             <Box sx={{ mt: 2 }}>
               <Typography variant="caption" color="textSecondary">
-                {"Ảnh hiện tại"}
+                Đã chọn: {fileName}
               </Typography>
               <Box sx={{ mt: 1, maxWidth: 200 }}>
                 <img
-                  src={fileName}
+                  src={uploadData?.url || fileName}
                   alt="Preview"
                   style={{
                     width: "100%",
@@ -232,6 +263,12 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
                 />
               </Box>
             </Box>
+          )}
+
+          {uploadError && (
+            <Typography color="error" variant="caption" sx={{ mt: 1 }}>
+              {uploadError}
+            </Typography>
           )}
         </Box>
 

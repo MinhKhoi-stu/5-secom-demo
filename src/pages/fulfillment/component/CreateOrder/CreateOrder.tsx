@@ -26,6 +26,7 @@ import { useCreateFacility } from "hooks/facility/useCreateFacility";
 import { CreateFacilityDto } from "dto/facility/create-facility.dto";
 import { useOrgunitTree } from "hooks/orgunit/useOrgunitTree";
 import { TreeOrgunitDto } from "dto/orgunit/tree-orgunit.dto";
+import { useFileUpload } from "hooks/file-upload/useFileUpload";
 
 type OrgUnit = {
   id: string;
@@ -129,8 +130,6 @@ const CreateOrder = ({
   const [formData, setFormData] = useState<FacilityDto>(initialFormState);
 
   const [savedOrders, setSavedOrders] = useState<FacilityDto[]>([]);
-
-  const navigate = useNavigate();
 
   const { mutateAsync: createFacilityAsync, isLoading: isCreating } =
     useCreateFacility();
@@ -274,11 +273,22 @@ const CreateOrder = ({
   ]);
 
   // --- rest of original handlers ---
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    if (file) setFileName(file.name);
+    if (file) {
+      setFileName(file.name);
+      try {
+        const uploaded = await uploadFile(file); // gọi API upload
+        if (uploaded?.url) {
+          setFormData((prev) => ({ ...prev, sampleSource: uploaded.url }));
+        }
+      } catch (err) {
+        console.error("Upload file thất bại:", err);
+      }
+    }
   };
-
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -460,11 +470,13 @@ const CreateOrder = ({
       area: row.area ?? 0,
       isException: !!row.isException,
       phone: row.phone || "",
+      note: row.note || "",
       address: row.address || "",
       labelingStandard: row.labelingStandard || "",
       // REQUIREMENT: ensure issuePlace is explicitly "unassigned" when creating.
       // This overrides any value that might come from initialValues or the logged-in user.
       issuePlace: "unassigned",
+      sampleSource: row.sampleSource || "",
     };
 
     if (row.skuOpt?.id) {
@@ -591,6 +603,9 @@ const CreateOrder = ({
     const val = e.target.value as string;
     setSelectedLevel3(val);
   };
+
+  //IMAGE UPLOAD
+  const { uploadFile } = useFileUpload();
 
   return (
     <Dialog

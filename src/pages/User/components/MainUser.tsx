@@ -226,7 +226,7 @@ const MainUser = () => {
             <Grid container spacing={2} minHeight="300px">
               {filteredUsers.map((user) => (
                 <Grid key={user.id} item xs={12} sm={6} md={4} lg={3}>
-                  <Box
+                  {/* <Box
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -243,10 +243,6 @@ const MainUser = () => {
                     }}
                     onClick={() => handleUserClick(user)}
                   >
-                    {/* <Avatar
-                      src={"/img/flag/VietNamflag.jpg"}
-                      sx={{ width: 56, height: 56 }}
-                    /> */}
                     <img
                       src={user.idCardNumber ?? "/img/flag/VietNamflag.jpg"}
                       // alt={user.id ?? ""}
@@ -269,7 +265,83 @@ const MainUser = () => {
                       <Typography fontSize={13}>{user.email}</Typography>
                       <Typography fontSize={13}>{user.phone}</Typography>
                     </Box>
-                    {/* Bỏ phần icon edit và delete */}
+                  </Box> */}
+
+                  <Box
+                    sx={{
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center",
+                      padding: 2,
+                      gap: 5,
+                      borderRadius: 2,
+                      border: "1px solid #eee",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      "&:hover": {
+                        backgroundColor: "#f5f5f5",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      },
+                    }}
+                    onClick={() => handleUserClick(user)}
+                  >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        "&:hover .zoom-preview": {
+                          display: "block",
+                        },
+                      }}
+                    >
+                      <img
+                        src={user.idCardNumber ?? "/img/flag/VietNamflag.jpg"}
+                        // alt={user.id ?? ""}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          cursor: "zoom-in",
+                        }}
+                      />
+                      <Box
+                        className="zoom-preview"
+                        sx={{
+                          display: "none",
+                          position: "absolute",
+                          top: "-50px",
+                          left: "50px",
+                          zIndex: 10,
+                          width: "200px",
+                          backgroundColor: "#fff",
+                          border: "2px solid #f44336",
+                          borderRadius: "8px",
+                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                          padding: "4px",
+                        }}
+                      >
+                        <img
+                          src={user.idCardNumber ?? "/img/flag/VietNamflag.jpg"}
+                          alt="preview"
+                          style={{
+                            width: "100%",
+                            height: "auto",
+                            display: "block",
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    <Box
+                      sx={{
+                        color: "black",
+                        display: "flex",
+                        flexDirection: "column",
+                        textAlign: "left",
+                        flex: 1,
+                      }}
+                    >
+                      <Typography fontWeight="bold">{user.name}</Typography>
+                      <Typography fontSize={13}>{user.email}</Typography>
+                      <Typography fontSize={13}>{user.phone}</Typography>
+                    </Box>
                   </Box>
                 </Grid>
               ))}
@@ -323,7 +395,7 @@ const MainUser = () => {
           <AddUser
             onSuccess={() => {
               handleCloseDialog();
-              refetch(); 
+              refetch();
             }}
             selectedRoleId={selectedTab}
           />
