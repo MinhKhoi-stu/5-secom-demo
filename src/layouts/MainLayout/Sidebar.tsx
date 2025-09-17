@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PATH } from "routes/constants";
-import useMenu, { RawMenu, MenuNode } from "hooks/menu/useMenu";
+import useMenu, { MenuNode } from "hooks/menu/useMenu";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import useFindAllFacilityCustom from "hooks/facility/useFindAllFacilityCustom";
 
@@ -244,7 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
     products: PATH.PRODUCT,
     skudesigns: PATH.SKUDESIGN,
     user: PATH.USERS,
-    role: "/admin/roles",
+    role: PATH.ROLES,
     right: "/admin/rights",
   };
 

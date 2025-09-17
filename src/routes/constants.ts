@@ -5,7 +5,7 @@ export enum PATH {
   SKUDESIGN = "/SKUDesign",
   TRACKING = "/Tracking",
   PRODUCT= "/Product",
-  ROLE= "/Role",
+  ROLES= "/AdminRole",
   FULFILLMENT= "/Fulfillment",
   FULFILLMENT_SERVICE = "/Fulfillment/:service",
   RECIEVEORDER= "/RecieveOrder",

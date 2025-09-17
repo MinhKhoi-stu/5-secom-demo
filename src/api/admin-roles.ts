@@ -10,7 +10,7 @@ import axiosClient from "utils/axios-client";
 
 export const adminRolesAPI = {
   create(createAdminRoleDto: CreateAdminRoleDto): Promise<AdminRoleDto> {
-    return axiosClient.post("admin-roles", createAdminRoleDto);
+    return axiosClient.post("role", createAdminRoleDto);
   },
   findAll(
     findAllAdminRoleDto: FindAllAdminRoleDto
@@ -33,7 +33,12 @@ export const adminRolesAPI = {
   ): Promise<AdminRoleDto> {
     return axiosClient.put(`admin-roles/${id}`, updateAdminRoleDto);
   },
-  delete(id: number): Promise<DefaultResponseDto> {
-    return axiosClient.delete(`admin-roles/${id}`);
+  // delete(id: number): Promise<DefaultResponseDto> {
+  //   return axiosClient.delete(`admin-roles/${id}`);
+  // },
+  delete(id: string, version: number): Promise<DefaultResponseDto> {
+    return axiosClient.delete("role", {
+      params: { id, version },
+    });
   },
 };
