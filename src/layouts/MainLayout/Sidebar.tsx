@@ -245,7 +245,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open }) => {
     skudesigns: PATH.SKUDESIGN,
     user: PATH.USERS,
     role: PATH.ROLES,
-    right: "/admin/rights",
+    right: PATH.RIGHTS,
   };
 
   // Tạo menu sections từ tree

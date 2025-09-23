@@ -1,4 +1,3 @@
-// RoleTable.tsx
 import React, { useState } from "react";
 import {
   Box,
@@ -25,8 +24,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import AddIcon from "@mui/icons-material/Add";
-import CreateRole from "./CreateRole";
-import UpdateRole from "./UpdateRole";
+import CreateRole from "../dialog/CreateRole";
+import UpdateRole from "../dialog/UpdateRole";
 import { useDeleteAdminRole } from "hooks/admin-roles/useDeleteAdminRole";
 import { useQueryClient } from "react-query";
 

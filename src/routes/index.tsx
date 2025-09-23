@@ -182,6 +182,7 @@ const TrackingPage = lazy(() => import("pages/Tracking"));
 const UserPage = lazy(() => import("pages/User"));
 const ProductPage = lazy(() => import("pages/Product"));
 const AdminRolePage = lazy(() => import("pages/AdminRole"));
+const AdminRightPage = lazy(() => import("pages/AdminRight"));
 
 const MAIN_FULFILLMENT_TYPECODE = "facility-add-multiple-row";
 const RECEIVE_ORDER_TYPECODES = new Set([
@@ -263,6 +264,10 @@ export const routes: RouteObject[] = [
       {
         path: PATH.ROLES,
         Component: AdminRolePage,
+      },
+      {
+        path: PATH.RIGHTS,
+        Component: AdminRightPage,
       },
 
       /** Fulfillment theo URL */

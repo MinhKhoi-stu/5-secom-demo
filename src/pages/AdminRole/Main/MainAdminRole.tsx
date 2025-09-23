@@ -5,9 +5,12 @@ import {
 } from "@mui/material";
 import { useFindAllAdminRoles } from "hooks/admin-roles/useFindAllAdminRole";
 import { useFindAllAdminRights } from "hooks/admin-rights/useFindAllAdminRights";
-import { useFindAdminRightById } from "hooks/admin-rights/useFindAdminRightById";
-import RoleTable from "../component/RoleTable";
-import RightTable from "../component/RightTable";
+import { useFindAdminRightByRoleId } from "hooks/admin-rights/useFindAdminRightByRoleId";
+import RoleTable from "../component/table/RoleTable";
+import RightTable from "../component/table/RightTable";
+import { useUpdateRightOfRole } from "hooks/admin-roles/useUpdateRightOfRole";
+import { useQueryClient } from "react-query";
+import type { UpdateRightOfRoleDto } from "dto/admin-roles/update-right-of-role.dto";
 
 type PermissionItem = {
   id: string | number;
@@ -28,6 +31,9 @@ const MainAdminRole: React.FC = () => {
   const [selectedRoleId, setSelectedRoleId] = useState<string | number | null>(
     null
   );
+
+  // selected role version (lấy từ rowsData khi chọn role) - để gửi cùng DTO
+  const [selectedRoleVersion, setSelectedRoleVersion] = useState<number>(0);
 
   const handleChange = (id: string | number) => {
     setState((prev) =>
@@ -99,8 +105,8 @@ const MainAdminRole: React.FC = () => {
     data: adminRightData,
     isLoading: adminRightLoading,
     isError: adminRightError,
-  } = useFindAdminRightById(selectedRoleId);
-  console.log(selectedRoleId);
+  } = useFindAdminRightByRoleId(selectedRoleId);
+  console.log("selectedRoleId:", selectedRoleId);
 
   // initialize state for rights only once (when rightsItems arrives and state is still empty)
   useEffect(() => {
@@ -194,6 +200,7 @@ const MainAdminRole: React.FC = () => {
     return [];
   };
 
+  // khi adminRightData thay đổi (hoặc role thay đổi), cập nhật checked state tương ứng
   useEffect(() => {
     if (!state || state.length === 0) {
       return;
@@ -207,8 +214,7 @@ const MainAdminRole: React.FC = () => {
 
     // when a role is selected, wait for adminRightData to arrive
     if (!adminRightData) {
-      // no data yet — do not modify user's manual changes; optionally we could wait.
-      // To strictly follow requirement, we will not change state until adminRightData present.
+      // no data yet — do not modify user's manual changes
       return;
     }
 
@@ -233,9 +239,71 @@ const MainAdminRole: React.FC = () => {
   const handleRoleSelect = (rawId: any) => {
     if (selectedRoleId === rawId) {
       setSelectedRoleId(null);
+      setSelectedRoleVersion(0);
     } else {
       setSelectedRoleId(rawId);
+
+      // tìm object role trong rowsData để lấy version (nhiều backend dùng field version)
+      const found =
+        rowsData.find(
+          (r: any) =>
+            r.id === rawId ||
+            r.code === rawId ||
+            String(r.id) === String(rawId) ||
+            String(r.code) === String(rawId)
+        ) ?? null;
+
+      const ver =
+        (found && (found.version ?? found.ver ?? found._version ?? 0)) ?? 0;
+      setSelectedRoleVersion(Number(ver ?? 0));
     }
+  };
+
+  // mutation: cập nhật quyền cho role
+  const updateRights = useUpdateRightOfRole();
+  const queryClient = useQueryClient();
+
+  const handleSaveRights = () => {
+    if (selectedRoleId == null) return;
+
+    const dto: UpdateRightOfRoleDto = {
+      id: String(selectedRoleId),
+      version: selectedRoleVersion ?? 0,
+      rights: state
+        .filter((p) => p.checked)
+        .map((p) => ({ id: String(p.id) })),
+    };
+
+    updateRights.mutate(dto, {
+      onSuccess: (data) => {
+        // invalidate queries liên quan đến rights / role để re-fetch
+        try {
+          queryClient.invalidateQueries({
+            predicate: (q) => {
+              try {
+                const keyStr = JSON.stringify(q.queryKey).toLowerCase();
+                return (
+                  keyStr.includes("adminright") ||
+                  keyStr.includes("find_admin_right") ||
+                  keyStr.includes("right") ||
+                  keyStr.includes("find_all_admin_role") ||
+                  keyStr.includes("role")
+                );
+              } catch {
+                return false;
+              }
+            },
+          });
+        } catch {
+          queryClient.invalidateQueries();
+        }
+        // tùy nếu bạn muốn hiển thị toast/snackbar thì có thể thêm ở đây
+        console.log("Cập nhật quyền cho role thành công:", data);
+      },
+      onError: (err) => {
+        console.error("Lỗi khi cập nhật quyền:", err);
+      },
+    });
   };
 
   return (
@@ -266,10 +334,13 @@ const MainAdminRole: React.FC = () => {
         />
 
         <RightTable
-          rightsLoading={rightsLoading}
-          rightsError={rightsError}
+          rightsLoading={rightsLoading || adminRightLoading}
+          rightsError={rightsError || adminRightError}
           state={state}
           handleChange={handleChange}
+          onSave={handleSaveRights}
+          saving={updateRights.isLoading}
+          selectedRoleId={selectedRoleId}
         />
       </Box>
     </Box>

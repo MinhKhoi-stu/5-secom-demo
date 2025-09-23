@@ -363,7 +363,7 @@ const MainPage: React.FC = () => {
               <Button
                 sx={{
                   width: { xs: "100%", md: 360 },
-                  backgroundColor: "transparent",
+                  backgroundColor: "lightgoldenrodyellow",
                   color: "black",
                   fontSize: { xs: "16px", md: "20px" },
                   fontWeight: "bold",

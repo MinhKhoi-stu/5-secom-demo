@@ -1,4 +1,4 @@
-import MainAdminRole from "./Main/MainAdminRole";
+import MainAdminRole from "./main/MainAdminRole";
 
 const AdminRole = () => {
     return(

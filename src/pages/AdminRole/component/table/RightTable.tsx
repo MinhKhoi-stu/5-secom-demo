@@ -24,6 +24,9 @@ type RightTableProps = {
   rightsError: boolean;
   state: PermissionItem[];
   handleChange: (id: string | number) => void;
+  onSave?: () => void; // new: callback when clicking Lưu
+  saving?: boolean; // new: mutation loading flag
+  selectedRoleId?: string | number | null; // new: to disable save when no role selected
 };
 
 const RightTable: React.FC<RightTableProps> = ({
@@ -31,6 +34,9 @@ const RightTable: React.FC<RightTableProps> = ({
   rightsError,
   state,
   handleChange,
+  onSave,
+  saving = false,
+  selectedRoleId = null,
 }) => {
   return (
     <Box sx={{ flex: 1, minWidth: 200 }}>
@@ -64,8 +70,15 @@ const RightTable: React.FC<RightTableProps> = ({
                 color: "black",
                 fontSize: "15px",
               }}
+              onClick={() => onSave && onSave()}
+              disabled={saving || !selectedRoleId}
             >
-              <SaveIcon/> Lưu
+              {saving ? (
+                <CircularProgress size={16} sx={{ mr: 1 }} />
+              ) : (
+                <SaveIcon sx={{ mr: 0.5 }} />
+              )}
+              Lưu
             </Button>
         </Box>
 

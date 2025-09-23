@@ -6,6 +6,7 @@ export enum PATH {
   TRACKING = "/Tracking",
   PRODUCT= "/Product",
   ROLES= "/AdminRole",
+  RIGHTS= "/AdminRight",
   FULFILLMENT= "/Fulfillment",
   FULFILLMENT_SERVICE = "/Fulfillment/:service",
   RECIEVEORDER= "/RecieveOrder",

@@ -5,6 +5,7 @@ import {
   FindAllAdminRoleDto,
   UpdateAdminRoleDto,
 } from "dto/admin-roles";
+import {UpdateRightOfRoleDto} from "dto/admin-roles/update-right-of-role.dto";
 import { DefaultResponseDto, PagingDataDto } from "dto/common";
 import axiosClient from "utils/axios-client";
 
@@ -25,14 +26,22 @@ export const adminRolesAPI = {
     });
   },
   findOne(id: number): Promise<AdminRoleDto> {
-    return axiosClient.get(`admin-roles/${id}`);
+    return axiosClient.get(`role/${id}`);
   },
   update(
-    id: number,
+    id: string,
     updateAdminRoleDto: UpdateAdminRoleDto
   ): Promise<AdminRoleDto> {
-    return axiosClient.put(`admin-roles/${id}`, updateAdminRoleDto);
+    return axiosClient.patch("role", updateAdminRoleDto);
   },
+
+  updateRightOfRole(
+    id: string,
+    updateRightOfRoleDto: UpdateRightOfRoleDto
+  ): Promise<AdminRoleDto> {
+    return axiosClient.put("role/right", updateRightOfRoleDto);
+  },
+
   // delete(id: number): Promise<DefaultResponseDto> {
   //   return axiosClient.delete(`admin-roles/${id}`);
   // },
