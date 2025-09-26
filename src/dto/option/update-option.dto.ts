@@ -4,7 +4,6 @@ export type UpdateOptionDto = {
   code: string;
   name: string;
   note?: string | null;
-//   config?: string | null;
   orderNo?: number;
   optionGroup: { id: string };
   optionSet?: null;

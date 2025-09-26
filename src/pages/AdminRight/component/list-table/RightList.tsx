@@ -68,14 +68,8 @@ const RightList: React.FC<RightListProps> = ({
       deleteAdminRight(rightToDelete, {
         onSuccess: () => {
           handleCloseDeleteDialog();
-          // Force reload bằng cách invalidate tất cả các query liên quan
-          queryClient.invalidateQueries("FIND_ALL_ADMIN_RIGHT");
-          queryClient.invalidateQueries("FIND_ALL_ADMIN_RIGHTS");
-          queryClient.invalidateQueries({ queryKey: ["FIND_ALL_ADMIN_RIGHT"] });
-          queryClient.invalidateQueries({ queryKey: ["FIND_ALL_ADMIN_RIGHTS"] });
           queryClient.invalidateQueries({ predicate: (query) => 
-            query.queryKey.toString().includes("ADMIN_RIGHT") ||
-            query.queryKey.toString().includes("ADMIN_RIGHTS")
+            query.queryKey.toString().includes("FIND_ALL_ADMIN_RIGHT")
           });
         },
         onError: (error) => {
@@ -90,7 +84,7 @@ const RightList: React.FC<RightListProps> = ({
     <Box
       sx={{
         bgcolor: "white",
-        p: 2,
+        p: 1,
         borderRadius: 2,
         display: "flex",
         flexDirection: "column",
@@ -134,7 +128,6 @@ const RightList: React.FC<RightListProps> = ({
                 <b>TÊN</b>
               </TableCell>
               <TableCell align="center" sx={{ width: "12%" }}>
-                <b>Hành động</b>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -168,6 +161,7 @@ const RightList: React.FC<RightListProps> = ({
               !rightsError &&
               rightsItems.map((r: any, idx: number) => {
                 const id = r.id ?? r.code ?? idx;
+                if (!id) return null;
                 const name = r.name ?? r.ten ?? r.code ?? "";
                 const rowKey = String(id);
                 const isSelected = selectedRightId !== null && rowKey === selectedRightId;

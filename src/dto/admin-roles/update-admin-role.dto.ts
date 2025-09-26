@@ -3,8 +3,6 @@ import {
   createAdminRoleSchema,
 } from "./create-admin-role.dto";
 
-// export type UpdateAdminRoleDto = Partial<CreateAdminRoleDto>;
-
 export type UpdateAdminRoleDto = {
   id: string;
   version: number;

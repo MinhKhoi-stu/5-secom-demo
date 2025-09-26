@@ -80,7 +80,7 @@ const RecieveOrderForm: React.FC<RecieveOrderModalProps> = ({
             fontWeight={"bold"}
             gutterBottom
           >
-            ĐƠN HÀNG CẦN VẼ 2D - {order.orderId}
+            ĐƠN HÀNG CẦN NHẬN - {order.orderId}
           </Typography>
 
           <Box

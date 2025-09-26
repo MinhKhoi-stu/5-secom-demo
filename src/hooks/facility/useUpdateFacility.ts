@@ -1,4 +1,3 @@
-// hooks/facility/useUpdateFacility.ts
 import { useMutation, useQueryClient } from "react-query";
 import { UpdateFacilityDto } from "dto/facility/update-facility.dto";
 import { FacilityDto } from "dto/facility/facility.dto";

@@ -13,16 +13,11 @@ export const facilityAPI = {
     return axiosClient.get("facility/find", { params: findAllFacilityDto });
   },
   findAllCustom(
-    // findAllFacilityDto: FindAllFacilityDto
     queryString: string
   ): Promise<PagingDataDto<FacilityDto>> {
     return axiosClient.get(`facility/find?${queryString}`);
   },
-  // createFacility(
-  //   createFacilityDto: CreateFacilityDto
-  // ): Promise<PagingDataDto<FacilityDto>> {
-  //   return axiosClient.post("facility", { params: createFacilityDto });
-  // },
+  
   createFacility(createFacilityDto: CreateFacilityDto) {
     return axiosClient
       .post("facility", createFacilityDto)
@@ -33,11 +28,7 @@ export const facilityAPI = {
       .patch<FacilityDto>("facility", data)
       .then((res) => res.data);
   },
-  // updateFacility(id: string, data: UpdateFacilityDto): Promise<FacilityDto> {
-  //   return axiosClient
-  //     .patch<FacilityDto>(`facility/${id}`, data)
-  //     .then((res) => res.data);
-  // },
+
   facilityDiary: (facilityDiaryDto: FacilityDiaryDto) => {
     return axiosClient
       .post("facility-diary", facilityDiaryDto)

@@ -1,13 +1,7 @@
-export type CreateAdminRightDto = {
-  code: string;
-  name: string;
-  note: string;
-  menus?: [
-    {
-      id: string;
-    }
-  ];
-  permissions?: [
+export type UpdateRightPermissionDto = {
+  version: number;
+  id: string;
+  permissions: [
     {
       resource: {
         id: string;

@@ -17,7 +17,6 @@ options?: UseQueryOptions<PagingDataDto<AdminRightDto>>
   return useQuery<PagingDataDto<AdminRightDto>>({
     queryKey: [QUERY_KEY.FIND_ALL, params],
     queryFn: () => adminRightsAPI.findAll(params),
-    // staleTime: 1000 * 30,
     cacheTime: 0,
     staleTime: 0,
     ...options,

@@ -82,7 +82,9 @@ const RightTable: React.FC<RightTableProps> = ({
             </Button>
         </Box>
 
-        <TextField
+        {/* Tìm kiếm */}
+        
+        {/* <TextField
           type="text"
           size="small"
           placeholder="Tìm kiếm..."
@@ -100,7 +102,7 @@ const RightTable: React.FC<RightTableProps> = ({
             width: "50%",
           }}
           fullWidth
-        />
+        /> */}
 
         <Box
           sx={{

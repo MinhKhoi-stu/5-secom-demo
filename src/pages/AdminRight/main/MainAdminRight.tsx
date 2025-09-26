@@ -21,13 +21,23 @@ const MainAdminRight = () => {
     refetch: rightsRefetch,
   } = useFindAllAdminRights({ page: 0, size: 0 });
 
-  const rightsItems: any[] =
-    (rightsData &&
-      (rightsData.content ||
-        (rightsData as any).items ||
-        (rightsData as any).data ||
-        (rightsData as any).rights)) ||
-    (Array.isArray(rightsData) ? rightsData : []);
+  const rightsItems: any[] = useMemo(() => {
+    const raw =
+      (rightsData &&
+        (rightsData.content ||
+          (rightsData as any).items ||
+          (rightsData as any).data ||
+          (rightsData as any).rights)) ||
+      (Array.isArray(rightsData) ? rightsData : []);
+    const arr = Array.isArray(raw) ? raw : [];
+    const seen = new Set();
+    return arr.filter((r: any) => {
+      const key = String(r.id ?? r.code ?? "");
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [rightsData]);
 
   // --- Fetch Resources ---
   const {
@@ -36,13 +46,24 @@ const MainAdminRight = () => {
     isError: resourceError,
   } = useFindAllResource({ page: 0, size: 50 });
 
-  const resourceItems: any[] =
-    (resourceData &&
-      (resourceData.content ||
-        (resourceData as any).items ||
-        (resourceData as any).data ||
-        (resourceData as any).resources)) ||
-    (Array.isArray(resourceData) ? resourceData : []);
+  const resourceItems: any[] = useMemo(() => {
+    const raw =
+      (resourceData &&
+        (resourceData.content ||
+          (resourceData as any).items ||
+          (resourceData as any).data ||
+          (resourceData as any).resources)) ||
+      (Array.isArray(resourceData) ? resourceData : []);
+    const arr = Array.isArray(raw) ? raw : [];
+    const seen = new Set();
+    return arr.filter((r: any) => {
+      const key = String(r.id ?? r.code ?? r.name ?? "");
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [resourceData]);
+
 
   // --- Selected Right ---
   const [selectedRightId, setSelectedRightId] = useState<string | null>(null);
@@ -276,7 +297,9 @@ const MainAdminRight = () => {
         Quyền menu - Quyền chức năng
       </Typography>
 
-      <TextField
+      {/* Tìm kiếm */}
+
+      {/* <TextField
         type="text"
         size="small"
         placeholder="Tìm kiếm..."
@@ -290,7 +313,7 @@ const MainAdminRight = () => {
         }}
         sx={{ backgroundColor: "white", borderRadius: "10px", width: "50%" }}
         fullWidth
-      />
+      /> */}
 
       <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
         <RightList
@@ -303,6 +326,7 @@ const MainAdminRight = () => {
         />
 
         <PermissionList
+          selectedRightId={selectedRightId}
           selectedRightLoading={selectedRightLoading}
           selectedRightError={selectedRightError}
           resourceItems={resourceItems}
@@ -313,9 +337,8 @@ const MainAdminRight = () => {
 
         <MenuList
           selectedRightId={selectedRightId}
-          selectedRightLoading={selectedRightLoading}
-          selectedRightError={selectedRightError}
-          effectiveMenuNames={effectiveMenuNames}
+          selectedRightData={selectedRightData}
+          resourceItems={resourceItems}
         />
       </Box>
 

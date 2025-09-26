@@ -43,7 +43,7 @@ const dedupeMenus = (items: RawMenu[] = []): RawMenu[] => {
   return out;
 };
 
-export function useMenu() {
+export function useTreeMenu() {
   const [raw, setRaw] = useState<RawMenu[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
@@ -160,4 +160,4 @@ export function useMenu() {
   };
 }
 
-export default useMenu;
+export default useTreeMenu;

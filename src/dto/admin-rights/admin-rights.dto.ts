@@ -4,7 +4,6 @@ export type AdminRightDto = {
   updatedBy?: string;
   createdDate?: string;
   updatedDate?: string;
-  // permission?: string;
   id: string;
   code: string;
   name: string;

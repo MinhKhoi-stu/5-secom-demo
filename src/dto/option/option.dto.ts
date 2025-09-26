@@ -8,10 +8,7 @@ export type ParentOptDto = {
 };
 
 export type OptionDto = {
-  // result: any;
-  // data: any;
   version: number;
-  // config: any;
   id: string;
   code: string;
   name: string;

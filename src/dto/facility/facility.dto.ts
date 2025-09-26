@@ -1,4 +1,3 @@
-// dto/facility.dto.ts
 import { OrgunitDto } from "dto/orgunit/orgunit.dto";
 import { FacilityTypeDto } from "./facility-type.dto";
 import { SkuOptDto } from "./sku-opt.dto";

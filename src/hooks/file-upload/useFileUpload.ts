@@ -1,4 +1,3 @@
-// hooks/useFileUpload.ts
 import {fileUploadAPI} from "api/file-upload";
 import {FileUploadDto} from "dto/file-upload/file-upload.dto";
 import { useState, useCallback } from "react";

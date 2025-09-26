@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PATH } from "routes/constants";
-import useMenu, { MenuNode } from "hooks/menu/useMenu";
+import useMenu, { MenuNode } from "hooks/menu/useTreeMenu";
 import { useFindOptionsByGroup } from "hooks/option/useFindOptionByGroup";
 import useFindAllFacilityCustom from "hooks/facility/useFindAllFacilityCustom";
 

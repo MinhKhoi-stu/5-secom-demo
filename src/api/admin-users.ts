@@ -36,15 +36,12 @@ export const adminUsersAPI = {
     return axiosClient.get(`user/find/${id}`);
   },
   update(
-    // id: number,
     id: string,
     updateAdminUserDto: UpdateAdminUserDto
   ): Promise<AdminUserDto> {
-    // return axiosClient.patch(`user/${id}`, updateAdminUserDto);
     return axiosClient.patch(`user`, updateAdminUserDto);
   },
   delete(id: string, version: number): Promise<DefaultResponseDto> {
-    // return axiosClient.delete(`user/${id}`);
     return axiosClient.delete("user", {
       params: { id, version },
     });

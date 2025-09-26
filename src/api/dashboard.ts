@@ -1,6 +1,4 @@
-import { PagingDataDto } from "dto/common";
 import { StatisticAllFacilityDto } from "dto/dashboard/facility-statistic.dto";
-import { FacilityDto } from "dto/facility/facility.dto";
 import axiosClient from "utils/axios-client";
 
 export const dashboardAPI = {

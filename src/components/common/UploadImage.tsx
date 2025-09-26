@@ -12,8 +12,6 @@ const UploadImage = ({
   label = "Chọn tệp",
   onFileSelect,
   accept = "image/*",
-    // width = "315px",
-    //   width = "100%"
 }: UploadImageProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState("");

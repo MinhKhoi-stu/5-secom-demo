@@ -1,5 +1,5 @@
 export type FindOneAdminRightByIdDto = {
-  version: 0;
+  version: number;
   createdBy: string;
   updatedBy: string;
   createdDate: string;

@@ -42,9 +42,6 @@ export const adminRolesAPI = {
     return axiosClient.put("role/right", updateRightOfRoleDto);
   },
 
-  // delete(id: number): Promise<DefaultResponseDto> {
-  //   return axiosClient.delete(`admin-roles/${id}`);
-  // },
   delete(id: string, version: number): Promise<DefaultResponseDto> {
     return axiosClient.delete("role", {
       params: { id, version },

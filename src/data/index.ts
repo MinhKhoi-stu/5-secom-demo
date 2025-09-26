@@ -1,3 +1,8 @@
+//*********
+//
+//Đây là file data giả, hiển thị cho các component chưa hoàn thành
+//
+//*********
 import type {
   FakeUser,
   newOrders,

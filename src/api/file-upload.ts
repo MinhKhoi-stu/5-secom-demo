@@ -11,8 +11,4 @@ export const fileUploadAPI = {
   },
 };
 
-// export const fileUploadAPI = {
-//   fileUpload(base64: string): Promise<FileUploadDto> {
-//     return axiosClient.post("file/upload", { url: base64 });
-//   },
-// };
+

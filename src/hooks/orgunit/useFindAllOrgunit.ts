@@ -11,7 +11,6 @@ export const useFindAllOrgunit = (params: FindAllOrgunitDto) => {
     () => orgUnitAPI.findAll(params),
     {
       keepPreviousData: true,
-      // staleTime: 5 * 60 * 1000,
       staleTime: 0,
     }
   );

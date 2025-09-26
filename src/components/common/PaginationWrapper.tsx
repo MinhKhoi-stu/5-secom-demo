@@ -1,4 +1,3 @@
-// components/common/TablePaginationWrapper.tsx
 import { Box, Pagination, Typography } from "@mui/material";
 
 interface Props {

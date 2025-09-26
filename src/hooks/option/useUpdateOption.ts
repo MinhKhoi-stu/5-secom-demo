@@ -15,13 +15,11 @@ export const useUpdateOption = (): UseMutationResult<
   return useMutation<OptionDto, unknown, UpdateOptionDto>({
     mutationFn: (data: UpdateOptionDto) => optionAPI.updateOption(data),
     onSuccess: (data) => {
-      // console.log("Update option success:", data);
       toast(locales.updateSuccess, { type: "success" });
       queryClient.invalidateQueries(QUERY_KEY.FIND_ALL_OPTION);
     },
     onError: (error) => {
       console.error("Update option error:", error);
-      // Ví dụ: hiển thị toast lỗi
     },
   });
 };
